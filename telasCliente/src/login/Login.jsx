@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Link } from "react-router-dom"; //import do link
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; //import da função de navegar
 // Inside the handleLogin function
 
 
@@ -10,7 +10,7 @@ const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan';
 
 function Login() {
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); //objeto de navegação
 
   const [formData, setFormData] = useState({
     email: '',
@@ -37,6 +37,8 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
+
+        //se a resposta for bem sucedida vai para a página seguinte
         navigate('/home'); 
       } else {
         const errorText = await response.text();
