@@ -3,30 +3,78 @@ import React, { useState, useEffect } from 'react';
 const MainContent = () => {
     const [activeTab, setActiveTab] = useState('perto');
     const [anuncios, setAnuncios] = useState([]);
+    const [teste, setTeste] = useState("");
     const [trabalhosPendentes, setTrabalhosPendentes] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
 
-    // Função para buscar anúncios e trabalhos pendentes
-    const fetchData = async () => {
+    const fetchData = async (id) => {
         try {
-            const responseAnuncios = await fetch('http://localhost:8080/2.0/touccan/bico/'); 
+            console.log(id);
+            let jsonEnviar = { id_cliente: id }
+            const responseAnuncios = await fetch(`http://localhost:8080/2.0/touccan/bico`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonEnviar)
+            });
             const dataAnuncios = await responseAnuncios.json();
-            setAnuncios(dataAnuncios);
-
-            const responseTrabalhos = await fetch('http://localhost:8080/'); 
-            const dataTrabalhos = await responseTrabalhos.json();
-            setTrabalhosPendentes(dataTrabalhos);
+            setAnuncios(dataAnuncios.bico);
+            console.log(anuncios)
+            console.log(dataAnuncios.bico)
+            // const responseTrabalhos = await fetch('http://localhost:8080/');
+            // const dataTrabalhos = await responseTrabalhos.json();
+            // setTrabalhosPendentes(dataTrabalhos);
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
+        }
+        finally {
+            setLoading(false)
         }
     };
 
     useEffect(() => {
-        fetchData();
+        let id = localStorage.getItem("id_cliente")
+        fetchData(id);
     }, []);
+
+    useEffect(() => {
+        console.log(anuncios)
+    }, [anuncios]);
+
+    if (loading) {
+        return (
+        <div className="main-content">
+        <div className="tabs">
+            <button
+                className={`tab-button ${activeTab === 'perto' ? 'active' : ''}`}
+                onClick={() => handleTabChange('perto')}
+            >
+                Meus anúncios
+            </button>
+            <button
+                className={`tab-button ${activeTab === 'urgente' ? 'active' : ''}`}
+                onClick={() => handleTabChange('urgente')}
+            >
+                Trabalhos pendentes
+            </button>
+        </div>
+
+        <div className={`tab-content ${activeTab === 'perto' ? 'active' : ''}`} id="perto">
+            <h2>perto</h2>
+        </div>
+        <div className={`tab-content ${activeTab === 'urgente' ? 'active' : ''}`} id="urgente">
+            <h2>urgente</h2>
+        </div>
+        <div>Carregando...</div>
+    </div>
+         
+        )
+    }
 
     return (
         <div className="main-content">

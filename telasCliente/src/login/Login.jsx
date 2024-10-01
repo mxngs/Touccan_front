@@ -38,6 +38,8 @@ function Login() {
         const data = await response.json();
         console.log(data);
 
+        localStorage.setItem("id_cliente", data.cliente.id)
+
         //se a resposta for bem sucedida vai para a página seguinte
         navigate('/home'); 
       } else {
