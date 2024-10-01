@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Link } from "react-router-dom"; //import do link
+import { useNavigate } from 'react-router-dom';
+// Inside the handleLogin function
+
 
 const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan';
 
+
 function Login() {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     senha: ''
@@ -30,6 +37,7 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
+        navigate('/home'); 
       } else {
         const errorText = await response.text();
         console.log("Erro na resposta:", errorText);
