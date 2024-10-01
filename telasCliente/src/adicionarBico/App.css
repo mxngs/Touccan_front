@@ -1,0 +1,33 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body{
+    background-color: #EBEBEB;
+  }
+
+  .addBico-container{
+    display: grid;
+    grid-template-columns: 20vw 1fr;
+  }
+
+  .bico-input-container{
+    display: grid;
+  }
+
+  input{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 5px;
+    border-bottom: 1px #E25401;
+  }
+
+  .error {
+    color: red;
+    font-size: 0.8em; 
+    margin-top: 0.5em; 
+}

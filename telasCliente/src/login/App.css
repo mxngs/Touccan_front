@@ -1,0 +1,158 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", system-ui;
+}
+
+:root{
+  --laranja: #F07B07;
+  --branco: #EBEBEB;
+  --laranja-escuro: #E25401;
+  --cinza: #ccc;
+}
+
+body{
+  background-color: #EBEBEB;
+}
+
+.decoracaoLaranja {
+  position: absolute;
+  width: 100%;
+  height: 465px;
+  background: linear-gradient(to right, #F07B07, #E25401);
+  z-index: 0;
+}
+
+.decoracaoCinza {
+  width: 450px;
+  height: 460px;
+  border-radius: 194px;
+  background-color: #EBEBEB;
+  left: -5px;
+  top: 200px;
+  position: absolute;
+  z-index: 0;
+}
+
+.decoracaoCinza2 {
+  width: 1630px;
+  height: 460px;
+  background-color: #EBEBEB;
+  position: absolute;
+  transform: rotate(-170.83deg);
+  transform-origin: center;
+  left: 250px;
+  top: 332px;
+  z-index: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  z-index: 1;
+  top: 46%;
+  transform: translateX(90%);
+  padding: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.input-div{
+  display: flex;
+  width: 500px;
+  gap: 8px;
+  border-bottom: solid 1px black;
+  padding-bottom: 10px;
+}
+.input-div img{
+  width: 40px;
+}
+
+
+form {
+  display: grid;
+  justify-items: center;
+}
+h1 {
+  color: #000000;
+  font-size: 1.3rem;
+  padding-bottom: 20px;
+  padding-left: 24px;
+  place-self: start;
+}
+a{
+  color: gray;
+  place-self: end;
+  transform: translateY(-24px);
+}
+
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 16px;
+  background: none;
+  border: none;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #F07B07;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  width: 50%;
+  font-weight: 700;
+  box-shadow: 0 6px 10px #6161616c;
+  padding: 18px 0;
+  
+}
+
+button:hover {
+  background-color: #E25401;
+}
+
+ p {
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 30px;
+}
+span{
+color: #F07B07;
+}
+
+.logoPrincipal {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    top: 20%;
+    transform: translateY(0);
+    width: 90%;
+  }
+
+  input, button {
+    width: 100%;
+  }
+}

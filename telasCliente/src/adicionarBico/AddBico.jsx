@@ -1,0 +1,165 @@
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../components/Sidebar.jsx';
+import './App.css';
+
+const AddBico = () => {
+   const baseUrl = 'http://localhost:8080/2.0/touccan';
+
+   const [formData, setFormData] = useState({
+       titulo: '',
+       descricao: '',
+       horario_inicio: '',
+       data_inicio: '',
+       horario_limite: '',
+       data_limite: '',
+       salario: '', 
+       id_dificuldade: '',
+       id_categoria: ''
+   });
+
+   const [erros, setErros] = useState({});
+
+   const getCategorias = async () => {
+       const response = await fetch(`${baseUrl}/categoria`);
+       const data = await response.json();
+       return data.categorias;
+   };
+
+   const preencherSelectCategoria = async () => {
+       let categorias = await getCategorias();
+       const categoriaSelect = document.getElementById('categoria-select');
+       categorias.forEach(categoria => {
+           const option = document.createElement('option');
+           option.value = categoria.id;
+           option.textContent = categoria.categoria;
+           categoriaSelect.appendChild(option);
+       });
+   };
+
+   const handleInputChange = (event) => {
+       const { name, value } = event.target;
+       const parsedValue = (name === 'id_dificuldade' || name === 'id_categoria') ? parseInt(value, 10) : value;
+
+       setFormData(prevData => ({
+           ...prevData,
+           [name]: parsedValue
+       }));
+   };
+
+   const validateForm = () => {
+       const novosErros = {};
+       if (!formData.titulo) novosErros.titulo = "Título é obrigatório.";
+       if (!formData.descricao) novosErros.descricao = "Descrição é obrigatória.";
+       if (!formData.horario_inicio) novosErros.horario_inicio = "Horário de início é obrigatório.";
+       if (!formData.data_inicio) novosErros.data_inicio = "Data de início é obrigatória.";
+       if (!formData.horario_limite) novosErros.horario_limite = "Horário limite é obrigatório.";
+       if (!formData.data_limite) novosErros.data_limite = "Data limite é obrigatória.";
+       if (!formData.salario) novosErros.salario = "Salário é obrigatório.";
+       if (!formData.id_dificuldade) novosErros.id_dificuldade = "Nível de dificuldade é obrigatório.";
+       if (!formData.id_categoria) novosErros.id_categoria = "Categoria é obrigatória.";
+
+       setErros(novosErros);
+       return Object.keys(novosErros).length === 0;
+   };
+
+   const handleSubmit = async (e) => {
+       e.preventDefault();
+       if (validateForm()) {
+           const dadosLimpos = {
+               ...formData,
+               id_dificuldade: formData.id_dificuldade,
+               id_categoria: formData.id_categoria
+           };
+           console.log(dadosLimpos);
+       }
+   };
+
+   useEffect(() => {
+       preencherSelectCategoria();
+   }, []);
+
+   const today = new Date().toISOString().split('T')[0];
+
+   return (
+       <div className='addBico-container'>
+           <Sidebar />
+
+           <div className='bico-app-container'>
+               <h1>Criar Anúncio</h1>
+
+               <form onSubmit={handleSubmit}>
+                   <div className="bico-input-container">
+                       <label>Titulo</label>
+                       <input type='text' name='titulo' value={formData.titulo} onChange={handleInputChange} />
+                       {erros.titulo && <span className="error">{erros.titulo}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Descrição</label>
+                       <input type='text' name='descricao' value={formData.descricao} onChange={handleInputChange} />
+                       {erros.descricao && <span className="error">{erros.descricao}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Horário início</label>
+                       <input type='time' name='horario_inicio' value={formData.horario_inicio} onChange={handleInputChange} />
+                       {erros.horario_inicio && <span className="error">{erros.horario_inicio}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Data início</label>
+                       <input type='date' name='data_inicio' min={today} value={formData.data_inicio} onChange={handleInputChange} />
+                       {erros.data_inicio && <span className="error">{erros.data_inicio}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Horário Limite</label>
+                       <input type='time' name='horario_limite' value={formData.horario_limite} onChange={handleInputChange} />
+                       {erros.horario_limite && <span className="error">{erros.horario_limite}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Data Limite</label>
+                       <input type='date' name='data_limite' min={today} value={formData.data_limite} onChange={handleInputChange} />
+                       {erros.data_limite && <span className="error">{erros.data_limite}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Salário</label>
+                       <input 
+                           type='text' 
+                           name='salario' 
+                           value={formData.salario} 
+                           onChange={handleInputChange} 
+                           placeholder="Digite o valor"
+                       />
+                       {erros.salario && <span className="error">{erros.salario}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Nível de dificuldade</label>
+                       <select name='id_dificuldade' value={formData.id_dificuldade} onChange={handleInputChange}>
+                           <option value="">Selecione um nível</option>
+                           <option value="1">Baixa</option>
+                           <option value="2">Média</option>
+                           <option value="3">Alta</option>
+                       </select>
+                       {erros.id_dificuldade && <span className="error">{erros.id_dificuldade}</span>}
+                   </div>
+
+                   <div className="bico-input-container">
+                       <label>Categoria</label>
+                       <select name='id_categoria' id='categoria-select' onChange={handleInputChange}>
+                           <option value="">Selecione uma categoria</option>
+                       </select>
+                       {erros.id_categoria && <span className="error">{erros.id_categoria}</span>}
+                   </div>
+
+                   <button type='submit'>CRIAR</button>
+               </form>
+           </div>
+       </div>
+   );
+}
+
+export default AddBico;

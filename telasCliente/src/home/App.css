@@ -1,0 +1,222 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", system-ui;
+}
+
+body {
+    background-color: #EBEBEB;
+}
+
+.container {
+    display: flex;
+    height: 100%;
+}
+
+.sidebar {
+    padding: 50px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo img {
+    width: 500px; 
+    padding-top: 50px;
+    margin-bottom: 190px;
+    margin-left: -55px;
+    margin-top: -60px;
+}
+
+
+
+.sidebar-menu {
+    list-style: none;
+    padding: 50px;
+    width: 100%;
+    flex-grow: 5;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item {
+    margin: 25px 0;
+    display: flex;
+    align-items: center;
+}
+
+.menu-item img {
+    width: 43px;
+    height: 43px;
+    margin-right: 20px;
+}
+
+.menu-item a {
+    text-decoration: none;
+    color: #333333;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
+
+.menu-item a:hover {
+    color: #F07B07;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #EBEBEB;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-top: 60px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: #333;
+    position: relative;
+    margin: 0 125px;
+}
+
+.tab-button.active {
+    color: #F07B07;
+}
+
+.tab-button.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #F07B07;
+}
+
+.tab-content {
+    display: none;
+    text-align: center;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.filter-container {
+    width: 400px;
+    background-color: #D9D9D9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+}
+
+
+
+.job-card {
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    margin: 20px auto;
+    align-items: center;
+    position: relative;
+}
+
+.job-card img {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+    border-radius: 50%;
+    margin-top: -160px;
+}
+
+.job-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.job-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #6D6D6D;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.job-difficulty {
+    font-size: 16px;
+    color: #6D6D6D;
+    margin-bottom: 10px;
+}
+
+.job-difficulty span {
+    color: #F07B07;
+}
+
+.job-description {
+    font-size: 16px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.register-btn {
+    background-color: #E97911;
+    width: 150px;
+    height: 32px;
+    border: none;
+    color: #EBEBEB;
+    border-radius: 15px;
+}
+
+.job-timing {
+    font-size: 14px;
+    color: #000000;
+    margin-top: 10px;
+}
+
+.job-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    background-color: #F07B07;
+    border-radius: 10px 0 0 10px;
+}
+
+.profile-icon {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    width: 50px;
+    height: 50px;
+}
+
+.profile-icon img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    cursor: pointer;
+}
