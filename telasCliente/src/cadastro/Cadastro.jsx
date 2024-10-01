@@ -154,6 +154,8 @@ function Cadastro() {
         },
         body: JSON.stringify(dadosLimpos)
       })
+
+      
         .then(response => response.json())
         .then(data => {
           console.log("Sucesso:", data);

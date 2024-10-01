@@ -76,7 +76,7 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '46px' }}>
             <div className='input-div'>
-              <img src="./img/email.png" alt="Email" width={18} />
+              <img src="../img/email.png" alt="Email" width={18} />
               <input
                 type="email"
                 name="email"
@@ -85,7 +85,7 @@ function Login() {
               />
             </div>
             <div className='input-div'>
-              <img src="./img/senha.png" alt="Senha" />
+              <img src="../img/senha.png" alt="Senha" />
               <input
                 id='senha'
                 type="password"
