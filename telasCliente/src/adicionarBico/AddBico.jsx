@@ -12,18 +12,21 @@ const AddBico = () => {
        data_inicio: '',
        horario_limite: '',
        data_limite: '',
-       salario: '', 
+       salario: '',
        id_dificuldade: '',
        id_categoria: ''
    });
 
    const [erros, setErros] = useState({});
+   const [idCliente, setIdCliente] = useState(null);  
+
 
    const getCategorias = async () => {
        const response = await fetch(`${baseUrl}/categoria`);
        const data = await response.json();
        return data.categorias;
    };
+
 
    const preencherSelectCategoria = async () => {
        let categorias = await getCategorias();
@@ -36,6 +39,21 @@ const AddBico = () => {
        });
    };
 
+   
+   useEffect(() => {
+       const id = localStorage.getItem("id_cliente");
+       console.log('ID recuperado:', id);
+
+       if (id) {
+           setIdCliente(id);  
+       } else {
+           console.error('ID do cliente não encontrado no localStorage');
+       }
+
+       preencherSelectCategoria(); 
+   }, []);
+
+
    const handleInputChange = (event) => {
        const { name, value } = event.target;
        const parsedValue = (name === 'id_dificuldade' || name === 'id_categoria') ? parseInt(value, 10) : value;
@@ -46,6 +64,7 @@ const AddBico = () => {
        }));
    };
 
+   
    const validateForm = () => {
        const novosErros = {};
        if (!formData.titulo) novosErros.titulo = "Título é obrigatório.";
@@ -62,21 +81,41 @@ const AddBico = () => {
        return Object.keys(novosErros).length === 0;
    };
 
+   
    const handleSubmit = async (e) => {
        e.preventDefault();
+
+       if (!idCliente) {
+           console.error("ID do cliente não encontrado para o envio");
+           return;
+       }
+
        if (validateForm()) {
            const dadosLimpos = {
                ...formData,
-               id_dificuldade: formData.id_dificuldade,
-               id_categoria: formData.id_categoria
+               id_cliente: idCliente,  
            };
-           console.log(dadosLimpos);
+
+           try {
+            console.log(dadosLimpos);
+               const response = await fetch(`${baseUrl}/bicos`, {
+                   method: 'POST',
+                   headers: {
+                       'Content-Type': 'application/json',
+                   },
+                   body: JSON.stringify(dadosLimpos),
+               });
+               if (response.ok) {
+                   const result = await response.json();
+                   console.log('Anúncio criado com sucesso:', result);
+               } else {
+                   console.error('Erro ao criar anúncio');
+               }
+           } catch (error) {
+               console.error('Erro de rede:', error);
+           }
        }
    };
-
-   useEffect(() => {
-       preencherSelectCategoria();
-   }, []);
 
    const today = new Date().toISOString().split('T')[0];
 
