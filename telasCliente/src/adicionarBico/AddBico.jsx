@@ -93,7 +93,7 @@ const AddBico = () => {
        if (validateForm()) {
            const dadosLimpos = {
                ...formData,
-               id_cliente: idCliente,  
+               id_cliente: parseInt(idCliente, 10),  
            };
 
            try {
@@ -120,8 +120,10 @@ const AddBico = () => {
    const today = new Date().toISOString().split('T')[0];
 
    return (
+    <div className="">
+    <Sidebar />
        <div className='addBico-container'>
-           <Sidebar />
+           
 
            <div className='bico-app-container'>
                <h1>Criar Anúncio</h1>
@@ -135,7 +137,8 @@ const AddBico = () => {
 
                    <div className="bico-input-container">
                        <label>Descrição</label>
-                       <input type='text' name='descricao' value={formData.descricao} onChange={handleInputChange} />
+                       <textarea name="descricao" id="" value={formData.descricao} onChange={handleInputChange}></textarea>
+                        
                        {erros.descricao && <span className="error">{erros.descricao}</span>}
                    </div>
 
@@ -197,6 +200,7 @@ const AddBico = () => {
                    <button type='submit'>CRIAR</button>
                </form>
            </div>
+       </div>
        </div>
    );
 }

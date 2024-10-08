@@ -29,6 +29,15 @@ body {
     margin-top: -60px;
 }
 
+/* .sidebar::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1;
+    height: 100%;
+    background-color: #636363;
+} */
 
 
 .sidebar-menu {
@@ -116,27 +125,15 @@ body {
     display: block;
 }
 
-.filter-container {
-    width: 400px;
-    background-color: #D9D9D9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    position: relative;
-}
-
-
 
 .job-card {
     display: flex;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
+    width: 600px;
     padding: 20px;
-    margin: 20px auto;
+    margin: 40px auto;
     align-items: center;
     position: relative;
 }
@@ -154,24 +151,26 @@ body {
     display: flex;
     flex-direction: column;
     text-align: left;
+    padding-left: 20px;
 }
 
 .job-title {
     font-size: 20px;
-    font-weight: 600;
-    color: #6D6D6D;
+    font-weight: 40px;
+    color: #000000;
     margin: 0;
     margin-bottom: 10px;
 }
 
 .job-difficulty {
     font-size: 16px;
-    color: #6D6D6D;
+    color: #494444;
     margin-bottom: 10px;
 }
 
 .job-difficulty span {
-    color: #F07B07;
+    color: #52504f;
+    
 }
 
 .job-description {
@@ -201,7 +200,7 @@ body {
     left: 0;
     top: 0;
     bottom: 0;
-    width: 10px;
+    width: 30px;
     background-color: #F07B07;
     border-radius: 10px 0 0 10px;
 }
@@ -219,4 +218,29 @@ body {
     height: auto;
     border-radius: 50%;
     cursor: pointer;
+}
+
+/* Botão */
+.addBico{
+    width: 70px;
+    height: 70px;
+    border-radius: 50px;
+}
+
+.addBico p{
+    color: #EBEBEB;
+    font-size: 40px;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
+/* Div que guarda o botão */
+.addBico_{
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+}
+
+.sidebar{
+    position: fixed
 }

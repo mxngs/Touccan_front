@@ -11,17 +11,23 @@ function Home() {
 
     return (
         <div className="container">
-
-            <Sidebar />
+            
+            
+            <Sidebar  />
             <MainContent />
 
             <div className="profile-icon">
-                <img src="../img/person.png" alt="Perfil" />
+                <Link to="/Perfil">
+                <a ><img src="../img/person.png" alt="Perfil" /></a>
+                </Link>
+                
             </div>
 
-            <div className="addBico">
+            <div className="addBico_">
                 <Link to="/AddBico">
-                <button></button>
+                <button className='addBico'>
+                    <p>+</p>
+                    </button>
                 </Link>
                 
             </div>

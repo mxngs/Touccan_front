@@ -6,6 +6,7 @@ import Cadastro from './cadastro/Cadastro.jsx'
 import AddBico from './adicionarBico/AddBico.jsx'
 import Home from './home/Home.jsx'
 import "./login/App.css"
+import Perfil from './perfil/perfil.jsx'
 
 
 export default function App() {
@@ -17,6 +18,8 @@ export default function App() {
                     <Route path="cadastro" element={< Cadastro />} />
                     <Route path="home" element={< Home />} />
                     <Route path="addBico" element={< AddBico />} />
+                    <Route path="perfil" element={< Perfil />} />
+                    
                 </Route>
             </Routes>
         </BrowserRouter>

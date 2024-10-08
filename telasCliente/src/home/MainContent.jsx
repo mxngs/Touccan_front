@@ -9,9 +9,9 @@ const MainContent = () => {
 
     // Mover a lógica de setNome para um useEffect
     useEffect(() => {
-        setNome('oiiiii'); // Atualiza o nome apenas uma vez
-        console.log(nome); // Deve mostrar 'oiiiii' uma vez
-    }, []); // Passando o array vazio, para que isso aconteça apenas uma vez
+        setNome('oiiiii'); 
+        console.log(nome); 
+    }, []); 
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -19,14 +19,14 @@ const MainContent = () => {
 
     useEffect(() => {
         const id = localStorage.getItem("id_cliente");
-        console.log('ID recuperado:', id);  // Verifique o id do cliente
+        console.log('ID recuperado:', id);  
 
         if (id) {
             fetchData(id);
         } else {
             console.error('ID do cliente não encontrado no localStorage');
         }
-    }, []); // Esse efeito ocorre apenas uma vez na montagem do componente
+    }, []); 
 
     const fetchData = async (id) => {
         try {

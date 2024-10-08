@@ -53,9 +53,7 @@ body{
   align-items: center;
   position: absolute;
   z-index: 1;
-  top: 46%;
   transform: translateX(90%);
-  padding: 20px;
   width: 100%;
   max-width: 600px;
 }

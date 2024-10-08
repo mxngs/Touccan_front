@@ -1,7 +1,6 @@
 import React from 'react';
-import './Sidebar.css'
-import { Link } from "react-router-dom"; //import do link
-
+import './Sidebar.css';
+import { Link } from "react-router-dom"; // import do link
 
 const Sidebar = () => {
     return (
@@ -12,29 +11,28 @@ const Sidebar = () => {
         
             <ul className="sidebar-menu">
                 {[
-                    
                     { 
-                     img: '../img/home.png', text: 'Página Inicial', to: "/home"
+                        img: '../img/home.png', text: 'Página Inicial', to: "/home"
                     },
                     { 
-                        img: '../img/notificação.png', text: 'Notificações' 
+                        img: '../img/notificação.png', text: 'Notificações', to: "/notificacoes" 
                     },
                     { 
-                        img: '../img/chat.png', text: 'Mensagens'
-                     },
-                    { 
-                        img: '../img/historico.png', text: 'Histórico'
-                     },
-                    { 
-                        img: '../img/cofrinho.png', text: 'Cofre' 
+                        img: '../img/chat.png', text: 'Mensagens', to: "/mensagens"
                     },
                     { 
-                        img: '../img/configurações.png', text: 'Configurações' 
+                        img: '../img/historico.png', text: 'Histórico', to: "/historico"
+                    },
+                    { 
+                        img: '../img/cofrinho.png', text: 'Cofre', to: "/cofre"
+                    },
+                    { 
+                        img: '../img/configurações.png', text: 'Configurações', to: "/configuracoes"
                     },
                 ].map((item, index) => (
                     <li className="menu-item" key={index}>
                         <img src={item.img} alt={item.text} />
-                        <a href="#">{item.text}</a>
+                        <Link to={item.to || "#"}>{item.text}</Link>
                     </li>
                 ))}
             </ul>
