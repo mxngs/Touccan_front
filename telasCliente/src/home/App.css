@@ -9,6 +9,14 @@ body {
     background-color: #EBEBEB;
 }
 
+.show-detalhe{
+    display: block;
+}
+
+.hide-detalhe{
+    display: none;
+}
+
 .container {
     display: flex;
     height: 100%;

@@ -169,7 +169,7 @@ const AddBico = () => {
                    <div className="bico-input-container">
                        <label>Salário</label>
                        <input 
-                           type='text' 
+                           type='number' 
                            name='salario' 
                            value={formData.salario} 
                            onChange={handleInputChange} 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DetalhesVaga from '../components/DetalhesVaga.jsx'
 
 const MainContent = () => {
     const [activeTab, setActiveTab] = useState('perto');
@@ -9,7 +10,7 @@ const MainContent = () => {
 
     // Mover a lógica de setNome para um useEffect
     useEffect(() => {
-        setNome('oiiiii'); 
+        setNome(''); 
         console.log(nome); 
     }, []); 
 
@@ -58,10 +59,21 @@ const MainContent = () => {
         }
     };
 
+    let anuncioClicado
+    let showDetalhes = false
+    const showDetalhesAnuncio = (anuncio) =>{
+
+        console.log('oxe clicou?')
+            showDetalhes = true
+            anuncioClicado = anuncio
+            // return()
+    }
+
 
     if (loading) {
         return (
             <div className="main-content">
+                
                 <div className="tabs">
                     <button
                         className={`tab-button ${activeTab === 'perto' ? 'active' : ''}`}
@@ -90,6 +102,11 @@ const MainContent = () => {
 
     return (
         <div className="main-content">
+
+
+        {/* ver como colocar a condição de aparecer quando clicar e mandar as informações */}
+        <DetalhesVaga anuncio={anuncioClicado}></ DetalhesVaga>
+            
             <div className="tabs">
                 <button
                     className={`tab-button ${activeTab === 'perto' ? 'active' : ''}`}
@@ -108,7 +125,7 @@ const MainContent = () => {
             <div className={`tab-content ${activeTab === 'perto' ? 'active' : ''}`} id="perto">
                 {anuncios.length > 0 ? (
                     anuncios.map(anuncio => (
-                        <div className="job-card" key={anuncio.id}>
+                        <div className="job-card" key={anuncio.id} onClick={() => showDetalhesAnuncio(anuncio)}>
                             <div className="job-info">
                                 <h3 className="job-title">{anuncio.titulo}</h3>
                                 <p className="job-description">{anuncio.descricao}</p>
@@ -143,6 +160,7 @@ const MainContent = () => {
                     ))
                 ) : (
                     <p>Sem trabalhos pendentes.</p>
+                    
                 )}
             </div>
         </div>

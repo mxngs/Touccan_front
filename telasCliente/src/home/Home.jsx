@@ -14,6 +14,7 @@ function Home() {
             
             
             <Sidebar  />
+            
             <MainContent />
 
             <div className="profile-icon">
