@@ -1,0 +1,33 @@
+.tela-perfil-cliente{
+    display: grid;
+    grid-template-areas: a1 a2;
+}
+.infos-perfil-cliente{
+    display: grid;
+    grid-area: a2;
+    place-items: center;
+}
+.pfp-perfil-cliente{
+    width: 200px;
+    height: 200px;
+}
+.pfp-perfil-cliente img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #F07B07;
+}
+.nome-perfil-cliente{
+    color: black;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 20px;
+}
+#sobre-perfil-cliente{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}

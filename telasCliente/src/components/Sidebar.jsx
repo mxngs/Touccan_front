@@ -8,7 +8,7 @@ const Sidebar = () => {
             <div className="sidebar-logo">
                 <img src="../img/logoPrincipal.svg" alt="Logo Touccan" />
             </div>
-        
+
             <ul className="sidebar-menu">
                 {[
                     { 
