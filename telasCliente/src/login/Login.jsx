@@ -1,65 +1,55 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Link } from "react-router-dom"; //import do link
-import { useNavigate } from 'react-router-dom'; //import da função de navegar
-// Inside the handleLogin function
-
+import { Link } from "react-router-dom"; 
+import { useNavigate } from 'react-router-dom';
 
 const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan';
 
-
 function Login() {
-
-  const navigate = useNavigate(); //objeto de navegação
-
-  const [formData, setFormData] = useState({
-    email: '',
-    senha: ''
-  });
-
+  const navigate = useNavigate();
+  
+  const [formData, setFormData] = useState({ email: '', senha: '' });
   const [erros, setErros] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();  
+    event.preventDefault();
 
-    console.log("Dados a serem enviados:", formData);
+    if (!formData.email || !formData.senha) {
+      setErros({ mensagem: "Preencha todos os campos." });
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${baseUrl}/login/cliente`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
-      // Verifica se a resposta é bem-sucedida
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-
-        localStorage.setItem("id_cliente", data.cliente.id)
-
-        //se a resposta for bem sucedida vai para a página seguinte
-        navigate('/home'); 
+        localStorage.setItem("id_cliente", data.cliente.id); 
+        navigate('/home');
+      } else if (response.status === 401) {
+        setErros({ mensagem: "E-mail ou senha incorretos. Verifique e tente novamente." });
       } else {
         const errorText = await response.text();
-        console.log("Erro na resposta:", errorText);
+        setErros({ mensagem: "Erro ao fazer login. Tente novamente" });
       }
     } catch (error) {
-      console.log("Erro na requisição:", error);
+      setErros({ mensagem: "Erro de conexão. Verifique sua internet e tente novamente." });
+    } finally {
+      setLoading(false);
     }
   };
 
   const togglePassword = () => {
     const inputSenha = document.getElementById('senha');
     inputSenha.classList.toggle('show');
-
-    if (inputSenha.classList.contains('show')) {
-      inputSenha.type = 'password';
-    } else {
-      inputSenha.type = 'text';
-    }
+    inputSenha.type = inputSenha.classList.contains('show') ? 'text' : 'password';
   };
 
   return (
@@ -69,7 +59,7 @@ function Login() {
         <div className="decoracaoCinza"></div>
         <div className="decoracaoCinza2"></div>
         <div className="logoPrincipal">
-          <img src='../img/logoPrincipal.svg' alt="" />
+          <img src='../img/logoPrincipal.svg' alt="Logo Principal" />
         </div>
       </div>
 
@@ -84,8 +74,10 @@ function Login() {
                 name="email"
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="E-mail"
+                required
               />
             </div>
+
             <div className='input-div'>
               <img src="../img/senha.png" alt="Senha" />
               <input
@@ -94,21 +86,29 @@ function Login() {
                 name="senha"
                 onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
                 placeholder="Senha"
+                required
               />
-              <img src="../img/olho.png" alt="Senha" style={{ width: '30px', height: '30px' }} onClick={togglePassword} />
+              <img
+                src="../img/olho.png"
+                alt="Mostrar Senha"
+                style={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                onClick={togglePassword}
+              />
             </div>
+
+            {erros.mensagem && (
+              <span style={{ color: 'red', fontSize: '14px' }}>{erros.mensagem}</span>
+            )}
+
             <a href="#">Esqueceu sua senha?</a>
           </div>
-          <button type="submit">
+
+          <button type="submit" disabled={loading} style={{ marginTop: '20px' }}>
             Entrar
           </button>
         </form>
 
-        {/* 
-        Precisa usar a tag Link para navegar entre as telas, aí precisa também importar o componente
-        import { Link } from "react-router-dom";
-         */}
-        <Link to="/cadastro">
+        <Link to="/cadastro" style={{ marginTop: '20px', display: 'block' }}>
           Não tem uma conta? <br />
           <span>Faça seu cadastro</span>
         </Link>

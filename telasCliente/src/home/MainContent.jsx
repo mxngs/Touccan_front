@@ -1,57 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import DetalhesVaga from '../components/DetalhesVaga.jsx'
+import DetalhesVaga from '../components/DetalhesVaga.jsx';
+import './App.css'; // Adicione estilos CSS específicos
 
 const MainContent = () => {
     const [activeTab, setActiveTab] = useState('perto');
     const [anuncios, setAnuncios] = useState([]);
     const [trabalhosPendentes, setTrabalhosPendentes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [nome, setNome] = useState('');
-
-    // Mover a lógica de setNome para um useEffect
-    useEffect(() => {
-        setNome(''); 
-        console.log(nome); 
-    }, []); 
-
-    const handleTabChange = (tab) => {
-        setActiveTab(tab);
-    };
+    const [anuncioSelecionado, setAnuncioSelecionado] = useState(null); // Estado para o anúncio clicado
 
     useEffect(() => {
         const id = localStorage.getItem("id_cliente");
-        console.log('ID recuperado:', id);  
-
-        if (id) {
-            fetchData(id);
-        } else {
-            console.error('ID do cliente não encontrado no localStorage');
-        }
-    }, []); 
+        if (id) fetchData(id);
+        else console.error('ID do cliente não encontrado no localStorage');
+    }, []);
 
     const fetchData = async (id) => {
         try {
-            console.log('ID do cliente:', id);
-
-            let jsonEnviar = { id_cliente: id };
-            const responseAnuncios = await fetch('http://localhost:8080/2.0/touccan/bico', {
+            const response = await fetch('http://localhost:8080/2.0/touccan/bico', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(jsonEnviar),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_cliente: id }),
             });
 
-            const dataAnuncios = await responseAnuncios.json();
-            console.log('Resposta da API:', dataAnuncios);
-
-            // Se os dados de "bico" não estiverem vazios, atualize o estado "anuncios"
-            if (dataAnuncios && dataAnuncios.bico && dataAnuncios.bico.length > 0) {
-                setAnuncios(dataAnuncios.bico);  // Atualizando o estado "anuncios"
-                console.log(anuncios);
-            } else {
-                setAnuncios([]);  // Caso não haja dados, limpe o estado
-            }
+            const data = await response.json();
+            if (data?.bico?.length > 0) setAnuncios(data.bico);
+            else setAnuncios([]);
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
         } finally {
@@ -59,54 +33,15 @@ const MainContent = () => {
         }
     };
 
-    let anuncioClicado
-    let showDetalhes = false
-    const showDetalhesAnuncio = (anuncio) =>{
+    const handleTabChange = (tab) => setActiveTab(tab);
 
-        console.log('oxe clicou?')
-            showDetalhes = true
-            anuncioClicado = anuncio
-            // return()
-    }
+    const showDetalhesAnuncio = (anuncio) => setAnuncioSelecionado(anuncio); // Exibe o modal
+    const fecharModal = () => setAnuncioSelecionado(null); // Fecha o modal
 
-
-    if (loading) {
-        return (
-            <div className="main-content">
-                
-                <div className="tabs">
-                    <button
-                        className={`tab-button ${activeTab === 'perto' ? 'active' : ''}`}
-                        onClick={() => handleTabChange('perto')}
-                    >
-                        Meus anúncios
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'urgente' ? 'active' : ''}`}
-                        onClick={() => handleTabChange('urgente')}
-                    >
-                        Trabalhos pendentes
-                    </button>
-                </div>
-
-                <div className={`tab-content ${activeTab === 'perto' ? 'active' : ''}`} id="perto">
-                    <h2>perto</h2>
-                </div>
-                <div className={`tab-content ${activeTab === 'urgente' ? 'active' : ''}`} id="urgente">
-                    <h2>urgente</h2>
-                </div>
-                <div>Carregando...</div>
-            </div>
-        );
-    }
+    if (loading) return <div>Carregando...</div>;
 
     return (
         <div className="main-content">
-
-
-        {/* ver como colocar a condição de aparecer quando clicar e mandar as informações */}
-        <DetalhesVaga anuncio={anuncioClicado}></ DetalhesVaga>
-            
             <div className="tabs">
                 <button
                     className={`tab-button ${activeTab === 'perto' ? 'active' : ''}`}
@@ -122,27 +57,25 @@ const MainContent = () => {
                 </button>
             </div>
 
-            <div className={`tab-content ${activeTab === 'perto' ? 'active' : ''}`} id="perto">
+            <div className={`tab-content ${activeTab === 'perto' ? 'active' : ''}`}>
                 {anuncios.length > 0 ? (
-                    anuncios.map(anuncio => (
-                        <div className="job-card" key={anuncio.id} onClick={() => showDetalhesAnuncio(anuncio)}>
+                    anuncios.map((anuncio) => (
+                        <div
+                            className="job-card"
+                            key={anuncio.id}
+                            onClick={() => showDetalhesAnuncio(anuncio)}
+                        >
                             <div className="job-info">
                                 <h3 className="job-title">{anuncio.titulo}</h3>
                                 <p className="job-description">{anuncio.descricao}</p>
-
                                 <div className="job-timing">
-                                    Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Localização não disponível'} <br />
+                                    Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
                                     Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
                                     Preço: R$ {anuncio.salario.toFixed(2)}
                                 </div>
-
                                 <p className="job-difficulty">
-                                    <span>Dificuldade:</span> <span>{anuncio.dificuldade[0]?.dificuldade || 'não especificada'}</span>
+                                    <span>Dificuldade:</span> {anuncio.dificuldade[0]?.dificuldade || 'Não especificada'}
                                 </p>
-                                <div className="verCandidatos">
-                                <button className="register-btn">Ver candidatos</button>
-                                </div>
-                               
                             </div>
                         </div>
                     ))
@@ -150,9 +83,10 @@ const MainContent = () => {
                     <p>Nenhum anúncio encontrado.</p>
                 )}
             </div>
-            <div className={`tab-content ${activeTab === 'urgente' ? 'active' : ''}`} id="urgente">
+
+            <div className={`tab-content ${activeTab === 'urgente' ? 'active' : ''}`}>
                 {trabalhosPendentes.length > 0 ? (
-                    trabalhosPendentes.map(trabalho => (
+                    trabalhosPendentes.map((trabalho) => (
                         <div className="job-card" key={trabalho.id}>
                             <h3>{trabalho.titulo}</h3>
                             <p>{trabalho.descricao}</p>
@@ -160,9 +94,16 @@ const MainContent = () => {
                     ))
                 ) : (
                     <p>Sem trabalhos pendentes.</p>
-                    
                 )}
             </div>
+
+            {anuncioSelecionado && (
+                <div className="modal-overlay" onClick={fecharModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <DetalhesVaga anuncio={anuncioSelecionado} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

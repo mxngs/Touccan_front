@@ -5,19 +5,14 @@ import Sidebar from '../components/Sidebar.jsx';
 import { Link } from "react-router-dom"; //import do link
 import { useNavigate } from 'react-router-dom'; //import da função de navegar
 
-
-
 const baseUrl = '';
-
 
 function Perfil() {
   const [mudarTab, setMudarTab] = useState('sobre');
 
   const handleTabChange = (tab) => {
     setMudarTab(tab);
-};
-
-  
+  };
 
   return (
     <div className='tela-perfil-cliente'>
@@ -27,24 +22,26 @@ function Perfil() {
           <img src="../img/store.png" alt="" />
         </div>
         <span className='nome-perfil-cliente'>Mercado Bom Lugar</span>
+
         <div className="tabs">
-                <button
-                    className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('sobre')}
-                >
-                    Sobre Nós
-                </button>
-                <button
-                    className={`tab-button ${mudarTab === 'feedback' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('feedback')}
-                >
-                    Feedback
-                </button>
-        </div>
-        <div className={`tab-content ${mudarTab === 'sobre' ? 'active' : ''}`} id='sobre-perfil-cliente'>
-          <button>
-            Editar Perfil
+          <button
+            className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
+            onClick={() => handleTabChange('sobre')}
+          >
+            Sobre Nós
           </button>
+          <button
+            className={`tab-button ${mudarTab === 'feedback' ? 'active' : ''}`}
+            onClick={() => handleTabChange('feedback')}
+          >
+            Feedback
+          </button>
+        </div>
+
+        
+        {mudarTab === 'sobre' && (
+          <div className="tab-content" id='sobre-perfil-cliente'>
+            <button>Editar Perfil</button>
             <div className="inputs-perfil-cliente">
               <div className="endereco-perfil-cliente">
                 <input type="text" disabled value="Endereço: "/>
@@ -59,16 +56,20 @@ function Perfil() {
             <div className="anuncios-perfil-cliente">
               <span>Anúncios</span>
             </div>
-        </div>
-        <div className={`tab-content ${mudarTab === 'feedback' ? 'active' : ''}`} id='feedback-perfil-cliente'>
-          <div className="teste-perfil-cliente">
-            <span>funciona funciona funciona funciona</span>
           </div>
-        </div>
+        )}
+
+       
+        {mudarTab === 'feedback' && (
+          <div className="tab-content" id='feedback-perfil-cliente'>
+            <div className="teste-perfil-cliente">
+              <span>funciona funciona funciona funciona</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-  
 
 export default Perfil;
