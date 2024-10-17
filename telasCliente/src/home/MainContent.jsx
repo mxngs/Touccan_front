@@ -14,7 +14,6 @@ const MainContent = () => {
         if (id) fetchData(id);
         else console.error('ID do cliente não encontrado no localStorage');
     }, []);
-
     const fetchData = async (id) => {
         try {
             const response = await fetch('http://localhost:8080/2.0/touccan/bico', {
@@ -22,21 +21,25 @@ const MainContent = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id_cliente: id }),
             });
-
+    
+            if (!response.ok) {
+                throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+            }
+    
             const data = await response.json();
-            if (data?.bico?.length > 0) setAnuncios(data.bico);
-            else setAnuncios([]);
+            console.log('Dados recebidos:', data); 
+            setAnuncios(data.bico || []);
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
         } finally {
             setLoading(false);
         }
     };
-
+    
     const handleTabChange = (tab) => setActiveTab(tab);
 
-    const showDetalhesAnuncio = (anuncio) => setAnuncioSelecionado(anuncio); // Exibe o modal
-    const fecharModal = () => setAnuncioSelecionado(null); // Fecha o modal
+    const showDetalhesAnuncio = (anuncio) => setAnuncioSelecionado(anuncio); 
+    const fecharModal = () => setAnuncioSelecionado(null); 
 
     if (loading) return <div>Carregando...</div>;
 
