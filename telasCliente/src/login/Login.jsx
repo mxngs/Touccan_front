@@ -20,6 +20,8 @@ function Login() {
       return;
     }
 
+    console.log('Dados enviados:', formData); 
+
     setLoading(true);
 
     try {
@@ -29,17 +31,22 @@ function Login() {
         body: JSON.stringify(formData),
       });
 
+      console.log('Status da resposta:', response.status); 
+
       if (response.ok) {
         const data = await response.json();
+        console.log('Dados recebidos:', data); 
         localStorage.setItem("id_cliente", data.cliente.id); 
         navigate('/home');
       } else if (response.status === 401) {
         setErros({ mensagem: "E-mail ou senha incorretos. Verifique e tente novamente." });
       } else {
         const errorText = await response.text();
+        console.error('Erro ao fazer login:', errorText); 
         setErros({ mensagem: "Erro ao fazer login. Tente novamente" });
       }
     } catch (error) {
+      console.error('Erro de conexão:', error); 
       setErros({ mensagem: "Erro de conexão. Verifique sua internet e tente novamente." });
     } finally {
       setLoading(false);

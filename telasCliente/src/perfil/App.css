@@ -1,4 +1,5 @@
 .tela-perfil-cliente{
+    top: 100px;
     display: grid;
     grid-template-areas: a1 a2;
 }
