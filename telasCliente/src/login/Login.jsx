@@ -62,19 +62,19 @@ function Login() {
   return (
     <div>
       <div className='container'>
-        <div className="decoracaoLaranja"></div>
-        <div className="decoracaoCinza"></div>
-        <div className="decoracaoCinza2"></div>
+        <div className="decoracaoLaranja-login"></div>
+        <div className="decoracaoCinza-login"></div>
+        <div className="decoracaoCinza2-login"></div>
         <div className="logoPrincipal">
           <img src='../img/logoPrincipal.svg' alt="Logo Principal" />
         </div>
       </div>
 
-      <div className="app-container">
+      <div className="app-container-login">
         <h1>Login</h1>
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '46px' }}>
-            <div className='input-div'>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className='input-div-login'>
               <img src="../img/email.png" alt="Email" width={18} />
               <input
                 type="email"
@@ -85,7 +85,7 @@ function Login() {
               />
             </div>
 
-            <div className='input-div'>
+            <div className='input-div-login'>
               <img src="../img/senha.png" alt="Senha" />
               <input
                 id='senha'
@@ -98,7 +98,7 @@ function Login() {
               <img
                 src="../img/olho.png"
                 alt="Mostrar Senha"
-                style={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                style={{ cursor: 'pointer' }}
                 onClick={togglePassword}
               />
             </div>

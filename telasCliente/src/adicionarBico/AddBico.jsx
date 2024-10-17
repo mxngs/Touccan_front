@@ -197,7 +197,7 @@ const AddBico = () => {
                        {erros.id_categoria && <span className="error">{erros.id_categoria}</span>}
                    </div>
 
-                   <button type='submit'>CRIAR</button>
+                   <button className='button-criar-addBico' type='submit'>CRIAR</button>
                </form>
            </div>
        </div>

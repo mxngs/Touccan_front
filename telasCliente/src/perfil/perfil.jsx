@@ -40,22 +40,30 @@ function Perfil() {
 
         
         {mudarTab === 'sobre' && (
+
           <div className="tab-content" id='sobre-perfil-cliente'>
+            
             <button>Editar Perfil</button>
+
             <div className="inputs-perfil-cliente">
+
               <div className="endereco-perfil-cliente">
                 <input type="text" disabled value="Endereço: "/>
               </div>
+
               <div className="foto-perfil-cliente">
                 <input type="text" disabled value="Imagens da Localização: "/>
               </div>
+
               <div className="contatos-perfil-cliente">
                 <input type="text" disabled value="Contatos: "/>
               </div>
+
             </div>
             <div className="anuncios-perfil-cliente">
               <span>Anúncios</span>
             </div>
+
           </div>
         )}
 

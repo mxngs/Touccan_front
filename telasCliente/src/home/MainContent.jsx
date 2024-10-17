@@ -41,6 +41,7 @@ const MainContent = () => {
     const showDetalhesAnuncio = (anuncio) => setAnuncioSelecionado(anuncio); 
     const fecharModal = () => setAnuncioSelecionado(null); 
 
+    
     if (loading) return <div class="custom-loader"></div>;
 
     return (

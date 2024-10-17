@@ -15,10 +15,20 @@
   
   }
 
+  .bico-app-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 200px;
+    margin-left: 700px;
+  }
+
   .bico-input-container{
     
     display: grid;
-    
+  }
+  
+  .button-criar-addBico{
+    margin-left: 400px;
   }
 
   h1{
@@ -50,7 +60,7 @@
   }
 
   input{
-    width: 800px;
+    width: 900px;
     height: 70px;
     background-color: white;
     border-top: none;

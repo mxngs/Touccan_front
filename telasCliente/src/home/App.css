@@ -6,25 +6,14 @@
 }
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
-    align-items: center;
+    padding-left: 40%;
     z-index: 1000;
 }
 
-.modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 80%;
-    max-width: 600px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
 
 
 body {
@@ -279,10 +268,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Para ocupar toda a altura da janela */
-  }
-  
-  .custom-loader {
+    height: 100vh;
+    position: relative; 
+}
+
+.custom-loader {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -294,8 +284,8 @@ body {
     -webkit-mask-composite: destination-in;
     mask-composite: intersect;
     animation: s4 1s infinite steps(10);
-  }
+}
   
-  @keyframes s4 {
+@keyframes s4 {
     to { transform: rotate(1turn); }
-  }
+}
