@@ -115,10 +115,12 @@ function Login() {
           </button>
         </form>
 
+        
         <Link to="/cadastro" style={{ marginTop: '20px', display: 'block' }}>
           Não tem uma conta? <br />
           <span>Faça seu cadastro</span>
         </Link>
+
       </div>
     </div>
   );

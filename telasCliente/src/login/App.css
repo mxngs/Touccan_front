@@ -19,7 +19,7 @@ body{
 .decoracaoLaranja-login {
   position: absolute;
   width: 100%;
-  height: 465px;
+  height: 467px;
   
   background: linear-gradient(to right, #F07B07, #E25401);
   z-index: 0;
@@ -30,7 +30,7 @@ body{
   height: 460px;
   border-radius: 194px;
   background-color: #EBEBEB;
-  left: -113px;
+  left: -20px;
   top: 220px;
   transform: rotate(-168deg);
   position: absolute;
@@ -38,14 +38,14 @@ body{
 }
 
 .decoracaoCinza2-login {
-  width: 1630px;
+  width: 2190px;
   height: 460px;
   background-color: #EBEBEB;
   position: absolute;
-  transform: rotate(-170.83deg);
+  transform: rotate(-173.10deg);
   transform-origin: center;
-  left: 20px;
-  top: 332px;
+  left: 150px;
+  top: 334px;
   z-index: 0;
 }
 
@@ -56,7 +56,7 @@ body{
   position: absolute;
   z-index: 1;
   margin-top: 460px;
-  margin-left: 42%;
+  margin-left: 37%;
   /* transform: translateX(90%); */
   width: 100%;
   max-width: 600px;
@@ -68,13 +68,24 @@ body{
   display: flex;
   width: 500px;
   gap: 8px;
-  border-bottom: solid 1px black;
   padding-bottom: 10px;
   height: 80px;
 }
 .input-div-login img{
   width: 30px;
   height: 30px;
+}
+
+.input-div-login input{
+  width: 350px;
+  padding: 8px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  outline: none;
+  font-size: 16px;
+  background-color: transparent;
+  font-family: "Inter", sans-serif;
 }
 
 
@@ -102,15 +113,7 @@ label {
   font-weight: bold;
 }
 
-input {
-  width: 100%;
-  
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 16px;
-  background: none;
-  border: none;
-}
+
 
 button {
   padding: 10px 20px;
