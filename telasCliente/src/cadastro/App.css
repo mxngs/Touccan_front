@@ -76,7 +76,7 @@ label {
   flex-direction: row;
 }
 
-input {
+.app-container input {
   width: 350px;
   padding: 8px;
   border-top: none;

@@ -3,7 +3,7 @@ import './App.css';
 import { Link } from "react-router-dom"; 
 import { useNavigate } from 'react-router-dom';
 
-const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan';
+const baseUrl = 'http://localhost:8080/2.0/touccan';
 
 function Login() {
   const navigate = useNavigate();
@@ -38,16 +38,20 @@ function Login() {
         console.log('Dados recebidos:', data); 
         localStorage.setItem("id_cliente", data.cliente.id); 
         navigate('/home');
+
       } else if (response.status === 401) {
         setErros({ mensagem: "E-mail ou senha incorretos. Verifique e tente novamente." });
+
       } else {
         const errorText = await response.text();
         console.error('Erro ao fazer login:', errorText); 
         setErros({ mensagem: "Erro ao fazer login. Tente novamente" });
       }
+
     } catch (error) {
       console.error('Erro de conexão:', error); 
       setErros({ mensagem: "Erro de conexão. Verifique sua internet e tente novamente." });
+      
     } finally {
       setLoading(false);
     }

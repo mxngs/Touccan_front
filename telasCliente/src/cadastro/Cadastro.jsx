@@ -251,7 +251,7 @@ function Cadastro() {
               </div>
             </div>
           </div>
-          <button type="submit">Cadastrar</button>
+          <button  type="submit" disabled={loading}>Cadastrar</button>
         </form>
         <p>Já possui conta? <br /> 
         <Link to="/" style={{color : '#E25401'}}>Faça seu Login</Link>

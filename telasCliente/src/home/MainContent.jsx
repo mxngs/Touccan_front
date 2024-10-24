@@ -41,9 +41,10 @@ const MainContent = () => {
     const showDetalhesAnuncio = (anuncio) => setAnuncioSelecionado(anuncio); 
     const fecharModal = () => setAnuncioSelecionado(null); 
 
-    
-    if (loading) return <div class="custom-loader"></div>;
-
+    <div className='carregar'>
+        {loading ? <div className="custom-loader"></div> : <div>Your content here</div>}
+    </div>
+       
     return (
         <div className="main-content">
             <div className="tabs">

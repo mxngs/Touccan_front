@@ -33,9 +33,12 @@ const DetalhesVaga = () =>{
                 </div>
             </div>
             <div className="container-botoes">
+                <Link to='./candidatos'>
                 <button className="ver-candidatos">
                     Ver candidatos
                 </button>
+                </Link>
+                
                 <button className="excluir-anuncio" id='excluir-anuncio'>
                     Excluir anúncio
                 </button>

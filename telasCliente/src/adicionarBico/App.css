@@ -10,16 +10,17 @@
   }
 
   .addBico-container{
-    padding-top: 90px;
     display: grid;
-  
+    /* align-items: center;
+    align-self: center;
+   */
   }
 
   .bico-app-container{
     display: flex;
     flex-direction: column;
-    margin-top: 200px;
-    margin-left: 700px;
+    margin-top: 100px;
+    margin-left: 400px;
   }
 
   .bico-input-container{
@@ -28,17 +29,17 @@
   }
   
   .button-criar-addBico{
-    margin-left: 400px;
+    margin-left: 18px;
   }
 
   h1{
     position: absolute;
-    left: 45%;
+    left: 54%;
     top: 60px;
   }
 
   select{
-    width: 800px;
+    width: 900px;
     height: 50px;
     background-color: white;
     border-top: none;
@@ -46,10 +47,21 @@
     border-right: none;
     border-radius: 5px;
     border-bottom: 1px #E25401;
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    color: #858181;
+    padding-left: 10px;
+  }
+
+  .carregar{
+    position: absolute;
+    z-index: 10px;
+    
+    
   }
 
   textarea{
-    width: 800px;
+    width: 900px;
     height: 100px;
     background-color: white;
     border-top: none;
@@ -59,7 +71,7 @@
     border-bottom: 1px #E25401;
   }
 
-  input{
+  .bico-input-container input{
     width: 900px;
     height: 70px;
     background-color: white;
@@ -68,6 +80,10 @@
     border-right: none;
     border-radius: 5px;
     border-bottom: 1px #E25401;
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    padding-left: 10px;
+  
   }
 
   .error {
