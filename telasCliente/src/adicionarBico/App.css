@@ -19,7 +19,7 @@
   .bico-app-container{
     display: flex;
     flex-direction: column;
-    margin-top: 100px;
+    margin-top: 50px;
     margin-left: 400px;
   }
 
@@ -35,7 +35,7 @@
   h1{
     position: absolute;
     left: 54%;
-    top: 60px;
+    top: 40px;
   }
 
   select{

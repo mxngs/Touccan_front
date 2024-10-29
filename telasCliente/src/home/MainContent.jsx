@@ -14,6 +14,7 @@ const MainContent = () => {
         if (id) fetchData(id);
         else console.error('ID do cliente não encontrado no localStorage');
     }, []);
+
     const fetchData = async (id) => {
         try {
             const response = await fetch('http://localhost:8080/2.0/touccan/bico', {
@@ -21,11 +22,11 @@ const MainContent = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id_cliente: id }),
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Erro: ${response.status} - ${response.statusText}`);
             }
-    
+
             const data = await response.json();
             console.log('Dados recebidos:', data); 
             setAnuncios(data.bico || []);
@@ -37,39 +38,31 @@ const MainContent = () => {
     };
     
     const handleTabChange = (tab) => setActiveTab(tab);
-
     const showDetalhesAnuncio = (anuncio) => setAnuncioSelecionado(anuncio); 
     const fecharModal = () => setAnuncioSelecionado(null); 
 
-    <div className='carregar'>
-        {loading ? <div className="custom-loader"></div> : <div>Your content here</div>}
-    </div>
-       
     return (
         <div className="main-content">
+            {/* Estado de carregamento */}
+            <div className='carregar'>
+                {loading ? <div className="custom-loader"></div> : <div></div>}
+            </div>
+
+            {/* Abas */}
             <div className="tabs">
-                <button
-                    className={`tab-button ${activeTab === 'perto' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('perto')}
-                >
+                <button className={`tab-button ${activeTab === 'perto' ? 'active' : ''}`} onClick={() => handleTabChange('perto')}>
                     Meus anúncios
                 </button>
-                <button
-                    className={`tab-button ${activeTab === 'urgente' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('urgente')}
-                >
+                <button className={`tab-button ${activeTab === 'urgente' ? 'active' : ''}`} onClick={() => handleTabChange('urgente')}>
                     Trabalhos pendentes
                 </button>
             </div>
 
+            {/* Conteúdo das Abas */}
             <div className={`tab-content ${activeTab === 'perto' ? 'active' : ''}`}>
                 {anuncios.length > 0 ? (
                     anuncios.map((anuncio) => (
-                        <div
-                            className="job-card"
-                            key={anuncio.id}
-                            onClick={() => showDetalhesAnuncio(anuncio)}
-                        >
+                        <div className="job-card" key={anuncio.id} onClick={() => showDetalhesAnuncio(anuncio)}>
                             <div className="job-info">
                                 <h3 className="job-title">{anuncio.titulo}</h3>
                                 <p className="job-description">{anuncio.descricao}</p>
@@ -102,10 +95,11 @@ const MainContent = () => {
                 )}
             </div>
 
+            {/* Modal para mostrar detalhes */}
             {anuncioSelecionado && (
                 <div className="modal-overlay" onClick={fecharModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <DetalhesVaga anuncio={anuncioSelecionado} />
+                        <DetalhesVaga anuncio={anuncioSelecionado} onClose={fecharModal} />
                     </div>
                 </div>
             )}

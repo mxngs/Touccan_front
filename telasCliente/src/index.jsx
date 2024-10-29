@@ -22,7 +22,7 @@ export default function App() {
                     <Route path="addBico" element={< AddBico />} />
                     <Route path="perfil" element={< Perfil />} />
                     <Route path="cofre" element={< Cofre />} />
-                    <Route path="candidatos" element={< Candidatos />} />
+                  <Route path="home/candidatos" element={< Candidatos />} />
                     
                 </Route>
             </Routes>
