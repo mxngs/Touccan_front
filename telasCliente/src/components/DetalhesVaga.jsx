@@ -3,13 +3,14 @@ import './DetalhesVaga.css';
 import { Link, useNavigate } from "react-router-dom";
 
 const DetalhesVaga = () => {
+
     const navigate = useNavigate();
 
     const handleDelete = async () => {
         const confirmDelete = window.confirm("Você tem certeza que deseja excluir este anúncio?");
         if (confirmDelete) {
             try {
-                const response = await fetch('http://localhost:8080/2.0/touccan/bico/{id_do_anuncio}', {
+                const response = await fetch('http://localhost:8080/2.0/touccan/bico/', {
                     method: 'DELETE',
                 });
 
@@ -34,22 +35,20 @@ const DetalhesVaga = () => {
                         <picture>
                             <img src="../../img/person.png" alt="" />
                         </picture>
-                        <h2>Empresa 1</h2>
+                        <h2></h2>
                     </div>
                     <div className="info-dificuldade">
                         <span>Dificuldade: </span>
-                        <span>Baixa</span>
                     </div>
                 </div>
 
-                <h3 className='titulo-trabalho-detalhes'>Assistente administrativo</h3>
-                <p className='descricao-detalhes'>Trabalho focado em organizar e atender clientes 
-                    com intuito de disponibilidade hoje!</p>
+                <h3 className='titulo-trabalho-detalhes'></h3>
+                <p className='descricao-detalhes'></p>
 
                 <div className="info-horario-pagamento">
-                    <span>Data: 24/10/2024</span> <br />
-                    <span>Início: 08:00</span> <br />
-                    <span>Fim: 17:00</span>
+                    <span>Data: </span> <br />
+                    <span>Início: </span> <br />
+                    <span>Fim: </span>
                     <div>
                         <span>Pagamento: </span><span className='valor-pagamento'>R$200,00</span>
                     </div>

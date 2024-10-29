@@ -7,6 +7,7 @@ import AddBico from './adicionarBico/AddBico.jsx'
 import Home from './home/Home.jsx'
 import "./login/App.css"
 import Perfil from './perfil/perfil.jsx'
+import Cofre from './cofre/cofre.jsx'
 import Candidatos from './candidatos/candidatos.jsx'
 
 
@@ -20,6 +21,7 @@ export default function App() {
                     <Route path="home" element={< Home />} />
                     <Route path="addBico" element={< AddBico />} />
                     <Route path="perfil" element={< Perfil />} />
+                    <Route path="cofre" element={< Cofre />} />
                     <Route path="candidatos" element={< Candidatos />} />
                     
                 </Route>

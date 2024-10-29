@@ -1,0 +1,249 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", system-ui;
+}
+
+body {
+   
+    background-color: #EAEAEA;
+}
+
+.content {
+    position: relative;
+    margin-left: 30%; 
+    top: 100px;
+}
+
+.titulo {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 30px;
+    padding: 10px;
+   
+}
+
+.linha-laranja {
+    width: 70%;
+    height: 1px;
+    background-color: #F07B07;
+    margin-top: 40px; 
+    margin-left: 5px;
+}
+
+.caixa {
+width: 100%;
+max-width: 600px; 
+height: 100px; 
+padding: 20px;
+border-radius: 5px;
+background-color: rgba(217, 217, 217, 0.6);
+position: relative;
+}
+
+
+.titulo-caixa {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.valor {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.data {
+    font-size: 14px;
+    text-align: right;
+    color: #666;
+}
+
+.container {
+    display: flex;
+    align-items: flex-start; /* Alinha os itens no topo */
+    gap: 20px; /* Espaçamento entre o cartão e as caixas */
+}
+
+.caixas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 600px;
+    overflow: hidden;
+    margin-left: 50px;
+    margin-top: 60px;
+    width: 50%; /* Ocupa 60% da largura do container */
+}
+
+.cartao-info {
+    display: flex;               /* Alinha os elementos na horizontal */
+    flex-direction: column;      /* Muda a direção para coluna */
+    align-items: flex-start;     /* Alinha todos os itens à esquerda */
+    margin-left: 40px;           /* Mantenha a margem à esquerda */
+}
+
+
+.titulo-cartao {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 70px;
+    margin-left: 70px;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    margin-bottom: 0px;
+    margin-left: 50px; 
+    color: #979797;     
+    
+}
+
+.caixa-cartao {
+    display: flex;              
+    align-items: center;         
+    margin-top: 20px; 
+    margin-left: -20px;          
+    padding: 12px;             
+    border: 1px solid #ccc;     
+    background-color: #dddddd;  
+    border-radius: 10px;        
+    width: 120%;         
+}
+
+.icon-cartao {
+    width: 40px; /* Tamanho do ícone do cartão */
+    height: 40px;
+    margin-right: 10px; /* Espaço à direita do ícone */
+}
+
+.detalhes-cartao {
+    flex-grow: 1; /* Permite que os detalhes do cartão ocupem o espaço restante */
+}
+
+.titulo-detalhe {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.subtitulo-detalhe {
+    font-size: 14px;
+    color: #666; /* Cor mais clara para o número do cartão */
+}
+
+.botao-editar {
+background-color: #F07B07; /* Cor do botão */
+color: white; /* Cor do texto do botão */
+border: none;
+padding: 10px 20px; /* Espaçamento interno do botão */
+margin-top: 25px; /* Espaço acima do botão */
+margin-left: 60px;
+cursor: pointer; /* Cursor em forma de mão */
+border-radius: 5px; /* Cantos arredondados */
+font-size: 16px; /* Tamanho do texto do botão */
+align-self: flex-start; 
+}
+
+
+.botoes-navegacao {
+display: flex;
+justify-content: center;
+margin-top: 20px; /* Reduzir a margem superior para aproximar do cartão */
+margin-left: -800px; /* Mantenha esta linha se necessário */
+}
+
+/* botões de navegação */
+.botao-seta {
+background-color: #F07B07; /* Cor do botão */
+color: white; /* Cor do texto do botão */
+border: none;
+padding: 10px 20px;
+cursor: pointer;
+font-size: 16px;
+margin: 0 20px;
+margin-top: 50px;
+}
+
+
+.botao-seta:disabled {
+    background-color: #ccc;
+}
+
+/* Estilos para o overlay e o card de edição */
+.overlay {
+    display: none; /* Inicialmente escondido */
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
+    justify-content: center; /* Centraliza o card */
+    align-items: center; 
+    z-index: 1000; /* Coloca o overlay acima de outros elementos */
+}
+
+.card-editar {
+    background-color: white; /* Fundo do card */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 500px; /* Largura do card */
+}
+
+
+.card-editar h2 {
+    margin-top: 2; /* Remove margem do topo */
+    margin-left: 170px;
+    color: #8a8a8a;
+}
+
+.campos {
+    display: flex;
+    justify-content: space-between; /* Espaça os inputs */
+    margin-bottom: 10px; /* Espaçamento abaixo dos campos */
+  
+}
+
+.campos input {
+    width: 25%; /* Largura dos inputs */
+}
+
+input {
+    width: 95%; /* Largura total dos inputs */
+    padding: 10px;
+    margin: 5px 0; /* Margem acima e abaixo */
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Bordas arredondadas */
+}
+
+.botao-salvar {
+    background-color: #F07B07; /* Cor do botão */
+    color: white; /* Cor do texto do botão */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer; /* Cursor em forma de mão */
+    border-radius: 5px; /* Cantos arredondados */
+    font-size: 16px; /* Tamanho do texto do botão */
+    margin-left: 200px;
+    margin-top: 20px;
+}
+
+/* Estilo da notificação */
+.notificacao {
+    background-color: #4CAF50; /* Verde para a notificação */
+    color: white; /* Texto branco */
+    padding: 10px;
+    border-radius: 5px;
+    position: fixed; /* Fixa a notificação na tela */
+    top: 20px; /* Distância do topo */
+    left: 50%; /* Alinha ao centro */
+    transform: translateX(-50%); /* Centraliza */
+    z-index: 1000; /* Para estar acima de outros elementos */
+    display: none; /* Escondido por padrão */
+}

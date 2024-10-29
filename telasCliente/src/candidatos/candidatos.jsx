@@ -10,6 +10,8 @@ const Candidatos = () => {
    return (
     <div className="">
           <Sidebar />
+
+          <div>oi</div>
     </div>
    );
    

@@ -159,6 +159,7 @@ function Cadastro() {
         .then(response => response.json())
         .then(data => {
           console.log("Sucesso:", data);
+          navigate('/login');
         })
         .catch((error) => {
           console.error("Erro:", error);

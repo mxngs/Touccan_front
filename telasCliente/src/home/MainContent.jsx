@@ -7,7 +7,7 @@ const MainContent = () => {
     const [anuncios, setAnuncios] = useState([]);
     const [trabalhosPendentes, setTrabalhosPendentes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [anuncioSelecionado, setAnuncioSelecionado] = useState(null); // Estado para o anúncio clicado
+    const [anuncioSelecionado, setAnuncioSelecionado] = useState(null); 
 
     useEffect(() => {
         const id = localStorage.getItem("id_cliente");
