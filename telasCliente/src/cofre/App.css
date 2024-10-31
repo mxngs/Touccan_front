@@ -6,7 +6,6 @@
 }
 
 body {
-   
     background-color: #EAEAEA;
 }
 
@@ -24,7 +23,6 @@ body {
     top: 0;
     left: 30px;
     padding: 10px;
-   
 }
 
 .linha-laranja {
@@ -36,15 +34,14 @@ body {
 }
 
 .caixa {
-width: 100%;
-max-width: 600px; 
-height: 100px; 
-padding: 20px;
-border-radius: 5px;
-background-color: rgba(217, 217, 217, 0.6);
-position: relative;
+    width: 100%;
+    max-width: 600px; 
+    height: 100px; 
+    padding: 20px;
+    border-radius: 5px;
+    background-color: rgba(217, 217, 217, 0.6);
+    position: relative;
 }
-
 
 .titulo-caixa {
     font-size: 18px;
@@ -66,8 +63,8 @@ position: relative;
 
 .container {
     display: flex;
-    align-items: flex-start; /* Alinha os itens no topo */
-    gap: 20px; /* Espaçamento entre o cartão e as caixas */
+    align-items: flex-start;
+    gap: 20px;
 }
 
 .caixas-container {
@@ -78,16 +75,15 @@ position: relative;
     overflow: hidden;
     margin-left: 50px;
     margin-top: 60px;
-    width: 50%; /* Ocupa 60% da largura do container */
+    width: 50%;
 }
 
 .cartao-info {
-    display: flex;               /* Alinha os elementos na horizontal */
-    flex-direction: column;      /* Muda a direção para coluna */
-    align-items: flex-start;     /* Alinha todos os itens à esquerda */
-    margin-left: 40px;           /* Mantenha a margem à esquerda */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 40px;
 }
-
 
 .titulo-cartao {
     font-size: 24px;
@@ -101,7 +97,6 @@ position: relative;
     margin-bottom: 0px;
     margin-left: 50px; 
     color: #979797;     
-    
 }
 
 .caixa-cartao {
@@ -117,13 +112,13 @@ position: relative;
 }
 
 .icon-cartao {
-    width: 40px; /* Tamanho do ícone do cartão */
+    width: 40px; 
     height: 40px;
-    margin-right: 10px; /* Espaço à direita do ícone */
+    margin-right: 10px; 
 }
 
 .detalhes-cartao {
-    flex-grow: 1; /* Permite que os detalhes do cartão ocupem o espaço restante */
+    flex-grow: 1; 
 }
 
 .titulo-detalhe {
@@ -133,117 +128,113 @@ position: relative;
 
 .subtitulo-detalhe {
     font-size: 14px;
-    color: #666; /* Cor mais clara para o número do cartão */
+    color: #666; 
 }
 
 .botao-editar {
-background-color: #F07B07; /* Cor do botão */
-color: white; /* Cor do texto do botão */
-border: none;
-padding: 10px 20px; /* Espaçamento interno do botão */
-margin-top: 25px; /* Espaço acima do botão */
-margin-left: 60px;
-cursor: pointer; /* Cursor em forma de mão */
-border-radius: 5px; /* Cantos arredondados */
-font-size: 16px; /* Tamanho do texto do botão */
-align-self: flex-start; 
+    background-color: #F07B07;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 25px;
+    margin-left: 60px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    align-self: flex-start; 
 }
-
 
 .botoes-navegacao {
-display: flex;
-justify-content: center;
-margin-top: 20px; /* Reduzir a margem superior para aproximar do cartão */
-margin-left: -800px; /* Mantenha esta linha se necessário */
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-left: -800px; 
 }
 
-/* botões de navegação */
 .botao-seta {
-background-color: #F07B07; /* Cor do botão */
-color: white; /* Cor do texto do botão */
-border: none;
-padding: 10px 20px;
-cursor: pointer;
-font-size: 16px;
-margin: 0 20px;
-margin-top: 50px;
+    background-color: #F07B07;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 20px;
+    margin-top: 50px;
 }
-
 
 .botao-seta:disabled {
     background-color: #ccc;
 }
 
-/* Estilos para o overlay e o card de edição */
 .overlay {
-    display: none; /* Inicialmente escondido */
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
-    justify-content: center; /* Centraliza o card */
-    align-items: center; 
-    z-index: 1000; /* Coloca o overlay acima de outros elementos */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.overlay-visivel {
+    display: flex; 
 }
 
 .card-editar {
-    background-color: white; /* Fundo do card */
+    background-color: white; 
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    width: 500px; /* Largura do card */
+    width: 500px; 
 }
 
-
 .card-editar h2 {
-    margin-top: 2; /* Remove margem do topo */
+    margin-top: 2; 
     margin-left: 170px;
     color: #8a8a8a;
 }
 
 .campos {
     display: flex;
-    justify-content: space-between; /* Espaça os inputs */
-    margin-bottom: 10px; /* Espaçamento abaixo dos campos */
-  
+    justify-content: space-between; 
+    margin-bottom: 10px; 
 }
 
 .campos input {
-    width: 25%; /* Largura dos inputs */
+    width: 25%; 
 }
 
 input {
-    width: 95%; /* Largura total dos inputs */
+    width: 95%; 
     padding: 10px;
-    margin: 5px 0; /* Margem acima e abaixo */
+    margin: 5px 0; 
     border: 1px solid #ccc;
-    border-radius: 5px; /* Bordas arredondadas */
+    border-radius: 5px; 
 }
 
 .botao-salvar {
-    background-color: #F07B07; /* Cor do botão */
-    color: white; /* Cor do texto do botão */
+    background-color: #F07B07; 
+    color: white; 
     border: none;
     padding: 10px 20px;
-    cursor: pointer; /* Cursor em forma de mão */
-    border-radius: 5px; /* Cantos arredondados */
-    font-size: 16px; /* Tamanho do texto do botão */
+    cursor: pointer; 
+    border-radius: 5px; 
+    font-size: 16px; 
     margin-left: 200px;
     margin-top: 20px;
 }
 
-/* Estilo da notificação */
 .notificacao {
-    background-color: #4CAF50; /* Verde para a notificação */
-    color: white; /* Texto branco */
+    background-color: #4CAF50; 
+    color: white; 
     padding: 10px;
     border-radius: 5px;
-    position: fixed; /* Fixa a notificação na tela */
-    top: 20px; /* Distância do topo */
-    left: 50%; /* Alinha ao centro */
-    transform: translateX(-50%); /* Centraliza */
-    z-index: 1000; /* Para estar acima de outros elementos */
-    display: none; /* Escondido por padrão */
+    position: fixed; 
+    top: 20px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 1000; 
+    display: none; 
 }
