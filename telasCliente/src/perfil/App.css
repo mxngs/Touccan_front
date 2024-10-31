@@ -5,6 +5,9 @@
     font-family: "Inter", system-ui;
 }
 
+.inputs-perfil-cliente input{
+    width: 500px;
+}
 
 
 .tela-perfil-cliente{

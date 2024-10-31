@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Cadastro() {
   const [formData, setFormData] = useState({
@@ -18,19 +18,28 @@ function Cadastro() {
   });
 
   const [erros, setErros] = useState({});
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     let formattedValue = value;
-    if (name === 'telefone') {
-      formattedValue = formatTelefone(value);
-    } else if (name === 'cpf_responsavel') {
-      formattedValue = formatCPF(value);
-    } else if (name === 'cep') {
-      formattedValue = formatCEP(value);
-    } else if (name === 'cnpj') {
-      formattedValue = formatCNPJ(value);
+
+    switch (name) {
+      case 'telefone':
+        formattedValue = formatTelefone(value);
+        break;
+      case 'cpf_responsavel':
+        formattedValue = formatCPF(value);
+        break;
+      case 'cep':
+        formattedValue = formatCEP(value);
+        break;
+      case 'cnpj':
+        formattedValue = formatCNPJ(value);
+        break;
+      default:
+        break;
     }
 
     setFormData({ ...formData, [name]: formattedValue });
@@ -91,13 +100,13 @@ function Cadastro() {
       novosErros.telefone = "Telefone inválido";
     }
 
-    const cpf_responsavelRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-    if (!cpf_responsavelRegex.test(formData.cpf_responsavel)) {
+    const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    if (!cpfRegex.test(formData.cpf_responsavel)) {
       novosErros.cpf_responsavel = "CPF inválido";
     }
 
-    const hoje = new Date();
     const dataNascimento = new Date(formData.data_nascimento);
+    const hoje = new Date();
     let idade = hoje.getFullYear() - dataNascimento.getFullYear();
     const mes = hoje.getMonth() - dataNascimento.getMonth();
     if (mes < 0 || (mes === 0 && hoje.getDate() < dataNascimento.getDate())) {
@@ -127,13 +136,13 @@ function Cadastro() {
     }
 
     setErros(novosErros);
-
     return Object.keys(novosErros).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setLoading(true);
       const dadosLimpos = {
         ...formData,
         telefone: removeSpecialCharacters(formData.telefone),
@@ -145,25 +154,32 @@ function Cadastro() {
         confirmar_senha: undefined
       };
 
-      console.log("Dados a serem enviados:", dadosLimpos);
-
       fetch('http://localhost:8080/1.0/touccan/cliente', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dadosLimpos)
-      })
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(dadosLimpos)
+})
+  .then(response => {
+    if (!response.ok) {
+      return response.text().then(text => {
+        throw new Error(`Erro: ${response.status} - ${text}`);
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Sucesso:", data);
+    navigate('/');
+  })
+  .catch((error) => {
+    console.error("Erro:", error);
+  })
+  .finally(() => {
+    setLoading(false);
+  });
 
-      
-        .then(response => response.json())
-        .then(data => {
-          console.log("Sucesso:", data);
-          navigate('/login');
-        })
-        .catch((error) => {
-          console.error("Erro:", error);
-        });
     }
   };
 
@@ -190,13 +206,13 @@ function Cadastro() {
               </div>
 
               <div>
-              <img src="./img/usuario.png" alt="Usuário" width={18} />
+                <img src="./img/usuario.png" alt="Usuário" width={18} />
                 <input type="text" name="nome_fantasia" value={formData.nome_fantasia} onChange={handleInputChange} placeholder="Nome Fantasia" />
                 {erros.nome_fantasia && <p style={{ color: 'red' }}>{erros.nome_fantasia}</p>}
               </div>
 
               <div>
-              <img src="./img/12.png" alt="Usuário" width={18} />
+                <img src="./img/12.png" alt="Usuário" width={18} />
                 <input type="text" name="razao_social" value={formData.razao_social} onChange={handleInputChange} placeholder="Razão Social" />
                 {erros.razao_social && <p style={{ color: 'red' }}>{erros.razao_social}</p>}
               </div>
@@ -218,12 +234,10 @@ function Cadastro() {
                 <input type="text" name="cpf_responsavel" value={formData.cpf_responsavel} onChange={handleInputChange} placeholder="CPF" maxLength={14} />
                 {erros.cpf_responsavel && <p style={{ color: 'red' }}>{erros.cpf_responsavel}</p>}
               </div>
-            </div>
 
-            <div style={{ flex: 1, marginLeft: '10px' }}>
               <div>
-                <img src="./img/calendario.png" alt="Data de Nascimento" width={18} />
-                <input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleInputChange} />
+                <img src="./img/data.png" alt="Data" width={18} />
+                <input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleInputChange} placeholder="Data de Nascimento" />
                 {erros.data_nascimento && <p style={{ color: 'red' }}>{erros.data_nascimento}</p>}
               </div>
 
@@ -232,7 +246,9 @@ function Cadastro() {
                 <input type="text" name="cep" value={formData.cep} onChange={handleInputChange} placeholder="CEP" maxLength={9} />
                 {erros.cep && <p style={{ color: 'red' }}>{erros.cep}</p>}
               </div>
+            </div>
 
+            <div style={{ flex: 1 }}>
               <div>
                 <img src="./img/senha.png" alt="Senha" width={18} />
                 <input type="password" name="senha" value={formData.senha} onChange={handleInputChange} placeholder="Senha" />
@@ -252,10 +268,14 @@ function Cadastro() {
               </div>
             </div>
           </div>
-          <button  type="submit" disabled={loading}>Cadastrar</button>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Cadastrando..." : "Cadastrar"}
+          </button>
         </form>
-        <p>Já possui conta? <br /> 
-        <Link to="/" style={{color : '#E25401'}}>Faça seu Login</Link>
+        <p>
+          Já possui conta? <br />
+          <Link to="/" style={{ color: '#E25401' }}>Faça seu Login</Link>
         </p>
       </div>
     </div>
