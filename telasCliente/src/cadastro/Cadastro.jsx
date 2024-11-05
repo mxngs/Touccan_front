@@ -19,6 +19,8 @@ function Cadastro() {
 
   const [erros, setErros] = useState({});
   const [loading, setLoading] = useState(false);
+  const [senhaVisivel, setSenhaVisivel] = useState(false); // Para controlar visibilidade da senha
+  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(false); // Para controlar visibilidade da confirmar senha
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -43,6 +45,14 @@ function Cadastro() {
     }
 
     setFormData({ ...formData, [name]: formattedValue });
+  };
+
+  const togglePasswordVisibility = (campo) => {
+    if (campo === 'senha') {
+      setSenhaVisivel(!senhaVisivel);
+    } else if (campo === 'confirmar_senha') {
+      setConfirmarSenhaVisivel(!confirmarSenhaVisivel);
+    }
   };
 
   const formatTelefone = (value) => {
@@ -154,32 +164,31 @@ function Cadastro() {
         confirmar_senha: undefined
       };
 
-      fetch('http://localhost:8080/1.0/touccan/cliente', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(dadosLimpos)
-})
-  .then(response => {
-    if (!response.ok) {
-      return response.text().then(text => {
-        throw new Error(`Erro: ${response.status} - ${text}`);
+      fetch('http://localhost:8080/2.0/touccan/cliente', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosLimpos)
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            throw new Error(`Erro: ${response.status} - ${text}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Sucesso:", data);
+        navigate('/');
+      })
+      .catch((error) => {
+        console.error("Erro:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    }
-    return response.json();
-  })
-  .then(data => {
-    console.log("Sucesso:", data);
-    navigate('/');
-  })
-  .catch((error) => {
-    console.error("Erro:", error);
-  })
-  .finally(() => {
-    setLoading(false);
-  });
-
     }
   };
 
@@ -206,15 +215,41 @@ function Cadastro() {
               </div>
 
               <div>
-                <img src="./img/usuario.png" alt="Usuário" width={18} />
-                <input type="text" name="nome_fantasia" value={formData.nome_fantasia} onChange={handleInputChange} placeholder="Nome Fantasia" />
+                <img src="../img/cpf.png" alt="CPF" width={18} />
+                <input type="text" name="cpf_responsavel" value={formData.cpf_responsavel} onChange={handleInputChange} placeholder="CPF" maxLength={14} />
+                {erros.cpf_responsavel && <p style={{ color: 'red' }}>{erros.cpf_responsavel}</p>}
+              </div>
+
+              <div>
+                <img src="./img/calendario.png" alt="Data" width={18} />
+                <input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleInputChange} placeholder="Data de Nascimento" />
+                {erros.data_nascimento && <p style={{ color: 'red' }}>{erros.data_nascimento}</p>}
+              </div>
+
+              <div>
+                <img src="./img/estabelecimento.png" alt="Usuário" width={18} />
+                <input type="text" name="nome_fantasia" value={formData.nome_fantasia} onChange={handleInputChange} placeholder="Nome Estabelecimento" />
                 {erros.nome_fantasia && <p style={{ color: 'red' }}>{erros.nome_fantasia}</p>}
               </div>
 
               <div>
-                <img src="./img/12.png" alt="Usuário" width={18} />
+                <img src="./img/razao.png" alt="Usuário" width={18} />
                 <input type="text" name="razao_social" value={formData.razao_social} onChange={handleInputChange} placeholder="Razão Social" />
                 {erros.razao_social && <p style={{ color: 'red' }}>{erros.razao_social}</p>}
+              </div>
+
+              <div>
+                <img src="../img/cnpj.png" alt="CNPJ" width={18} />
+                <input type="text" name="cnpj" value={formData.cnpj} onChange={handleInputChange} placeholder="CNPJ" maxLength={18} />
+                {erros.cnpj && <p style={{ color: 'red' }}>{erros.cnpj}</p>}
+              </div>
+            </div>
+
+            <div style={{ flex: 1 }}>
+              <div>
+                <img src="./img/cep.png" alt="CEP" width={18} />
+                <input type="text" name="cep" value={formData.cep} onChange={handleInputChange} placeholder="CEP" maxLength={9} />
+                {erros.cep && <p style={{ color: 'red' }}>{erros.cep}</p>}
               </div>
 
               <div>
@@ -230,41 +265,39 @@ function Cadastro() {
               </div>
 
               <div>
-                <img src="./img/cpf.png" alt="CPF" width={18} />
-                <input type="text" name="cpf_responsavel" value={formData.cpf_responsavel} onChange={handleInputChange} placeholder="CPF" maxLength={14} />
-                {erros.cpf_responsavel && <p style={{ color: 'red' }}>{erros.cpf_responsavel}</p>}
-              </div>
-
-              <div>
-                <img src="./img/data.png" alt="Data" width={18} />
-                <input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleInputChange} placeholder="Data de Nascimento" />
-                {erros.data_nascimento && <p style={{ color: 'red' }}>{erros.data_nascimento}</p>}
-              </div>
-
-              <div>
-                <img src="./img/cep.png" alt="CEP" width={18} />
-                <input type="text" name="cep" value={formData.cep} onChange={handleInputChange} placeholder="CEP" maxLength={9} />
-                {erros.cep && <p style={{ color: 'red' }}>{erros.cep}</p>}
-              </div>
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <div>
                 <img src="./img/senha.png" alt="Senha" width={18} />
-                <input type="password" name="senha" value={formData.senha} onChange={handleInputChange} placeholder="Senha" />
+                <input
+                  type={senhaVisivel ? 'text' : 'password'}
+                  name="senha"
+                  value={formData.senha}
+                  onChange={handleInputChange}
+                  placeholder="Senha"
+                />
+                <img
+                  src="../img/olho.png"
+                  alt="Mostrar Senha"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => togglePasswordVisibility('senha')}
+                />
                 {erros.senha && <p style={{ color: 'red' }}>{erros.senha}</p>}
               </div>
 
               <div>
                 <img src="./img/senha.png" alt="Confirmar Senha" width={18} />
-                <input type="password" name="confirmar_senha" value={formData.confirmar_senha} onChange={handleInputChange} placeholder="Confirmar Senha" />
+                <input
+                  type={confirmarSenhaVisivel ? 'text' : 'password'}
+                  name="confirmar_senha"
+                  value={formData.confirmar_senha}
+                  onChange={handleInputChange}
+                  placeholder="Confirmar Senha"
+                />
+                <img
+                  src="../img/olho.png"
+                  alt="Mostrar Senha"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => togglePasswordVisibility('confirmar_senha')}
+                />
                 {erros.confirmar_senha && <p style={{ color: 'red' }}>{erros.confirmar_senha}</p>}
-              </div>
-
-              <div>
-                <img src="./img/cnpj.png" alt="CNPJ" width={18} />
-                <input type="text" name="cnpj" value={formData.cnpj} onChange={handleInputChange} placeholder="CNPJ" maxLength={18} />
-                {erros.cnpj && <p style={{ color: 'red' }}>{erros.cnpj}</p>}
               </div>
             </div>
           </div>

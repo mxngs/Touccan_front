@@ -61,3 +61,27 @@ input{
     gap: 10px;
 
 }
+
+.job-card-perfil{
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    height: 200px;
+    padding: 20px;
+    margin: 40px auto;
+    align-items: center;
+    position: relative;
+}
+
+.job-card-perfil::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background-color: #F07B07;
+    border-radius: 10px 0 0 10px;
+}

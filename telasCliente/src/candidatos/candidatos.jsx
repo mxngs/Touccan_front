@@ -19,7 +19,6 @@ const Candidatos = () => {
                 if (Array.isArray(data.candidatos)) {
                     console.log("Candidatos:", data.candidatos);
                     setCandidatos(data.candidatos);
-                    // Atualiza os candidatos aceitos baseado nos dados da API
                     const aceitos = new Set(data.candidatos.filter(candidato => candidato.escolhido).map(candidato => candidato.id_candidato));
                     setCandidatosAceitos(aceitos);
                 } else {
@@ -58,7 +57,6 @@ const Candidatos = () => {
                 throw new Error(`Erro ao aceitar candidato: ${errorText}`);
             }
     
-            // Atualiza o estado local para incluir o candidato aceito
             setCandidatos(prev =>
                 prev.map(candidato =>
                     candidato.id_candidato === id_candidato ? { ...candidato, escolhido: true } : candidato

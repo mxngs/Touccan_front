@@ -19,7 +19,7 @@ function Home() {
 
             <div className="profile-icon">
                 <Link to="/Perfil">
-                <a ><img src="../img/person.png" alt="Perfil" /></a>
+                <a ><img src="./img/person.png" alt="Perfil" /></a>
                 </Link>
                 
             </div>

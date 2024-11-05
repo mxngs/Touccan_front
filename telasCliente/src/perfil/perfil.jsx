@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from '../components/Sidebar.jsx';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { initializeApp } from 'firebase/app';
+import { AiOutlinePlus } from 'react-icons/ai';  // Icone para o botão de adicionar
+
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAm4r7cDuQWBT4dLTnNqj6ijVKvNVIJ-As",
+  authDomain: "touccan-firebase.firebaseapp.com",
+  projectId: "touccan-firebase",
+  storageBucket: "touccan-firebase.appspot.com",
+  messagingSenderId: "906368056826",
+  appId: "1:906368056826:web:0e8f0b08a2ae94acce3843",
+  measurementId: "G-646HZZSX54"
+};
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
 
 const Perfil = () => {
   const [mudarTab, setMudarTab] = useState('sobre');
@@ -10,6 +28,7 @@ const Perfil = () => {
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
 
   const handleTabChange = (tab) => {
     setMudarTab(tab);
@@ -81,19 +100,46 @@ const Perfil = () => {
       return;
     }
 
+    let fotoURL = dadosCliente.foto;
+    if (imageFile) {
+      // Carregar a foto para o Firebase
+      const storageRef = ref(storage, 'perfil/' + imageFile.name);
+      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Progresso do upload (opcional)
+        },
+        (error) => {
+          console.error('Erro ao fazer upload da foto:', error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            fotoURL = downloadURL; // Recebe a URL pública do Firebase Storage
+            saveClienteData(id, fotoURL);
+          });
+        }
+      );
+    } else {
+      saveClienteData(id, fotoURL);
+    }
+  };
+
+  const saveClienteData = async (id, fotoURL) => {
     const payload = {
       id: dadosCliente.id,
       nome_responsavel: dadosCliente.nome_responsavel,
       cpf_responsavel: dadosCliente.cpf_responsavel,
-      email, 
+      email,
       nome_fantasia: dadosCliente.nome_fantasia,
       razao_social: dadosCliente.razao_social,
-      telefone, 
+      telefone,
       cnpj: dadosCliente.cnpj,
       cep: dadosCliente.cep,
       senha: dadosCliente.senha,
       premium: dadosCliente.premium,
-      foto: dadosCliente.foto,
+      foto
     };
 
     try {
@@ -114,17 +160,40 @@ const Perfil = () => {
       console.error('Erro na requisição de atualização:', error);
     }
   };
-  
+
+  // Função para lidar com a mudança da imagem
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
+  };
+
   return (
     <div className='tela-perfil-cliente'>
       <Sidebar />
       <div className="infos-perfil-cliente">
         <div className="pfp-perfil-cliente">
           {dadosCliente ? (
-            <img src={dadosCliente.foto} alt="Foto do Cliente" />
+            dadosCliente.foto ? (
+              <img src={dadosCliente.foto} alt="Foto do Cliente" />
+            ) : (
+              <img src="../img/semFtoo.png" alt="Sem Foto de Perfil" />
+            )
           ) : 'Carregando...'}
+
+          {/* Ícone para trocar a foto */}
+          <label htmlFor="upload-image" className="upload-icon">
+            <AiOutlinePlus size={30} />
+          </label>
+          <input 
+            type="file" 
+            id="upload-image" 
+            style={{ display: 'none' }} 
+            onChange={handleImageChange}
+          />
         </div>
-        
+
         <span className='nome-perfil-cliente'>
           {dadosCliente ? dadosCliente.nome_fantasia : 'Carregando...'}
         </span>
@@ -181,7 +250,7 @@ const Perfil = () => {
               <span>Anúncios</span>
               {anuncios.length > 0 ? (
                 anuncios.map((anuncio) => (
-                  <div className="job-card" key={anuncio.id}>
+                  <div className="job-card-perfil" key={anuncio.id}>
                     <h3>{anuncio.titulo}</h3>
                     <p>{anuncio.descricao}</p>
                     <p>Local: {anuncio.cliente?.nome_fantasia || 'Não disponível'}</p>
