@@ -3,7 +3,7 @@ import './App.css';
 import Sidebar from '../components/Sidebar.jsx';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { initializeApp } from 'firebase/app';
-import { AiOutlinePlus } from 'react-icons/ai';  // Icone para o botão de adicionar
+import { AiOutlinePlus } from 'react-icons/ai';  
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -113,16 +113,22 @@ const Perfil = () => {
         },
         (error) => {
           console.error('Erro ao fazer upload da foto:', error);
+          alert('Erro ao carregar a foto, tente novamente.');
         },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             fotoURL = downloadURL; // Recebe a URL pública do Firebase Storage
-            saveClienteData(id, fotoURL);
-          });
+            await saveClienteData(id, fotoURL); // Passa a URL da foto ao salvar os dados
+          } catch (error) {
+            console.error('Erro ao obter a URL da foto:', error);
+            alert('Erro ao obter a URL da foto.');
+          }
         }
       );
     } else {
-      saveClienteData(id, fotoURL);
+      // Se não houver arquivo de imagem, apenas salva os dados
+      await saveClienteData(id, fotoURL);
     }
   };
 
@@ -139,7 +145,7 @@ const Perfil = () => {
       cep: dadosCliente.cep,
       senha: dadosCliente.senha,
       premium: dadosCliente.premium,
-      foto
+      foto: fotoURL // Atualiza a foto com a URL do Firebase
     };
 
     try {
@@ -155,9 +161,11 @@ const Perfil = () => {
       } else {
         const errorText = await response.text();
         console.error('Erro ao atualizar dados:', response.statusText, errorText);
+        alert('Erro ao salvar os dados. Tente novamente.');
       }
     } catch (error) {
       console.error('Erro na requisição de atualização:', error);
+      alert('Erro na atualização. Tente novamente.');
     }
   };
 
