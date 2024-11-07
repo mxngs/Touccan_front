@@ -27,7 +27,7 @@ const Sidebar = () => {
                         img: '../img/cofrinho.png', text: 'Cofre', to: "/cofre"
                     },
                     { 
-                        img: '../img/configurações.png', text: 'Configurações', to: "/configuracoes"
+                        img: '../img/configurações.png', text: 'Configurações', to: "/configuracao"
                     },
                 ].map((item, index) => (
                     <li className="menu-item" key={index}>

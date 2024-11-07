@@ -7,7 +7,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 
 // Configuração do Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAm4r7cDuQWBT4dLTnNqj6ijVKvNVIJ-As",
+  apiKey: "AIzaSyAm4r7cDuQWBT4dLTnNqj6ijVKvNVIJ-As",  
   authDomain: "touccan-firebase.firebaseapp.com",
   projectId: "touccan-firebase",
   storageBucket: "touccan-firebase.appspot.com",
@@ -55,10 +55,12 @@ const Perfil = () => {
 
   const fetchEndereco = async (cep) => {
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const response = await fetch(`https://cors-anywhere.herokuapp.com/https://viacep.com.br/ws/${cep}/json/`);
       if (response.ok) {
         const enderecoData = await response.json();
         setEndereco(enderecoData);
+      } else {
+        console.error('Erro ao obter o endereço:', response.statusText);
       }
     } catch (error) {
       console.error('Erro na requisição do endereço:', error);
@@ -101,6 +103,7 @@ const Perfil = () => {
     }
 
     let fotoURL = dadosCliente.foto;
+
     if (imageFile) {
       // Carregar a foto para o Firebase
       const storageRef = ref(storage, 'perfil/' + imageFile.name);
@@ -109,7 +112,7 @@ const Perfil = () => {
       uploadTask.on(
         'state_changed',
         (snapshot) => {
-          // Progresso do upload (opcional)
+          
         },
         (error) => {
           console.error('Erro ao fazer upload da foto:', error);
@@ -117,9 +120,9 @@ const Perfil = () => {
         },
         async () => {
           try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            fotoURL = downloadURL; // Recebe a URL pública do Firebase Storage
-            await saveClienteData(id, fotoURL); // Passa a URL da foto ao salvar os dados
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref());
+            fotoURL = downloadURL;
+            await saveClienteData(id, fotoURL);  
           } catch (error) {
             console.error('Erro ao obter a URL da foto:', error);
             alert('Erro ao obter a URL da foto.');
@@ -127,8 +130,7 @@ const Perfil = () => {
         }
       );
     } else {
-      // Se não houver arquivo de imagem, apenas salva os dados
-      await saveClienteData(id, fotoURL);
+      await saveClienteData(id, fotoURL);  
     }
   };
 
@@ -145,7 +147,7 @@ const Perfil = () => {
       cep: dadosCliente.cep,
       senha: dadosCliente.senha,
       premium: dadosCliente.premium,
-      foto: fotoURL // Atualiza a foto com a URL do Firebase
+      foto: fotoURL  
     };
 
     try {
@@ -157,7 +159,7 @@ const Perfil = () => {
 
       if (response.ok) {
         console.log('Dados atualizados com sucesso');
-        setIsEditing(false);
+        setIsEditing(false);  
       } else {
         const errorText = await response.text();
         console.error('Erro ao atualizar dados:', response.statusText, errorText);
@@ -169,7 +171,6 @@ const Perfil = () => {
     }
   };
 
-  // Função para lidar com a mudança da imagem
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -181,6 +182,21 @@ const Perfil = () => {
     <div className='tela-perfil-cliente'>
       <Sidebar />
       <div className="infos-perfil-cliente">
+       
+        {isEditing && (
+          <div className="AdcFoto">
+            <label htmlFor="upload-image" className="upload-icon">
+              <AiOutlinePlus size={24} /> Alterar Foto de Perfil
+            </label>
+            <input 
+              type="file" 
+              id="upload-image" 
+              style={{ display: 'none' }} 
+              onChange={handleImageChange}
+            />
+          </div>
+        )}
+
         <div className="pfp-perfil-cliente">
           {dadosCliente ? (
             dadosCliente.foto ? (
@@ -189,17 +205,6 @@ const Perfil = () => {
               <img src="../img/semFtoo.png" alt="Sem Foto de Perfil" />
             )
           ) : 'Carregando...'}
-
-          {/* Ícone para trocar a foto */}
-          <label htmlFor="upload-image" className="upload-icon">
-            <AiOutlinePlus size={30} />
-          </label>
-          <input 
-            type="file" 
-            id="upload-image" 
-            style={{ display: 'none' }} 
-            onChange={handleImageChange}
-          />
         </div>
 
         <span className='nome-perfil-cliente'>
@@ -282,6 +287,6 @@ const Perfil = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Perfil;

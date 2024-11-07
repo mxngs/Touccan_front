@@ -1,0 +1,347 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", system-ui;
+  }
+
+  body {
+    background-color: #EBEBEB;
+}
+
+
+
+/* Painel de Cards */
+.cards-panel {
+    display: flex;
+    flex-direction: column;
+    margin-left: 520px;
+    margin-top: 35px;
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centraliza o conteúdo do card */
+    background-color: #FFFFFF;
+    border: 1px solid #D9D9D9;
+    border-radius: 5px;
+    margin: 15px auto; /* Centraliza o card na página */
+    padding: 10px;
+    width: 300px; /* Ajuste a largura conforme necessário */
+    transition: background-color 0.3s;
+}
+
+.card:hover {
+    background-color: #FFEBCC; /* Laranja claro ao passar o mouse */
+}
+
+.card-detail {
+    width: 7px;
+    height: 90px;
+    background-color: #F07B07;
+    margin-right: 10px;
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 10px; /* Ajuste a margem conforme necessário */
+}
+
+.card-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+/* Estilo para os títulos e descrições do card */
+.card-title {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333333;
+}
+
+.card-description {
+    font-size: 14px;
+    color: #666666;
+}
+
+/* Estilo para o painel de imagem */
+.image-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 320px;
+    width: 100px;
+    flex-direction: column;
+}
+
+.logo-image {
+    width: 110px;
+    height: auto;
+}
+
+.image-description {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    white-space: nowrap; /* Impede a quebra de linha */
+    overflow: hidden; /* Oculta o texto que exceder o limite */
+    text-overflow: ellipsis; /* Adiciona reticências (...) se o texto for muito longo */
+}
+
+/* Estilo para as informações da conta */
+.account-details {
+    margin-left: 40px; /* Aumenta a margem à esquerda */
+    margin-top: 30px; /* Aumenta a margem acima para mover para baixo */
+    display: flex;
+    flex-direction: column;
+}
+
+.account-title {
+    margin-bottom: 10px; /* Espaço entre o título e o card */
+    margin-top: 120px;
+    margin-left: 200px; /* Mesma margem do card para alinhar */
+    position: relative; /* Para o uso da linha laranja abaixo */
+}
+
+/* Card padrão */
+.account-card {
+    background-color: #fafafa; /* Cor do fundo do card */
+    border: 1px solid #dbdbdb;
+    border-radius: 7px;
+    padding: 30px; /* Espaçamento interno do card */
+    width: 400px; /* Largura do card */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+    margin-top: 20px;
+    margin-left: 200px; /* Mesma margem do título */
+}
+
+.account-title {
+    position: relative; /* Para a linha abaixo do título */
+}
+
+.account-title {
+    font-weight: bold;
+    text-align: center; /* Centraliza o título */
+    margin-bottom: 10px;
+    margin-top: 120px;
+    margin-left: 200px; /* Mesma margem do card */
+    position: relative;
+}
+
+.account-title::after {
+    content: '';
+    display: block;
+    width: 50%; /* Largura da linha abaixo do título */
+    height: 2px; /* Espessura da linha */
+    background-color: #F07B07; /* Cor laranja */
+    margin: 10px auto 0; /* Espaço entre o título e a linha */
+}
+
+.info {
+    margin-bottom: 25px;
+    text-align: left; /* Alinhamento à esquerda */
+}
+
+.info-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Botão centralizado */
+.logout-button {
+    margin-top: 20px;
+    padding: 10px;
+   
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: center; /* Centraliza o botão */
+}
+
+.logout-button:hover {
+    background-color: #D06506; /* Cor ao passar o mouse */
+}
+
+/* Estilo para a seção de segurança */
+.security-settings {
+    margin-left: 40px; /* Aumenta a margem à esquerda */
+    margin-top: 30px; /* Aumenta a margem acima para mover para baixo */
+}
+
+.security-title {
+    font-weight: bold;
+    font-size: 24px; /* Tamanho do título */
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.security-description {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 20px; /* Espaçamento entre a descrição e os campos */
+}
+
+.security-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.security-form .info {
+    margin-bottom: 15px;
+}
+
+.security-form label {
+    font-weight: bold; /* Destaca os rótulos */
+}
+
+.security-form input {
+    padding: 10px;
+    border: 1px solid #D9D9D9;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Botões */
+.update-button {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #F07B07;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.update-button:hover {
+    background-color: #D06506; /* Cor ao passar o mouse */
+}
+
+.forgot-password {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.forgot-password a {
+    color: #F07B07;
+    text-decoration: none;
+}
+
+.account-title {
+    margin-left: 245px;
+}
+
+.account-card {
+    margin-bottom: 20px; 
+    background-color: rgba(217, 217, 217, 0.62)
+
+}
+
+textarea {
+    width: 100%; /* Largura da caixa de texto */
+    padding: 10px; /* Espaçamento interno */
+    border: 1px solid #e0e0e0; /* Borda da caixa */
+    border-radius: 5px; /* Bordas arredondadas */
+    resize: none; /* Impede redimensionamento */
+    margin-top: 20px; /* Espaço acima da caixa de texto */
+    margin-bottom: 10px; /* Espaço abaixo da caixa de texto */
+    margin-left: -10px;
+}
+
+.character-count {
+    margin-top: 5px; /* Espaço acima do contador */
+    font-size: 14px; /* Tamanho da fonte do contador */
+    color: #666; /* Cor do texto do contador */
+}
+
+.send-button {
+    background-color: #E97911; /* Cor de fundo laranja */
+    color: white; /* Cor do texto do botão */
+    border: none; /* Remove a borda padrão */
+    padding: 10px 20px; /* Espaçamento interno do botão */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Muda o cursor ao passar o mouse */
+    font-size: 16px; /* Tamanho da fonte */
+    margin-top: 10px; /* Espaço acima do botão */
+    margin-left: 130px;
+}
+
+.send-button:hover {
+    background-color: #d66a0c; /* Cor do botão ao passar o mouse */
+}
+
+/*sobre nós*/
+.sub-title {
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+.info-value {
+    margin-bottom: 17px;
+}
+
+.card-price {
+    font-size: 16px;
+    color: #F07B07; /* Cor mais escura que a descrição, mas mais clara que o título */
+    font-weight: bold;
+    margin-top: 5px; /* Espaçamento acima do preço */
+}
+
+.premium-panel {
+    width: 320px; /* Largura do card */
+    padding: 15px; /* Ajuste o padding para diminuir a altura */
+    background-color: #f9f9f9; /* Cor de fundo do card */
+    border: 1px solid #ccc; /* Borda opcional */
+    border-radius: 8px; /* Bordas arredondadas */
+    text-align: center; /* Centraliza o texto */
+    margin-left: 200px;
+    margin-top: 200px;
+    height:300px
+}
+
+.premium-header {
+    display: flex; /* Usar flexbox para alinhar a imagem e o título */
+    align-items: center; /* Centraliza verticalmente */
+    margin-bottom: 15px; /* Espaçamento inferior */
+}
+
+.premium-icon {
+    width: 40px; /* Ajuste o tamanho da imagem conforme necessário */
+    height: auto; /* Mantém a proporção da imagem */
+    margin-right: 10px; /* Espaçamento à direita da imagem */
+}
+
+.premium-title {
+    font-size: 1.5em; /* Tamanho da fonte do título */
+    color: #F07B07;
+}
+
+.premium-subtitle {
+    margin-bottom: 10px; /* Espaçamento inferior */
+    color:#3a3a3a;
+}
+
+.price-label, .price-value {
+    color: #555; /* Cinza escuro */
+    font-weight: bold; /* Negrito */
+}
+
+#premium-button {
+    background-color: #E97911; /* Botão laranja */
+    color: white; /* Texto branco */
+    padding: 10px 20px; /* Padding do botão */
+    border: none; /* Sem borda */
+    border-radius: 5px; /* Bordas arredondadas no botão */
+    cursor: pointer; /* Mão ao passar o mouse */
+    font-size: 1em; /* Tamanho da fonte do botão */
+}
+
+#premium-button:hover {
+    background-color: #d76e0e; /* Tom mais escuro no hover */
+}
