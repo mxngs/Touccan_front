@@ -10,6 +10,8 @@ import Perfil from './perfil/perfil.jsx'
 import Cofre from './cofre/cofre.jsx'
 import Candidatos from './candidatos/candidatos.jsx'
 import Configuracao from './configuracao/configuracao.jsx'
+import Notificacao from './notificacao/notificacao.jsx'
+import Historico from './historico/historico.jsx'
 
 
 export default function App() {
@@ -24,6 +26,8 @@ export default function App() {
                     <Route path="perfil" element={< Perfil />} />
                     <Route path="cofre" element={< Cofre />} />
                     <Route path="configuracao" element={< Configuracao />} />
+                    <Route path="notificacao" element={< Notificacao />} />
+                    <Route path="historico" element={< Historico />} />
                   <Route path="home/candidatos" element={< Candidatos />} />
                     
                 </Route>

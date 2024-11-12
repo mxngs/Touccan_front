@@ -160,7 +160,7 @@ const AddBico = () => {
                        </div>
 
                        <div className="bico-input-container">
-                           <label>Salário</label>
+                           <label>Salário - Considere os 10% da taxa de serviço </label>
                            <input 
                                type='number' 
                                name='salario' 

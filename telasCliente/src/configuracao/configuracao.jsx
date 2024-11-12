@@ -47,34 +47,34 @@ const Configuracao = () => {
             alert('ID do cliente não encontrado');
             return;
         }
-
+    
         const newPremiumStatus = !isPremium;
-        setIsPremium(newPremiumStatus);
-
-        const updatedFormData = { ...formData, premium: newPremiumStatus };
-
+        setIsPremium(newPremiumStatus);  // Atualiza o estado local
+    
         try {
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`, {
+            // Envia a solicitação PUT para o novo endpoint
+            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/premium/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ cliente: updatedFormData }),
+                body: JSON.stringify({ premium: newPremiumStatus }),  // Passa o status de Premium
             });
-
+    
             if (response.ok) {
                 alert(newPremiumStatus ? 'Agora você é Premium!' : 'Premium cancelado!');
             } else {
                 const errorData = await response.json();
                 alert('Erro ao atualizar status Premium. Detalhes: ' + errorData.message);
-                setIsPremium(!newPremiumStatus);
+                setIsPremium(!newPremiumStatus); // Reverte o estado caso o PUT falhe
             }
         } catch (error) {
             console.error('Erro ao atualizar o status Premium:', error);
             alert('Erro na atualização. Tente novamente.');
-            setIsPremium(!newPremiumStatus);
+            setIsPremium(!newPremiumStatus);  // Reverte o estado caso haja erro na requisição
         }
     };
+    
 
     const validateFormData = () => {
         const requiredFields = ['nome_fantasia', 'telefone', 'email', 'cep'];

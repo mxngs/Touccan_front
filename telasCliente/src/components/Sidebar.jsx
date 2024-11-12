@@ -15,7 +15,7 @@ const Sidebar = () => {
                         img: '../img/home.png', text: 'Página Inicial', to: "/home"
                     },
                     { 
-                        img: '../img/notificação.png', text: 'Notificações', to: "/notificacoes" 
+                        img: '../img/notificação.png', text: 'Notificações', to: "/notificacao" 
                     },
                     { 
                         img: '../img/chat.png', text: 'Mensagens', to: "/mensagens"

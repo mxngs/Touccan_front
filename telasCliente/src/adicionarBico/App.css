@@ -19,7 +19,7 @@
   .bico-app-container{
     display: flex;
     flex-direction: column;
-    margin-top: 50px;
+    margin-top: 40px;
     margin-left: 400px;
   }
 
@@ -60,7 +60,7 @@
     
   }
 
-  textarea{
+  .bico-input-container textarea{
     width: 900px;
     height: 100px;
     background-color: white;
