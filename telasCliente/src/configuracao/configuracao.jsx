@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.jsx';
+import Confetti from 'react-confetti';
 import './App.css';
 
 const Configuracao = () => {
@@ -8,6 +9,7 @@ const Configuracao = () => {
     const [currentView, setCurrentView] = useState('image');
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
+    const [showConfetti, setShowConfetti] = useState(false);  // Para exibir os confetes
 
     const handleLogout = () => {
         localStorage.removeItem("id_cliente");
@@ -48,30 +50,46 @@ const Configuracao = () => {
             return;
         }
     
-        const newPremiumStatus = !isPremium;
-        setIsPremium(newPremiumStatus);  // Atualiza o estado local
+        // Confirmar a ação com o usuário antes de proceder
+        const confirmed = window.confirm(
+            isPremium 
+            ? "Tem certeza que deseja cancelar sua assinatura Premium?" 
+            : "Tem certeza que deseja se tornar Premium?"
+        );
+        
+        if (!confirmed) return;
+    
+        // Atualiza o status Premium para 1 ou 0
+        const newPremiumStatus = isPremium ? 0 : 1;  // 0 para cancelar, 1 para se tornar Premium
+        setIsPremium(newPremiumStatus);
     
         try {
-            // Envia a solicitação PUT para o novo endpoint
+            // Envia a solicitação para a API para atualizar o status Premium
             const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/premium/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ premium: newPremiumStatus }),  // Passa o status de Premium
+                body: JSON.stringify({ premium: newPremiumStatus }),  // Envia 0 ou 1 dependendo da ação
             });
     
-            if (response.ok) {
-                alert(newPremiumStatus ? 'Agora você é Premium!' : 'Premium cancelado!');
-            } else {
+            if (!response.ok) {
                 const errorData = await response.json();
+                console.error('Erro ao atualizar status Premium:', errorData);
                 alert('Erro ao atualizar status Premium. Detalhes: ' + errorData.message);
-                setIsPremium(!newPremiumStatus); // Reverte o estado caso o PUT falhe
+                setIsPremium(!newPremiumStatus);  // Reverte o estado em caso de falha
+            } else {
+                alert(newPremiumStatus === 1 ? 'Agora você é Premium!' : 'Premium cancelado!');
+                if (newPremiumStatus === 1) {
+                    // Exibe a animação de confetes quando se tornar Premium
+                    setShowConfetti(true);
+                    setTimeout(() => setShowConfetti(false), 3000);  // Confetes por 3 segundos
+                }
             }
         } catch (error) {
             console.error('Erro ao atualizar o status Premium:', error);
             alert('Erro na atualização. Tente novamente.');
-            setIsPremium(!newPremiumStatus);  // Reverte o estado caso haja erro na requisição
+            setIsPremium(!newPremiumStatus);  // Reverte o estado em caso de erro
         }
     };
     
@@ -102,7 +120,10 @@ const Configuracao = () => {
         }
 
         try {
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`, {
+            delete formData.id
+            console.log(formData);
+
+            const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -311,6 +332,9 @@ const Configuracao = () => {
                     </div>
                 </div>
             )}
+
+            {/* Animação de Confetes */}
+            {showConfetti && <Confetti />}
         </div>
     );
 };
