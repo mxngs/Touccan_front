@@ -128,7 +128,7 @@ const Configuracao = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ cliente: formData }),
+                body: JSON.stringify({ formData }),
             });
 
             if (response.ok) {

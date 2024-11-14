@@ -1,29 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from '../components/Sidebar.jsx';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { initializeApp } from 'firebase/app';
-import { AiOutlinePlus } from 'react-icons/ai';  
-
-// Configuração do Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyAm4r7cDuQWBT4dLTnNqj6ijVKvNVIJ-As",  
-  authDomain: "touccan-firebase.firebaseapp.com",
-  projectId: "touccan-firebase",
-  storageBucket: "touccan-firebase.appspot.com",
-  messagingSenderId: "906368056826",
-  appId: "1:906368056826:web:0e8f0b08a2ae94acce3843",
-  measurementId: "G-646HZZSX54"
-};
-
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
+import { AiOutlinePlus } from 'react-icons/ai';
 
 const Perfil = () => {
   const [mudarTab, setMudarTab] = useState('sobre');
   const [dadosCliente, setDadosCliente] = useState(null);
-  const [endereco, setEndereco] = useState(null);
+  const [endereco, setEndereco] = useState(null); // Inicialize como null
   const [anuncios, setAnuncios] = useState([]);
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -44,7 +27,7 @@ const Perfil = () => {
           setDadosCliente(cliente);
           setEmail(cliente.email);
           setTelefone(cliente.telefone);
-          fetchEndereco(cliente.cep);
+          fetchEndereco(cliente.cep); // Tenta buscar o endereço
           fetchAnuncios(id);
         }
       }
@@ -53,17 +36,23 @@ const Perfil = () => {
     }
   };
 
+  // Função para buscar o endereço
   const fetchEndereco = async (cep) => {
     try {
-      const response = await fetch(`https://cors-anywhere.herokuapp.com/https://viacep.com.br/ws/${cep}/json/`);
-      if (response.ok) {
-        const enderecoData = await response.json();
-        setEndereco(enderecoData);
-      } else {
-        console.error('Erro ao obter o endereço:', response.statusText);
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      if (!response.ok) {
+        throw new Error('Erro ao acessar o ViaCEP');
       }
+
+      const enderecoData = await response.json();
+      if (enderecoData.erro) {
+        throw new Error('CEP inválido');
+      }
+
+      setEndereco(enderecoData);
     } catch (error) {
-      console.error('Erro na requisição do endereço:', error);
+      console.error('Erro ao obter o endereço:', error.message);
+      setEndereco(undefined); // Em caso de erro, setar como undefined
     }
   };
 
@@ -101,36 +90,27 @@ const Perfil = () => {
       console.error('ID do cliente não encontrado no localStorage');
       return;
     }
-
     let fotoURL = dadosCliente.foto;
-
     if (imageFile) {
-      // Carregar a foto para o Firebase
-      const storageRef = ref(storage, 'perfil/' + imageFile.name);
-      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+      const formData = new FormData();
+      formData.append('file', imageFile);
+      formData.append('upload_preset', 'profile_pics');
+      try {
+        const response = await fetch('https://api.cloudinary.com/v1_1/dauesfz5t/image/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          
-        },
-        (error) => {
-          console.error('Erro ao fazer upload da foto:', error);
-          alert('Erro ao carregar a foto, tente novamente.');
-        },
-        async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref());
-            fotoURL = downloadURL;
-            await saveClienteData(id, fotoURL);  
-          } catch (error) {
-            console.error('Erro ao obter a URL da foto:', error);
-            alert('Erro ao obter a URL da foto.');
-          }
-        }
-      );
+        const result = await response.json();
+        fotoURL = result.secure_url; 
+        await saveClienteData(id, fotoURL); 
+        setDadosCliente((prev) => ({ ...prev, foto: fotoURL }));
+      } catch (error) {
+        console.error('Erro ao carregar a foto para o Cloudinary:', error);
+        alert('Erro ao carregar a foto, tente novamente.');
+      }
     } else {
-      await saveClienteData(id, fotoURL);  
+      await saveClienteData(id, fotoURL); 
     }
   };
 
@@ -159,7 +139,7 @@ const Perfil = () => {
 
       if (response.ok) {
         console.log('Dados atualizados com sucesso');
-        setIsEditing(false);  
+        setIsEditing(false); 
       } else {
         const errorText = await response.text();
         console.error('Erro ao atualizar dados:', response.statusText, errorText);
@@ -179,19 +159,18 @@ const Perfil = () => {
   };
 
   return (
-    <div className='tela-perfil-cliente'>
+    <div className="tela-perfil-cliente">
       <Sidebar />
       <div className="infos-perfil-cliente">
-       
         {isEditing && (
           <div className="AdcFoto">
             <label htmlFor="upload-image" className="upload-icon">
               <AiOutlinePlus size={24} /> Alterar Foto de Perfil
             </label>
-            <input 
-              type="file" 
-              id="upload-image" 
-              style={{ display: 'none' }} 
+            <input
+              type="file"
+              id="upload-image"
+              style={{ display: 'none' }}
               onChange={handleImageChange}
             />
           </div>
@@ -207,7 +186,7 @@ const Perfil = () => {
           ) : 'Carregando...'}
         </div>
 
-        <span className='nome-perfil-cliente'>
+        <span className="nome-perfil-cliente">
           {dadosCliente ? dadosCliente.nome_fantasia : 'Carregando...'}
         </span>
 
@@ -227,34 +206,34 @@ const Perfil = () => {
         </div>
 
         {mudarTab === 'sobre' && (
-          <div className="tab-content" id='sobre-perfil-cliente'>
+          <div className="tab-content" id="sobre-perfil-cliente">
             <button onClick={isEditing ? handleSave : handleEdit}>
               {isEditing ? 'Salvar' : 'Editar'}
             </button>
 
             <div className="inputs-perfil-cliente">
               <div className="endereco-perfil-cliente">
-                <input 
-                  type="text" 
-                  disabled 
-                  value={endereco ? `Endereço: ${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade} - ${endereco.uf}` : 'Carregando endereço...'}
+                <input
+                  type="text"
+                  disabled
+                  value={endereco ? `Endereço: ${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade} - ${endereco.uf}` : 'Indefinido'}
                 />
               </div>
 
               <div className="contatos-perfil-cliente">
-                <input 
-                  type="email" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  placeholder="E-mail" 
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="E-mail"
                   disabled={!isEditing}
                 />
               </div>
-              <input 
-                type="tel" 
-                value={telefone} 
-                onChange={(e) => setTelefone(e.target.value)} 
-                placeholder="Telefone" 
+              <input
+                type="tel"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+                placeholder="Telefone"
                 disabled={!isEditing}
               />
             </div>
@@ -278,7 +257,7 @@ const Perfil = () => {
         )}
 
         {mudarTab === 'feedback' && (
-          <div className="tab-content" id='feedback-perfil-cliente'>
+          <div className="tab-content" id="feedback-perfil-cliente">
             <div className="teste-perfil-cliente">
               <span>funciona funciona funciona funciona</span>
             </div>
