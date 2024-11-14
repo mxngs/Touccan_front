@@ -5,11 +5,17 @@ import { Link, useNavigate } from "react-router-dom";
 const DetalhesVaga = ({ anuncio, onClose }) => {
     const navigate = useNavigate();
 
+    
+    const handleVerCandidatos = () => {
+       
+        localStorage.setItem("id_bico", anuncio.id);
+        navigate('/candidatos'); 
+    };
+
     const handleDelete = async () => {
         const confirmDelete = window.confirm("Você tem certeza que deseja excluir este anúncio?");
         if (confirmDelete) {
             try {
-                
                 const response = await fetch(`http://localhost:8080/2.0/touccan/bico/${anuncio.id}`, {
                     method: 'DELETE',
                 });
@@ -26,8 +32,6 @@ const DetalhesVaga = ({ anuncio, onClose }) => {
                 alert("Erro ao excluir o anúncio.");
             }
         }
-    
-    
     };
 
     return (
@@ -58,12 +62,10 @@ const DetalhesVaga = ({ anuncio, onClose }) => {
                 </div>
             </div>
             <div className="container-botoes">
-                <Link to='./candidatos'>
-                    <button className="ver-candidatos">
-                        Ver candidatos
-                    </button>
-                </Link>
-                
+                <button className="ver-candidatos" onClick={handleVerCandidatos}>
+                    Ver candidatos
+                </button>
+
                 <button className="excluir-anuncio" id='excluir-anuncio' onClick={handleDelete}>
                     Excluir anúncio
                 </button>

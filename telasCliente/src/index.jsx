@@ -28,7 +28,7 @@ export default function App() {
                     <Route path="configuracao" element={< Configuracao />} />
                     <Route path="notificacao" element={< Notificacao />} />
                     <Route path="historico" element={< Historico />} />
-                  <Route path="home/candidatos" element={< Candidatos />} />
+                  <Route path="candidatos" element={< Candidatos />} />
                     
                 </Route>
             </Routes>

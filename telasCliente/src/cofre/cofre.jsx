@@ -9,11 +9,11 @@ const Cofre = () => {
     const [notificationVisible, setNotificationVisible] = useState(false);
     const [cartaoCadastrado, setCartaoCadastrado] = useState(false);
     const [formData, setFormData] = useState({
-        numeroCartao: '',
+        numero: '',
         validade: '',
         cvv: '',
-        nomeTitular: '',
-        cnpjCpf: '',
+        nome_titular: '',
+        cpf: '',
         apelido: ''
     });
 
@@ -64,7 +64,7 @@ const Cofre = () => {
                 .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona ponto
                 .replace(/(\d{3})(\d{1,2})$/, '$1-$2') // Adiciona traço
                 .slice(0, 14); // Limita a 14 caracteres
-        } else { // CNPJ
+        } else { 
             return onlyNumbers
                 .replace(/(\d{2})(\d)/, '$1.$2') // Adiciona ponto
                 .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona ponto

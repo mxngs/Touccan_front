@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar.jsx';
 
 const baseUrl = 'http://localhost:8080/2.0/touccan';
 
@@ -14,7 +15,7 @@ function Historico() {
     else console.error('ID do cliente não encontrado no localStorage');
   }, []);
 
-  // Função para buscar os dados do backend
+  
   const fetchData = async (id) => {
     try {
       const response = await fetch(`${baseUrl}/bico`, {
@@ -39,6 +40,9 @@ function Historico() {
 
   return (
     <div className="histórico-container">
+
+<Sidebar />
+
       <h1 className="histórico-title">Histórico</h1>
       
       {loading ? (

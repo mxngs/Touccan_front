@@ -8,31 +8,48 @@ const Candidatos = () => {
     const [candidatosAceitos, setCandidatosAceitos] = useState(new Set());
 
     useEffect(() => {
-        const fetchCandidatos = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/2.0/touccan/candidato');
-                if (!response.ok) throw new Error('Erro ao buscar candidatos');
-
-                const data = await response.json();
-                console.log("Dados recebidos da API:", data);
-
-                if (Array.isArray(data.candidatos)) {
-                    console.log("Candidatos:", data.candidatos);
-                    setCandidatos(data.candidatos);
-                    const aceitos = new Set(data.candidatos.filter(candidato => candidato.escolhido).map(candidato => candidato.id_candidato));
-                    setCandidatosAceitos(aceitos);
-                } else {
-                    console.error("A estrutura de dados não contém candidatos.");
-                }
-            } catch (error) {
-                console.error("Erro:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCandidatos();
+        // Pega o ID do bico do localStorage
+        const id_bico = localStorage.getItem("id_bico");
+        if (id_bico) {
+            fetchCandidatos(id_bico); // Passa o id_bico para a função
+        } else {
+            console.error('ID do bico não encontrado no localStorage');
+        }
     }, []);
+
+    const fetchCandidatos = async (id_bico) => {
+        console.log(`Buscando candidatos para o bico com ID: ${id_bico}`);
+        
+        try {
+            // Exibindo a URL antes de fazer a requisição para verificar
+            const url = `http://localhost:8080/2.0/touccan/candidato/${id_bico}`;
+            console.log(`URL para buscar candidatos: ${url}`);
+            
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.error(`Erro ao buscar candidatos. Status: ${response.status}`);
+                throw new Error('Erro ao buscar candidatos');
+            }
+    
+            const data = await response.json();
+            console.log("Dados recebidos da API:", data);
+    
+            if (Array.isArray(data.candidatos)) {
+                console.log("Candidatos:", data.candidatos);
+                setCandidatos(data.candidatos);
+                const aceitos = new Set(data.candidatos.filter(candidato => candidato.escolhido).map(candidato => candidato.id_candidato));
+                setCandidatosAceitos(aceitos);
+            } else {
+                console.error("A estrutura de dados não contém candidatos.");
+            }
+        } catch (error) {
+            console.error("Erro:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
 
     const aceitarCandidato = async (id_candidato, id_bico) => {
         if (!id_candidato || !id_bico) {
@@ -44,7 +61,7 @@ const Candidatos = () => {
         console.log("Requisição PUT:", requestBody);
     
         try {
-            const response = await fetch(`http://localhost:8080/2.0/touccan/candidato`, {
+            const response = await fetch('http://localhost:8080/2.0/touccan/candidato', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,7 +80,6 @@ const Candidatos = () => {
                 )
             );
     
-            // Atualiza o estado de candidatos aceitos
             setCandidatosAceitos(prev => new Set(prev).add(id_candidato));
     
             console.log(`Candidato aceito: ${id_candidato}`);
@@ -73,24 +89,22 @@ const Candidatos = () => {
     };
     
     const negarCandidato = async (id_candidato, id_bico) => {
-        // Verifica se os IDs são válidos antes de enviar a requisição
         if (!id_candidato || !id_bico) {
             console.error(`Tentativa de negar candidato com dados inválidos: id_candidato=${id_candidato}, id_bico=${id_bico}`);
-            return;  // Evitar chamada se os IDs não forem válidos
+            return;
         }
     
         console.log(`Tentando negar candidato: id_candidato=${id_candidato}, id_bico=${id_bico}`);
     
-        // O corpo deve ser um objeto com os parâmetros id_user e id_bico
         const requestBody = { id_user: id_candidato, id_bico: id_bico };
     
         try {
-            const response = await fetch(`http://localhost:8080/2.0/touccan/candidato`, {
+            const response = await fetch('http://localhost:8080/2.0/touccan/candidato', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(requestBody),  // Enviando o corpo na requisição
+                body: JSON.stringify(requestBody),
             });
     
             if (!response.ok) {
@@ -98,10 +112,8 @@ const Candidatos = () => {
                 throw new Error(`Erro ao negar candidato: ${errorText}`);
             }
     
-            // Atualiza a lista de candidatos, removendo o candidato negado
             setCandidatos(prev => prev.filter(candidato => candidato.id_candidato !== id_candidato));
     
-            // Remove do conjunto de aceitos
             setCandidatosAceitos(prev => {
                 const newSet = new Set(prev);
                 newSet.delete(id_candidato);
@@ -114,12 +126,9 @@ const Candidatos = () => {
         }
     };
     
-    
-
     return (
         <div className="container">
             <Sidebar />
-
             <div className="content">
                 <div className="title">Candidatos</div>
                 <div className="title-line"></div>
@@ -133,7 +142,6 @@ const Candidatos = () => {
                                 <img src={candidato.foto || 'default-image-url.jpg'} alt="Foto de Perfil" />
                                 <div className="candidate-name">{candidato.candidato || 'Candidato Indefinido'}</div>
 
-                                {/* Verifica se o candidato já foi aceito */}
                                 {candidato.escolhido ? (
                                     <div style={{ color: 'green' }}>Contratado</div>
                                 ) : (
