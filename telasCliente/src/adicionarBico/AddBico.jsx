@@ -148,7 +148,7 @@ const AddBico = () => {
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Horário Limite</label>
+                            <label>Horário Final</label>
                             <input type='time' name='horario_limite' value={formData.horario_limite} onChange={handleInputChange} />
                             {erros.horario_limite && <span className="error">{erros.horario_limite}</span>}
                         </div>

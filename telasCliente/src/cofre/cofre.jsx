@@ -17,8 +17,8 @@ const Cofre = () => {
         cpf: '',
         apelido: ''
     });
-    const [idCliente, setIdCliente] = useState(null);  
-    const [isCardSaved, setIsCardSaved] = useState(false); 
+    const [idCliente, setIdCliente] = useState(null);
+    const [isCardSaved, setIsCardSaved] = useState(false);
 
     const caixas = [
         { nome: 'Maria Clara', cargo: 'Assistente Administrativo', valor: 'R$ 100,00', data: '01/01/2023' },
@@ -43,20 +43,23 @@ const Cofre = () => {
 
     useEffect(() => {
         const id = localStorage.getItem('id_cliente');
-        console.log('ID do cliente recuperado:', id); 
+        console.log('ID do cliente recuperado:', id);
         if (id) {
-            setIdCliente(id);  
-            if (isCardSaved) {
-                fetchCartao(id);
-            }
+            setIdCliente(id);
         } else {
             console.error('ID do cliente não encontrado no localStorage');
         }
-    }, [idCliente, isCardSaved]); 
-   
+    }, []);  // Execute this effect only once when the component mounts
+
+    useEffect(() => {
+        if (idCliente && !cartaoCadastrado) {
+            fetchCartao(idCliente);
+        }
+    }, [idCliente, cartaoCadastrado]);  // Run whenever idCliente or cartaoCadastrado changes
+
     const fetchCartao = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:8080/2.0/touccan/usuario/cartao/${id}`);
+            const response = await axios.get(`http://localhost:8080/2.0/touccan/cliente/cartao/${id}`);
             const cartao = response.data;
             if (cartao) {
                 setCartaoCadastrado(true);
@@ -76,42 +79,20 @@ const Cofre = () => {
         }
     };
 
-    const formatNumeroCartao = (value) => {
-        return value.replace(/\D/g, '').slice(0, 16); 
-    };
-
-    const formatValidade = (value) => {
-        return value
-            .replace(/\D/g, '') 
-            .replace(/(\d{2})(\d)/, '$1/$2') 
-            .slice(0, 5); 
-    };
-
-    const formatCVV = (value) => {
-        return value.replace(/\D/g, '').slice(0, 3); 
-    };
-
-    const formatCPF = (value) => {
-        return value.replace(/\D/g, '').slice(0, 11); 
-    };
-
-    const formatData = (value) => {
-        return value
-            .replace(/\D/g, '') 
-            .replace(/(\d{2})(\d)/, '$1/$2') 
-            .replace(/\/(\d{2})(\d)/, '/$1/$2') 
-            .slice(0, 7); 
-    };
-
+    const formatNumeroCartao = (value) => value.replace(/\D/g, '').slice(0, 16);
+    const formatValidade = (value) => value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
+    const formatCVV = (value) => value.replace(/\D/g, '').slice(0, 3);
+    const formatCPF = (value) => value.replace(/\D/g, '').slice(0, 11);
+    const formatData = (value) => value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').replace(/\/(\d{2})(\d)/, '/$1/$2').slice(0, 7);
     const formatCNPJorCPF = (value) => {
         const onlyNumbers = value.replace(/\D/g, '');
-        if (onlyNumbers.length <= 11) { 
+        if (onlyNumbers.length <= 11) {
             return onlyNumbers
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
                 .slice(0, 14);
-        } else { 
+        } else {
             return onlyNumbers
                 .replace(/(\d{2})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d)/, '$1.$2')
@@ -126,28 +107,25 @@ const Cofre = () => {
             console.error('ID do cliente não encontrado');
             return;
         }
-    
+
         const cartaoData = {
             numero: formatNumeroCartao(formData.numero),
             validade: formatValidade(formData.validade),
             cvv: formatCVV(formData.cvv),
             nome_titular: formData.nome_titular,
-            cpf: formatCPF(formData.cpf), 
+            cpf: formatCPF(formData.cpf),
             apelido: formData.apelido,
-            id_cliente: idCliente  
+            id_cliente: idCliente
         };
-        
+
         console.log('Dados a serem enviados:', cartaoData);
-        
-    
-        console.log('Dados a serem enviados:', cartaoData); 
-    
-        const url = cartaoCadastrado 
-        ? `http://localhost:8080/2.0/touccan/cliente/cartao/${idCliente}` 
-        : 'http://localhost:8080/2.0/touccan/usuario/cartao';
-    
-        const method = cartaoCadastrado ? 'post' : '';
-    
+
+        const url = cartaoCadastrado
+            ? `http://localhost:8080/2.0/touccan/cliente/cartao/${idCliente}`
+            : 'http://localhost:8080/2.0/touccan/cliente/cartao';
+
+        const method = cartaoCadastrado ? 'PUT' : 'POST';
+
         try {
             const response = await axios({
                 method: method,
@@ -156,23 +134,27 @@ const Cofre = () => {
             });
             console.log('Resposta da requisição:', response);
             setIsCardSaved(true);
+            setCartaoCadastrado(true); // This triggers the 'GET' call next time
             setNotificationVisible(true);
-            setCartaoCadastrado(true);
             setTimeout(() => {
                 setNotificationVisible(false);
                 setIsEditing(false);
             }, 3000);
+
+            // Fetch the updated card info after saving
+            fetchCartao(idCliente);
+
         } catch (error) {
             console.error('Erro ao salvar o cartão:', error.response || error.message);
         }
     };
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === 'validade') {
             setFormData({ ...formData, [name]: formatData(value) });
         } else if (name === 'cpf') {
-            setFormData({ ...formData, [name]: formatCNPJorCPF(value) }); 
+            setFormData({ ...formData, [name]: formatCNPJorCPF(value) });
         } else {
             setFormData({ ...formData, [name]: value });
         }
@@ -208,8 +190,12 @@ const Cofre = () => {
                             <div className="caixa-cartao">
                                 <img src="/cartao.png" className="icon-cartao" alt="Ícone do Cartão" />
                                 <div className="detalhes-cartao">
-                                    <div className="titulo-detalhe">Apelido • Débito</div>
-                                    <div className="subtitulo-detalhe">••••7865</div>
+                                    <div className="titulo-detalhe">
+                                        {formData.apelido || 'Apelido não definido'} • Débito
+                                    </div>
+                                    <div className="subtitulo-detalhe">
+                                        {formData.numero ? `•••• ${formData.numero.slice(-4)}` : '•••• ****'}
+                                    </div>
                                 </div>
                             </div>
                         ) : (

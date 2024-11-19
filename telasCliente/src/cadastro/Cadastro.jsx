@@ -204,7 +204,7 @@ function Cadastro() {
       </div>
 
       <div className="app-container">
-        <h1>Cadastro</h1>
+        
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div style={{ flex: 1, marginRight: '230px' }}>
