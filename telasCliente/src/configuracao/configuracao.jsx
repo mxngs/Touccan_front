@@ -26,7 +26,7 @@ const Configuracao = () => {
             alert('ID do cliente não encontrado');
             return;
         }
-
+    
         try {
             const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`);
             if (response.ok) {
@@ -35,13 +35,16 @@ const Configuracao = () => {
                 setFormData(data.cliente);
                 setIsPremium(data.cliente.premium);
             } else {
+                const errorData = await response.json();
+                console.error('Erro ao buscar dados:', errorData); // Log detalhado do erro
                 alert('Erro ao buscar dados do cliente');
             }
         } catch (error) {
-            console.error('Erro ao buscar dados:', error);
+            console.error('Erro ao buscar dados:', error); // Log do erro completo
             alert('Erro ao buscar dados do cliente');
         }
     };
+    
 
     const toggleView = (view) => {
         setCurrentView(view);
@@ -115,25 +118,25 @@ const Configuracao = () => {
 
     const handleSaveChanges = async () => {
         if (!validateFormData()) return;
-
+    
         const id = localStorage.getItem("id_cliente");
         if (!id) {
             alert('ID do cliente não encontrado');
             return;
         }
-
+    
         try {
-            delete formData.id
-            console.log(formData);
-
-            const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/${id}`, {
+            // Garantir que o CEP seja uma string no corpo da requisição
+            const updatedFormData = { ...formData, cep: formData.cep.toString() };
+    
+            const response = await fetch(`http://localhost:8080/2.0/touccan/infos/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ formData }),
+                body: JSON.stringify(updatedFormData),  // Aqui enviamos os dados com o CEP garantido como string
             });
-
+    
             if (response.ok) {
                 const updatedData = await response.json();
                 alert('Dados atualizados com sucesso!');
@@ -148,7 +151,7 @@ const Configuracao = () => {
             alert('Erro ao salvar as alterações.');
         }
     };
-
+    
     useEffect(() => {
         fetchUserData();
     }, []);

@@ -18,7 +18,7 @@ function Historico() {
   
   const fetchData = async (id) => {
     try {
-      const response = await fetch(`${baseUrl}/bico`, {
+      const response = await fetch(`${baseUrl}bico/pendente/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_cliente: id }),
@@ -30,7 +30,7 @@ function Historico() {
 
       const data = await response.json();
       console.log('Dados recebidos:', data);
-      setAnuncios(data.bico || []); // Atualiza o estado com os títulos dos anúncios
+      setAnuncios(data.bico || []); 
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
     } finally {
