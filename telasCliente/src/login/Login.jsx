@@ -75,7 +75,7 @@ function Login() {
       </div>
 
       <div className="app-container-login">
-        <h1>Login</h1>
+        {/* <h1 className='login-title'>Login</h1> */}
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div className='input-div-login'>

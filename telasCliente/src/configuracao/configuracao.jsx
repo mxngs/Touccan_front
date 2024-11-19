@@ -9,11 +9,15 @@ const Configuracao = () => {
     const [currentView, setCurrentView] = useState('image');
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
-    const [showConfetti, setShowConfetti] = useState(false);  // Para exibir os confetes
+    const [showConfetti, setShowConfetti] = useState(false);
 
     const handleLogout = () => {
-        localStorage.removeItem("id_cliente");
-        window.location.href = '/';
+
+        const confirmed = window.confirm('Tem certeza de que deseja sair?');
+        if (confirmed) {
+            localStorage.removeItem("id_cliente");
+            window.location.href = '/';
+        }
     };
 
     const fetchUserData = async () => {
@@ -49,50 +53,49 @@ const Configuracao = () => {
             alert('ID do cliente não encontrado');
             return;
         }
-    
-        // Confirmar a ação com o usuário antes de proceder
+
+
         const confirmed = window.confirm(
-            isPremium 
-            ? "Tem certeza que deseja cancelar sua assinatura Premium?" 
-            : "Tem certeza que deseja se tornar Premium?"
+            isPremium
+                ? "Tem certeza que deseja cancelar sua assinatura Premium?"
+                : "Tem certeza que deseja se tornar Premium?"
         );
-        
+
         if (!confirmed) return;
-    
-        // Atualiza o status Premium para 1 ou 0
-        const newPremiumStatus = isPremium ? 0 : 1;  // 0 para cancelar, 1 para se tornar Premium
+
+
+        const newPremiumStatus = isPremium ? 0 : 1;
         setIsPremium(newPremiumStatus);
-    
+
         try {
-            // Envia a solicitação para a API para atualizar o status Premium
+
             const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/premium/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ premium: newPremiumStatus }),  // Envia 0 ou 1 dependendo da ação
+                body: JSON.stringify({ premium: newPremiumStatus }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error('Erro ao atualizar status Premium:', errorData);
                 alert('Erro ao atualizar status Premium. Detalhes: ' + errorData.message);
-                setIsPremium(!newPremiumStatus);  // Reverte o estado em caso de falha
+                setIsPremium(!newPremiumStatus);
             } else {
                 alert(newPremiumStatus === 1 ? 'Agora você é Premium!' : 'Premium cancelado!');
                 if (newPremiumStatus === 1) {
-                    // Exibe a animação de confetes quando se tornar Premium
                     setShowConfetti(true);
-                    setTimeout(() => setShowConfetti(false), 3000);  // Confetes por 3 segundos
+                    setTimeout(() => setShowConfetti(false), 10000); 
                 }
             }
         } catch (error) {
             console.error('Erro ao atualizar o status Premium:', error);
             alert('Erro na atualização. Tente novamente.');
-            setIsPremium(!newPremiumStatus);  // Reverte o estado em caso de erro
+            setIsPremium(!newPremiumStatus);
         }
     };
-    
+
 
     const validateFormData = () => {
         const requiredFields = ['nome_fantasia', 'telefone', 'email', 'cep'];
@@ -153,7 +156,7 @@ const Configuracao = () => {
     return (
         <div className="container">
             <Sidebar toggleView={toggleView} />
-            
+
             <div className="cards-panel">
                 <div className="card" onClick={() => toggleView('account')}>
                     <div className="card-content">
@@ -205,7 +208,7 @@ const Configuracao = () => {
             <div className="separator"></div>
 
             <div className="image-panel" style={{ display: currentView === 'image' ? 'flex' : 'none' }}>
-                <img src="./logo - preto.png" alt="Descrição da Imagem" className="logo-image" />
+                <img src="./img/tucano.png" alt="Descrição da Imagem" className="logo-image" />
                 <div className="image-description">O que deseja acessar?</div>
             </div>
 
@@ -244,6 +247,7 @@ const Configuracao = () => {
                                 </div>
                                 <div className="info">
                                     <label>CEP:</label>
+                                    <br />
                                     <input
                                         type="text"
                                         name="cep"
@@ -264,21 +268,30 @@ const Configuracao = () => {
                             </div>
                         )}
                     </div>
-                    <button onClick={handleLogout}>Sair</button>
+                    <div className="logout-icon" onClick={handleLogout}>
+                        <img src="./img/sair.png" alt="Sair" className="logout-img" />
+                    </div>
                 </div>
             )}
 
             {currentView === 'premium' && (
                 <div className="premium-details">
-                    <h2 className="account-title">Serviço Premium</h2>
+                    <h2 className="account-title">Vire Premium já!</h2>
                     <div className="premium-content">
-                        <p>O serviço premium permite acesso exclusivo a novos recursos.</p>
-                        <button onClick={togglePremium}>
-                            {isPremium ? 'Cancelar Premium' : 'Tornar-se Premium'}
+                        <div className="premium-description">
+                            <img src="./img/premium.png" alt="Coroa" className="premium-icon" />
+                            <p>Deseja sempre estar em primeiro nos anúncios? Assine já, para ter prioridade sempre.</p>
+                            <p><strong>Apenas por R$15,00</strong></p>
+                            <p className="premium-note">Valor cobrado mensalmente<br />Cancele quando quiser</p>
+                        </div>
+                        <button className="premium-button" onClick={togglePremium}>
+                            {isPremium ? 'Cancelar Premium' : 'Me tornar Premium'}
                         </button>
                     </div>
                 </div>
             )}
+
+
 
             {currentView === 'security' && (
                 <div className="security-settings">
@@ -310,7 +323,7 @@ const Configuracao = () => {
                         <div className="contato">E-mail para contato</div>
                         <div className="info-value">contato.touccan@gmail.com</div>
                         <div className="info-title">Encontrou algum problema? reporte para nós</div>
-                        <textarea id="support-message"  rows="4" placeholder="Digite sua mensagem aqui..."></textarea>
+                        <textarea className='suporte' id="support-message" rows="4" placeholder="Digite sua mensagem aqui..."></textarea>
                         <div className="character-count">0/500 caracteres</div>
                         <button className="send-button">Enviar Reporte</button>
                     </div>

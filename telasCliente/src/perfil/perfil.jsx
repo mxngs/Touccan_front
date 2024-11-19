@@ -6,8 +6,9 @@ import { AiOutlinePlus } from 'react-icons/ai';
 const Perfil = () => {
   const [mudarTab, setMudarTab] = useState('sobre');
   const [dadosCliente, setDadosCliente] = useState(null);
-  const [endereco, setEndereco] = useState(null); // Inicialize como null
+  const [endereco, setEndereco] = useState(null);
   const [anuncios, setAnuncios] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -27,8 +28,9 @@ const Perfil = () => {
           setDadosCliente(cliente);
           setEmail(cliente.email);
           setTelefone(cliente.telefone);
-          fetchEndereco(cliente.cep); // Tenta buscar o endereço
+          fetchEndereco(cliente.cep);
           fetchAnuncios(id);
+          fetchFeedbacks(id);
         }
       }
     } catch (error) {
@@ -36,7 +38,31 @@ const Perfil = () => {
     }
   };
 
-  // Função para buscar o endereço
+  const fetchFeedbacks = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/2.0/touccan/feedback/usuario/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Feedbacks recebidos:', data.feedback);
+
+        if (Array.isArray(data.feedback)) {
+          setFeedbacks(data.feedback);
+        } else {
+          console.warn('A resposta da API não contém um array de feedbacks');
+          setFeedbacks([]);
+        }
+      } else {
+        console.error('Erro ao buscar feedbacks:', response.statusText);
+        setFeedbacks([]);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar feedbacks:', error);
+      setFeedbacks([]);
+    }
+  };
+
+
+
   const fetchEndereco = async (cep) => {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
@@ -52,7 +78,7 @@ const Perfil = () => {
       setEndereco(enderecoData);
     } catch (error) {
       console.error('Erro ao obter o endereço:', error.message);
-      setEndereco(undefined); // Em caso de erro, setar como undefined
+      setEndereco(undefined);
     }
   };
 
@@ -102,15 +128,15 @@ const Perfil = () => {
         });
 
         const result = await response.json();
-        fotoURL = result.secure_url; 
-        await saveClienteData(id, fotoURL); 
+        fotoURL = result.secure_url;
+        await saveClienteData(id, fotoURL);
         setDadosCliente((prev) => ({ ...prev, foto: fotoURL }));
       } catch (error) {
         console.error('Erro ao carregar a foto para o Cloudinary:', error);
         alert('Erro ao carregar a foto, tente novamente.');
       }
     } else {
-      await saveClienteData(id, fotoURL); 
+      await saveClienteData(id, fotoURL);
     }
   };
 
@@ -127,7 +153,7 @@ const Perfil = () => {
       cep: dadosCliente.cep,
       senha: dadosCliente.senha,
       premium: dadosCliente.premium,
-      foto: fotoURL  
+      foto: fotoURL
     };
 
     try {
@@ -139,7 +165,7 @@ const Perfil = () => {
 
       if (response.ok) {
         console.log('Dados atualizados com sucesso');
-        setIsEditing(false); 
+        setIsEditing(false);
       } else {
         const errorText = await response.text();
         console.error('Erro ao atualizar dados:', response.statusText, errorText);
@@ -243,10 +269,12 @@ const Perfil = () => {
               {anuncios.length > 0 ? (
                 anuncios.map((anuncio) => (
                   <div className="job-card-perfil" key={anuncio.id}>
-                    <h3>{anuncio.titulo}</h3>
-                    <p>{anuncio.descricao}</p>
-                    <p>Local: {anuncio.cliente?.nome_fantasia || 'Não disponível'}</p>
-                    <p>Preço: R$ {anuncio.salario.toFixed(2)}</p>
+                    <div className="job-info">
+                      <h3>{anuncio.titulo}</h3>
+                      <p>{anuncio.descricao}</p>
+                      <p>Local: {anuncio.cliente?.nome_fantasia || 'Não disponível'}</p>
+                      <p>Preço: R$ {anuncio.salario.toFixed(2)}</p>
+                    </div>
                   </div>
                 ))
               ) : (
@@ -258,11 +286,24 @@ const Perfil = () => {
 
         {mudarTab === 'feedback' && (
           <div className="tab-content" id="feedback-perfil-cliente">
-            <div className="teste-perfil-cliente">
-              <span>funciona funciona funciona funciona</span>
+            <div className="feedbacks-list">
+              {feedbacks.length > 0 ? (
+                feedbacks.map((feedback) => (
+                  <div className="feedback-card" key={feedback.id}>
+                    <p><strong>Denúncia:</strong> {feedback.denuncia || 'Nenhuma denúncia registrada'}</p>
+                    <p><strong>Avaliação:</strong> {feedback.avaliacao || 'Nenhuma avaliação registrada'}</p>
+                    <p><strong>Id Bico:</strong> {feedback.id_bico}</p>
+                    <p><strong>Id Cliente:</strong> {feedback.id_cliente}</p>
+                    <p><strong>Id Usuário:</strong> {feedback.id_usuario}</p>
+                  </div>
+                ))
+              ) : (
+                <p>Nenhum feedback encontrado. Verifique se há avaliações ou denúncias feitas por clientes.</p>
+              )}
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

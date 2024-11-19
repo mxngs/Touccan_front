@@ -12,6 +12,7 @@ import Candidatos from './candidatos/candidatos.jsx'
 import Configuracao from './configuracao/configuracao.jsx'
 import Notificacao from './notificacao/notificacao.jsx'
 import Historico from './historico/historico.jsx'
+import Mensagem from './mensagem/mensagens.jsx'
 
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
                     <Route path="configuracao" element={< Configuracao />} />
                     <Route path="notificacao" element={< Notificacao />} />
                     <Route path="historico" element={< Historico />} />
+                    <Route path="mensagem" element={< Mensagem />} />
                   <Route path="candidatos" element={< Candidatos />} />
                     
                 </Route>

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Sidebar from '../components/Sidebar.jsx';
 import './App.css';
 
 const Cofre = () => {
     const [startIndex, setStartIndex] = useState(0);
-    const maxNotifications = 4; 
+    const maxNotifications = 4;
     const [isEditing, setIsEditing] = useState(false);
     const [notificationVisible, setNotificationVisible] = useState(false);
     const [cartaoCadastrado, setCartaoCadastrado] = useState(false);
@@ -16,6 +17,8 @@ const Cofre = () => {
         cpf: '',
         apelido: ''
     });
+    const [idCliente, setIdCliente] = useState(null);  
+    const [isCardSaved, setIsCardSaved] = useState(false); 
 
     const caixas = [
         { nome: 'Maria Clara', cargo: 'Assistente Administrativo', valor: 'R$ 100,00', data: '01/01/2023' },
@@ -38,48 +41,138 @@ const Cofre = () => {
         if (e.target === e.currentTarget) setIsEditing(false);
     };
 
-    const handleSave = () => {
-        setNotificationVisible(true);
-        setCartaoCadastrado(true);
-        setTimeout(() => {
-            setNotificationVisible(false);
-            setIsEditing(false);
-        }, 3000);
+    useEffect(() => {
+        const id = localStorage.getItem('id_cliente');
+        console.log('ID do cliente recuperado:', id); 
+        if (id) {
+            setIdCliente(id);  
+            if (isCardSaved) {
+                fetchCartao(id);
+            }
+        } else {
+            console.error('ID do cliente não encontrado no localStorage');
+        }
+    }, [idCliente, isCardSaved]); 
+   
+    const fetchCartao = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/2.0/touccan/usuario/cartao/${id}`);
+            const cartao = response.data;
+            if (cartao) {
+                setCartaoCadastrado(true);
+                setFormData({
+                    numero: cartao.numero,
+                    validade: cartao.validade,
+                    cvv: cartao.cvv,
+                    nome_titular: cartao.nome_titular,
+                    cpf: cartao.cpf,
+                    apelido: cartao.apelido
+                });
+            } else {
+                setCartaoCadastrado(false);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar o cartão:', error);
+        }
+    };
+
+    const formatNumeroCartao = (value) => {
+        return value.replace(/\D/g, '').slice(0, 16); 
+    };
+
+    const formatValidade = (value) => {
+        return value
+            .replace(/\D/g, '') 
+            .replace(/(\d{2})(\d)/, '$1/$2') 
+            .slice(0, 5); 
+    };
+
+    const formatCVV = (value) => {
+        return value.replace(/\D/g, '').slice(0, 3); 
+    };
+
+    const formatCPF = (value) => {
+        return value.replace(/\D/g, '').slice(0, 11); 
     };
 
     const formatData = (value) => {
         return value
-            .replace(/\D/g, '') // Remove todos os caracteres não numéricos
-            .replace(/(\d{2})(\d)/, '$1/$2') // Adiciona a barra após os 2 primeiros dígitos
-            .replace(/\/(\d{2})(\d)/, '/$1/$2') // Adiciona a barra após os 2 dígitos seguintes
-            .slice(0, 7); // Limita a 7 caracteres
+            .replace(/\D/g, '') 
+            .replace(/(\d{2})(\d)/, '$1/$2') 
+            .replace(/\/(\d{2})(\d)/, '/$1/$2') 
+            .slice(0, 7); 
     };
 
     const formatCNPJorCPF = (value) => {
         const onlyNumbers = value.replace(/\D/g, '');
-
-        if (onlyNumbers.length <= 11) { // CPF
+        if (onlyNumbers.length <= 11) { 
             return onlyNumbers
-                .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona ponto
-                .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona ponto
-                .replace(/(\d{3})(\d{1,2})$/, '$1-$2') // Adiciona traço
-                .slice(0, 14); // Limita a 14 caracteres
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+                .slice(0, 14);
         } else { 
             return onlyNumbers
-                .replace(/(\d{2})(\d)/, '$1.$2') // Adiciona ponto
-                .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona ponto
-                .replace(/(\d{3})(\d{1,4})$/, '$1/$2') // Adiciona barra
-                .replace(/(\d{2})(\d{1,2})$/, '$1-$2') // Adiciona traço
-                .slice(0, 18); // Limita a 18 caracteres
+                .replace(/(\d{2})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d{1,4})$/, '$1/$2')
+                .replace(/(\d{2})(\d{1,2})$/, '$1-$2')
+                .slice(0, 18);
         }
     };
 
+    const handleSave = async () => {
+        if (!idCliente) {
+            console.error('ID do cliente não encontrado');
+            return;
+        }
+    
+        const cartaoData = {
+            numero: formatNumeroCartao(formData.numero),
+            validade: formatValidade(formData.validade),
+            cvv: formatCVV(formData.cvv),
+            nome_titular: formData.nome_titular,
+            cpf: formatCPF(formData.cpf), 
+            apelido: formData.apelido,
+            id_cliente: idCliente  
+        };
+        
+        console.log('Dados a serem enviados:', cartaoData);
+        
+    
+        console.log('Dados a serem enviados:', cartaoData); 
+    
+        const url = cartaoCadastrado 
+        ? `http://localhost:8080/2.0/touccan/cliente/cartao/${idCliente}` 
+        : 'http://localhost:8080/2.0/touccan/usuario/cartao';
+    
+        const method = cartaoCadastrado ? 'post' : '';
+    
+        try {
+            const response = await axios({
+                method: method,
+                url: url,
+                data: cartaoData
+            });
+            console.log('Resposta da requisição:', response);
+            setIsCardSaved(true);
+            setNotificationVisible(true);
+            setCartaoCadastrado(true);
+            setTimeout(() => {
+                setNotificationVisible(false);
+                setIsEditing(false);
+            }, 3000);
+        } catch (error) {
+            console.error('Erro ao salvar o cartão:', error.response || error.message);
+        }
+    };
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === 'validade') {
             setFormData({ ...formData, [name]: formatData(value) });
-        } else if (name === 'cnpjCpf') {
-            setFormData({ ...formData, [name]: formatCNPJorCPF(value) });
+        } else if (name === 'cpf') {
+            setFormData({ ...formData, [name]: formatCNPJorCPF(value) }); 
         } else {
             setFormData({ ...formData, [name]: value });
         }
@@ -91,7 +184,7 @@ const Cofre = () => {
 
             <div className="content">
                 <h1 className="titulo">Cofre</h1>
-                <div className="linha-laranja"></div> 
+                <div className="linha-laranja"></div>
 
                 <div className="container">
                     <div className="caixas-container" id="caixas-container">
@@ -141,11 +234,11 @@ const Cofre = () => {
                             <div className="campos">
                                 <input
                                     type="text"
-                                    name="numeroCartao"
+                                    name="numero"
                                     placeholder="Número do cartão"
                                     maxLength={16}
                                     required
-                                    value={formData.numeroCartao}
+                                    value={formData.numero}
                                     onChange={handleChange}
                                 />
                                 <input
@@ -169,20 +262,20 @@ const Cofre = () => {
                             </div>
                             <input
                                 type="text"
-                                name="nomeTitular"
+                                name="nome_titular"
                                 placeholder="Nome do titular"
                                 maxLength={50}
                                 required
-                                value={formData.nomeTitular}
+                                value={formData.nome_titular}
                                 onChange={handleChange}
                             />
                             <input
                                 type="text"
-                                name="cnpjCpf"
+                                name="cpf"
                                 placeholder="CNPJ/CPF"
                                 maxLength={14}
                                 required
-                                value={formData.cnpjCpf}
+                                value={formData.cpf}
                                 onChange={handleChange}
                             />
                             <input
