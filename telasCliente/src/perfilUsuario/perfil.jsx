@@ -3,14 +3,14 @@ import './App.css';
 import Sidebar from '../components/Sidebar.jsx';
 import { AiOutlinePlus } from 'react-icons/ai';
 
-const Perfil = () => {
+const PerfilUsuario = () => {
   const [mudarTab, setMudarTab] = useState('sobre');
   const [dadosCliente, setDadosCliente] = useState(null);
-  const [endereco, setEndereco] = useState(null);
+  const [formacao, setFormacao] = useState(null);
   const [anuncios, setAnuncios] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
+  const [biografia, setBiografia] = useState('');
+  const [habilidades, setHabilidades] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [imageFile, setImageFile] = useState(null);
 
@@ -20,7 +20,7 @@ const Perfil = () => {
 
   const fetchDadosCliente = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/${id}`);
+      const response = await fetch(`http://localhost:8080/2.0/touccan/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
         if (data && data.cliente) {
@@ -38,33 +38,15 @@ const Perfil = () => {
     }
   };
 
-  const juntar = function (feedback) {
-    let ava = feedback.avaliacoes
-    let den = feedback.denuncias
-    let feedTotal = []
-
-    for (let index = 0; index < ava.length; index++) {
-      const element = ava[index];
-      feedTotal.push(element)
-    }
-    for (let index = 0; index < den.length; index++) {
-      const element = den[index];
-      feedTotal.push(element)
-    }
-    
-    return feedTotal
-  }
-
   const fetchFeedbacks = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/feedback/cliente/${id}`);
+      const response = await fetch(`http://localhost:8080/2.0/touccan/feedback/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
-        let feedback = juntar(data)
-        console.log('Feedbacks recebidos:', feedback);
+        console.log('Feedbacks recebidos:', data.feedback);
 
-        if (Array.isArray(feedback)) {
-          setFeedbacks(feedback);
+        if (Array.isArray(data.feedback)) {
+          setFeedbacks(data.feedback);
         } else {
           console.warn('A resposta da API não contém um array de feedbacks');
           setFeedbacks([]);
@@ -78,6 +60,7 @@ const Perfil = () => {
       setFeedbacks([]);
     }
   };
+
 
 
   const fetchEndereco = async (cep) => {
@@ -119,7 +102,7 @@ const Perfil = () => {
   };
 
   useEffect(() => {
-    const id = localStorage.getItem("id_cliente");
+    const id = localStorage.getItem("id_usuario");
     if (id) fetchDadosCliente(id);
   }, []);
 
@@ -202,9 +185,9 @@ const Perfil = () => {
   };
 
   return (
-    <div className="tela-perfil-cliente">
+    <div className="tela-perfil-user">
       <Sidebar />
-      <div className="infos-perfil-cliente">
+      <div className="infos-perfil-user">
         {isEditing && (
           <div className="AdcFoto">
             <label htmlFor="upload-image" className="upload-icon">
@@ -229,7 +212,7 @@ const Perfil = () => {
           ) : 'Carregando...'}
         </div>
 
-        <span className="nome-perfil-cliente">
+        <span className="nome-perfil-user">
           {dadosCliente ? dadosCliente.nome_fantasia : 'Carregando...'}
         </span>
 
@@ -254,39 +237,43 @@ const Perfil = () => {
               {isEditing ? 'Salvar' : 'Editar'}
             </button>
 
-            <div className="inputs-perfil-cliente">
-              <div className="endereco-perfil-cliente">
+            <div className="inputs-perfil-user">
+              <div className="formacao-perfil-usuario">
                 <input
-                  type="text"
+                  type="text" 
                   disabled
-                  value={endereco ? `Endereço: ${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade} - ${endereco.uf}` : 'Indefinido'}
+                  value={endereco ? `Formação: ${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade} - ${endereco.uf}` : 'Indefinido'}
                 />
               </div>
 
-              <div className="contatos-perfil-cliente">
+              <div className="biografia-perfil-usuario">
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="E-mail"
-                  disabled={!isEditing}
+                  type="text"
+                  value={biografia}
+                  placeholder="Biografia"
+                  disabled
                 />
               </div>
               <input
+                type="text"
+                value={habilidades}
+                placeholder="Habilidades"
+                disabled
+              />
+               <input
                 type="tel"
                 value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
                 placeholder="Telefone"
-                disabled={!isEditing}
+                disabled
               />
             </div>
 
-            <div className="anuncios-perfil-cliente">
+            <div className="anuncios-perfil-usuario">
               <span>Anúncios</span>
               {anuncios.length > 0 ? (
                 anuncios.map((anuncio) => (
                   <div className="job-card-perfil" key={anuncio.id}>
-                    <div className="job-info">
+                    <div className="job-info-user">
                       <h3>{anuncio.titulo}</h3>
                       <p>{anuncio.descricao}</p>
                       <p>Local: {anuncio.cliente?.nome_fantasia || 'Não disponível'}</p>
@@ -302,11 +289,11 @@ const Perfil = () => {
         )}
 
         {mudarTab === 'feedback' && (
-          <div className="tab-content" id="feedback-perfil-cliente">
-            <div className="feedbacks-list">
+          <div className="tab-content" id="feedback-perfil-usuario">
+            <div className="feedbacks-list-user">
               {feedbacks.length > 0 ? (
                 feedbacks.map((feedback) => (
-                  <div className="feedback-card" key={feedback.id}>
+                  <div className="feedback-card-user" key={feedback.id}>
                     <p><strong>Denúncia:</strong> {feedback.denuncia || 'Nenhuma denúncia registrada'}</p>
                     <p><strong>Avaliação:</strong> {feedback.avaliacao || 'Nenhuma avaliação registrada'}</p>
                     <p><strong>Id Bico:</strong> {feedback.id_bico}</p>
@@ -326,4 +313,4 @@ const Perfil = () => {
   );
 };
 
-export default Perfil;
+export default PerfilUsuario;

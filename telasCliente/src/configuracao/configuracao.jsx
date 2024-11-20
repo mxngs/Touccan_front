@@ -28,7 +28,7 @@ const Configuracao = () => {
         }
     
         try {
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`);
+            const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setUserData(data.cliente);
@@ -125,31 +125,32 @@ const Configuracao = () => {
             return;
         }
     
-        try {
-            // Garantir que o CEP seja uma string no corpo da requisição
-            const updatedFormData = { ...formData, cep: formData.cep.toString() };
+    try {
+        const updatedFormData = { ...formData, cep: formData.cep.toString() };
     
-            const response = await fetch(`http://localhost:8080/2.0/touccan/infos/cliente/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedFormData),  // Aqui enviamos os dados com o CEP garantido como string
-            });
+        const response = await fetch(`http://localhost:8080/2.0/touccan/infos/cliente/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedFormData),
+        });
     
-            if (response.ok) {
-                const updatedData = await response.json();
-                alert('Dados atualizados com sucesso!');
-                setUserData(updatedData.cliente);
-                setIsEditing(false);
-            } else {
-                const errorData = await response.json();
-                alert('Erro ao salvar alterações. Detalhes: ' + errorData.message);
-            }
-        } catch (error) {
-            console.error('Erro ao salvar as alterações:', error);
-            alert('Erro ao salvar as alterações.');
+        if (response.ok) {
+            const updatedData = await response.json();
+            setUserData(updatedData.cliente); // Atualiza os dados no estado
+            setIsEditing(false); // Fecha o modo de edição
+            console.log('Dados atualizados com sucesso:', updatedData);
+        } else {
+            const errorData = await response.json();
+            console.error('Erro ao atualizar os dados:', errorData);
+            alert('Erro ao salvar alterações. Detalhes: ' + errorData.message);
         }
+    } catch (error) {
+        console.error('Erro ao salvar as alterações:', error);
+        alert('Erro ao salvar as alterações.');
+    }
+    
     };
     
     useEffect(() => {
