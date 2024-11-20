@@ -116,42 +116,42 @@ const Configuracao = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSaveChanges = async () => {
-        if (!validateFormData()) return;
-    
-        const id = localStorage.getItem("id_cliente");
-        if (!id) {
-            alert('ID do cliente não encontrado');
-            return;
-        }
-    
-    try {
-        const updatedFormData = { ...formData, cep: formData.cep.toString() };
-    
-        const response = await fetch(`http://localhost:8080/2.0/touccan/infos/cliente/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedFormData),
-        });
-    
-        if (response.ok) {
-            const updatedData = await response.json();
-            setUserData(updatedData.cliente); // Atualiza os dados no estado
-            setIsEditing(false); // Fecha o modo de edição
-            console.log('Dados atualizados com sucesso:', updatedData);
-        } else {
-            const errorData = await response.json();
-            console.error('Erro ao atualizar os dados:', errorData);
-            alert('Erro ao salvar alterações. Detalhes: ' + errorData.message);
-        }
-    } catch (error) {
-        console.error('Erro ao salvar as alterações:', error);
-        alert('Erro ao salvar as alterações.');
+const handleSaveChanges = async () => {
+    console.log('Botão clicado - handleSaveChanges chamado');
+    if (!validateFormData()) return;
+
+    const id = localStorage.getItem("id_cliente");
+    if (!id) {
+        alert('ID do cliente não encontrado');
+        return;
     }
+
+        try {
+            const updatedFormData = { ...formData, cep: formData.cep.toString() };
     
-    };
+            const response = await fetch(`http://localhost:8080/2.0/touccan/infos/cliente/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedFormData),
+            });
+    
+            if (response.ok) {
+                await fetchUserData(); // Sincroniza os dados atualizados
+                setIsEditing(false);
+            } else {
+                const errorData = await response.json();
+                console.error('Erro ao atualizar os dados:', errorData);
+                alert(`Erro ao salvar alterações: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Erro ao salvar as alterações:', error);
+            alert('Erro ao salvar as alterações.');
+        }
+};
+
+
     
     useEffect(() => {
         fetchUserData();
