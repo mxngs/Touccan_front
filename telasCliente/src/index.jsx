@@ -32,7 +32,7 @@ export default function App() {
                     <Route path="historico" element={< Historico />} />
                     <Route path="mensagem" element={< Mensagem />} />
                   <Route path="candidatos" element={< Candidatos />} />
-                  <Route path="perfilUsuario" element={< PerfilUsuario />} />
+                  <Route path="/perfilUsuario/:id" element={< PerfilUsuario />} />
                     
                 </Route>
             </Routes>
