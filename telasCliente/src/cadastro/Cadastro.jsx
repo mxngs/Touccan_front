@@ -172,35 +172,35 @@ function Cadastro() {
         },
         body: JSON.stringify(dadosLimpos)
       })
-      .then(response => {
-        if (!response.ok) {
-          return response.text().then(text => {
-            throw new Error(`Erro: ${response.status} - ${text}`);
+        .then(response => {
+          if (!response.ok) {
+            return response.text().then(text => {
+              throw new Error(`Erro: ${response.status} - ${text}`);
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Cadastro realizado com sucesso!',
+            text: 'Agora você pode fazer login e aproveitar os recursos.',
+            confirmButtonText: 'Ok'
           });
-        }
-        return response.json();
-      })
-      .then(data => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Cadastro realizado com sucesso!',
-          text: 'Agora você pode fazer login e aproveitar os recursos.',
-          confirmButtonText: 'Ok'
+          navigate('/');
+        })
+        .catch((error) => {
+          console.error("Erro:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao cadastrar',
+            text: error.message,
+            confirmButtonText: 'Tentar novamente'
+          });
+        })
+        .finally(() => {
+          setLoading(false);
         });
-        navigate('/');
-      })
-      .catch((error) => {
-        console.error("Erro:", error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Erro ao cadastrar',
-          text: error.message,
-          confirmButtonText: 'Tentar novamente'
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
     }
   };
   return (
@@ -215,7 +215,7 @@ function Cadastro() {
       </div>
 
       <div className="app-container">
-        
+
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div style={{ flex: 1, marginRight: '230px' }}>
@@ -317,9 +317,11 @@ function Cadastro() {
             {loading ? "Cadastrando..." : "Cadastrar"}
           </button>
         </form>
+
         <p>
-          Já possui conta? <br />
-          <Link to="/" style={{ color: '#E25401' }}>Faça seu Login</Link>
+          <Link to="/" style={{ color: '#E25401' }}>
+            Já possui conta? <br />
+            Faça seu Login</Link>
         </p>
       </div>
     </div>
