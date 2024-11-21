@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Sidebar from '../components/Sidebar.jsx';
+import Swal from 'sweetalert2'; // Importando o SweetAlert2
 import './App.css';
 
 const AddBico = () => {
@@ -80,39 +81,71 @@ const AddBico = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!idCliente) {
             console.error("ID do cliente não encontrado para o envio");
             return;
         }
+    
 
-        if (validateForm()) {
-            const dadosLimpos = {
-                ...formData,
-                id_cliente: parseInt(idCliente, 10),
-            };
-
-            try {
-                console.log(dadosLimpos);
-                const response = await fetch(`${baseUrl}/bicos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(dadosLimpos),
-                });
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Anúncio criado com sucesso:', result);
-                    navigate('/home'); 
-                } else {
-                    console.error('Erro ao criar anúncio');
+        
+        const salarioValue = parseFloat(formData.salario);
+        if (isNaN(salarioValue)) {
+            Swal.fire({
+                title: 'Erro',
+                text: 'Por favor, insira um valor de salário válido.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    
+        const salarioComDesconto = salarioValue * 0.9;
+    
+        const confirmacao = await Swal.fire({
+            title: 'Confirmar anúncio',
+            text: `O salário informado é R$ ${salarioValue.toFixed(2)}. Após aplicar a taxa de serviço de 10%, o salário final será R$ ${salarioComDesconto.toFixed(2)}. Deseja criar o anúncio com esse salário?`,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, criar anúncio',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        });
+    
+        if (confirmacao.isConfirmed) {
+            if (validateForm()) {
+                const dadosLimpos = {
+                    ...formData,
+                    id_cliente: parseInt(idCliente, 10),
+                    salario: salarioComDesconto // Envia o salário **com o desconto de 10%** AAAA FUNCIONA
+                };
+    
+                try {
+                    console.log(dadosLimpos);
+                    const response = await fetch(`${baseUrl}/bicos`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(dadosLimpos),
+                    });
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Anúncio criado com sucesso:', result);
+                        navigate('/home');
+                    } else {
+                        console.error('Erro ao criar anúncio');
+                    }
+                } catch (error) {
+                    console.error('Erro de rede:', error);
                 }
-            } catch (error) {
-                console.error('Erro de rede:', error);
             }
+        } else {
+            
+            console.log("Usuário cancelou a criação do anúncio.");
         }
     };
+    
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -136,7 +169,7 @@ const AddBico = () => {
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Horário início</label>
+                            <label>Horário início - Espediente</label>
                             <input type='time' name='horario_inicio' value={formData.horario_inicio} onChange={handleInputChange} />
                             {erros.horario_inicio && <span className="error">{erros.horario_inicio}</span>}
                         </div>
@@ -148,7 +181,7 @@ const AddBico = () => {
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Horário Final</label>
+                            <label>Horário Final - Espediente</label>
                             <input type='time' name='horario_limite' value={formData.horario_limite} onChange={handleInputChange} />
                             {erros.horario_limite && <span className="error">{erros.horario_limite}</span>}
                         </div>

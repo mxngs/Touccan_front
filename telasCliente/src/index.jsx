@@ -14,6 +14,8 @@ import Notificacao from './notificacao/notificacao.jsx'
 import Historico from './historico/historico.jsx'
 import Mensagem from './mensagem/mensagens.jsx'
 import PerfilUsuario from './perfilUsuario/perfil.jsx'
+import MudarSenha from './mudarSenha/mudarSenha.jsx'
+import RecuperarSenha from './recuperarSenha/recuperarSenha.jsx'
 
 
 export default function App() {
@@ -33,6 +35,8 @@ export default function App() {
                     <Route path="mensagem" element={< Mensagem />} />
                   <Route path="candidatos" element={< Candidatos />} />
                   <Route path="/perfilUsuario/:id" element={< PerfilUsuario />} />
+                  <Route path="/recuperarSenha" element={< RecuperarSenha />} />
+                  <Route path="/mudarSenha" element={< MudarSenha />} />
                     
                 </Route>
             </Routes>

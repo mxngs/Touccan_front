@@ -1,35 +1,56 @@
 import React from 'react';
 import './DetalhesVaga.css';
 import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'; // Importando o SweetAlert2
 
 const DetalhesVaga = ({ anuncio, onClose }) => {
     const navigate = useNavigate();
 
-    
     const handleVerCandidatos = () => {
-       
         localStorage.setItem("id_bico", anuncio.id);
-        navigate('/candidatos'); 
+        navigate('/candidatos');
     };
 
     const handleDelete = async () => {
-        const confirmDelete = window.confirm("Você tem certeza que deseja excluir este anúncio?");
-        if (confirmDelete) {
+        // Exibir o SweetAlert de confirmação antes de excluir
+        const confirmDelete = await Swal.fire({
+            title: 'Você tem certeza?',
+            text: "Este anúncio será excluído permanentemente!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, excluir',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        });
+
+        if (confirmDelete.isConfirmed) {
             try {
                 const response = await fetch(`http://localhost:8080/2.0/touccan/bico/${anuncio.id}`, {
                     method: 'DELETE',
                 });
-    
+
                 if (response.ok) {
-                    alert("Anúncio excluído com sucesso!");
+                    Swal.fire(
+                        'Excluído!',
+                        'O anúncio foi excluído com sucesso.',
+                        'success'
+                    );
                     onClose(); 
                     navigate('/home'); 
                 } else {
-                    alert("Erro ao excluir o anúncio.");
+                    Swal.fire(
+                        'Erro!',
+                        'Não foi possível excluir o anúncio.',
+                        'error'
+                    );
                 }
             } catch (error) {
                 console.error("Erro:", error);
-                alert("Erro ao excluir o anúncio.");
+                Swal.fire(
+                    'Erro!',
+                    'Não foi possível excluir o anúncio.',
+                    'error'
+                );
             }
         }
     };

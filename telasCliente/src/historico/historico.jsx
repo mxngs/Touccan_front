@@ -15,7 +15,7 @@ function Historico() {
     else console.error('ID do cliente não encontrado no localStorage');
   }, []);
 
-  
+
   const fetchData = async (id) => {
     try {
       const response = await fetch(`${baseUrl}bico/pendente/${id}`, {
@@ -30,7 +30,7 @@ function Historico() {
 
       const data = await response.json();
       console.log('Dados recebidos:', data);
-      setAnuncios(data.bico || []); 
+      setAnuncios(data.bico || []);
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
     } finally {
@@ -41,10 +41,10 @@ function Historico() {
   return (
     <div className="histórico-container">
 
-<Sidebar />
+      <Sidebar />
 
       <h1 className="histórico-title">Histórico</h1>
-      
+
       {loading ? (
         <p className="histórico-loading">Carregando...</p>
       ) : (

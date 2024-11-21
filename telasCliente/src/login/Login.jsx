@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
 const baseUrl = 'http://localhost:8080/2.0/touccan';
 
 function Login() {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({ email: '', senha: '' });
   const [erros, setErros] = useState({});
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ function Login() {
       return;
     }
 
-    console.log('Dados enviados:', formData); 
+    console.log('Dados enviados:', formData);
 
     setLoading(true);
 
@@ -31,12 +31,12 @@ function Login() {
         body: JSON.stringify(formData),
       });
 
-      console.log('Status da resposta:', response.status); 
+      console.log('Status da resposta:', response.status);
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Dados recebidos:', data); 
-        localStorage.setItem("id_cliente", data.cliente.id); 
+        console.log('Dados recebidos:', data);
+        localStorage.setItem("id_cliente", data.cliente.id);
         navigate('/home');
 
       } else if (response.status === 401) {
@@ -44,14 +44,14 @@ function Login() {
 
       } else {
         const errorText = await response.text();
-        console.error('Erro ao fazer login:', errorText); 
+        console.error('Erro ao fazer login:', errorText);
         setErros({ mensagem: "Erro ao fazer login. Tente novamente" });
       }
 
     } catch (error) {
-      console.error('Erro de conexão:', error); 
+      console.error('Erro de conexão:', error);
       setErros({ mensagem: "Erro de conexão. Verifique sua internet e tente novamente." });
-      
+
     } finally {
       setLoading(false);
     }
@@ -111,7 +111,10 @@ function Login() {
               <span style={{ color: 'red', fontSize: '14px' }}>{erros.mensagem}</span>
             )}
 
-            <a href="#">Esqueceu sua senha?</a>
+            <Link to="/recuperarSenha">
+              <a href="#">Esqueceu sua senha?</a>
+            </Link>
+
           </div>
 
           <button type="submit" disabled={loading} style={{ marginTop: '20px' }}>
@@ -119,7 +122,7 @@ function Login() {
           </button>
         </form>
 
-        
+
         <Link to="/cadastro" style={{ marginTop: '20px', display: 'block' }}>
           Não tem uma conta? <br />
           <span>Faça seu cadastro</span>

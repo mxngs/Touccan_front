@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.jsx';
 import Confetti from 'react-confetti';
+import Swal from 'sweetalert2'; // Importação do SweetAlert2
 import './App.css';
 
 const Configuracao = () => {
@@ -11,22 +12,34 @@ const Configuracao = () => {
     const [formData, setFormData] = useState({});
     const [showConfetti, setShowConfetti] = useState(false);
 
-    const handleLogout = () => {
+    
+    const toggleView = (view) => {
+        setCurrentView(view);
+    };
 
-        const confirmed = window.confirm('Tem certeza de que deseja sair?');
-        if (confirmed) {
-            localStorage.removeItem("id_cliente");
-            window.location.href = '/';
-        }
+    const handleLogout = () => {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Você deseja realmente sair?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, sair!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem("id_cliente");
+                window.location.href = '/';
+            }
+        });
     };
 
     const fetchUserData = async () => {
         const id = localStorage.getItem("id_cliente");
         if (!id) {
-            alert('ID do cliente não encontrado');
+            Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
             return;
         }
-    
+
         try {
             const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/${id}`);
             if (response.ok) {
@@ -36,42 +49,37 @@ const Configuracao = () => {
                 setIsPremium(data.cliente.premium);
             } else {
                 const errorData = await response.json();
-                console.error('Erro ao buscar dados:', errorData); // Log detalhado do erro
-                alert('Erro ao buscar dados do cliente');
+                console.error('Erro ao buscar dados:', errorData);
+                Swal.fire('Erro', 'Erro ao buscar dados do cliente', 'error');
             }
         } catch (error) {
-            console.error('Erro ao buscar dados:', error); // Log do erro completo
-            alert('Erro ao buscar dados do cliente');
+            console.error('Erro ao buscar dados:', error);
+            Swal.fire('Erro', 'Erro ao buscar dados do cliente', 'error');
         }
-    };
-    
-
-    const toggleView = (view) => {
-        setCurrentView(view);
     };
 
     const togglePremium = async () => {
         const id = localStorage.getItem("id_cliente");
         if (!id) {
-            alert('ID do cliente não encontrado');
+            Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
             return;
         }
 
+        const confirmed = await Swal.fire({
+            title: isPremium ? "Cancelar assinatura Premium?" : "Tornar-se Premium?",
+            text: isPremium ? "Tem certeza que deseja cancelar?" : "Tem certeza que deseja se tornar Premium?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Cancelar'
+        });
 
-        const confirmed = window.confirm(
-            isPremium
-                ? "Tem certeza que deseja cancelar sua assinatura Premium?"
-                : "Tem certeza que deseja se tornar Premium?"
-        );
-
-        if (!confirmed) return;
-
+        if (!confirmed.isConfirmed) return;
 
         const newPremiumStatus = isPremium ? 0 : 1;
         setIsPremium(newPremiumStatus);
 
         try {
-
             const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/premium/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -80,31 +88,30 @@ const Configuracao = () => {
                 body: JSON.stringify({ premium: newPremiumStatus }),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Erro ao atualizar status Premium:', errorData);
-                alert('Erro ao atualizar status Premium. Detalhes: ' + errorData.message);
-                setIsPremium(!newPremiumStatus);
-            } else {
-                alert(newPremiumStatus === 1 ? 'Agora você é Premium!' : 'Premium cancelado!');
+            if (response.ok) {
+                Swal.fire('Sucesso', newPremiumStatus === 1 ? 'Agora você é Premium!' : 'Premium cancelado!', 'success');
                 if (newPremiumStatus === 1) {
                     setShowConfetti(true);
-                    setTimeout(() => setShowConfetti(false), 10000); 
+                    setTimeout(() => setShowConfetti(false), 10000);
                 }
+            } else {
+                const errorData = await response.json();
+                console.error('Erro ao atualizar status Premium:', errorData);
+                Swal.fire('Erro', `Erro ao atualizar status Premium: ${errorData.message}`, 'error');
+                setIsPremium(!newPremiumStatus);
             }
         } catch (error) {
             console.error('Erro ao atualizar o status Premium:', error);
-            alert('Erro na atualização. Tente novamente.');
+            Swal.fire('Erro', 'Erro na atualização. Tente novamente.', 'error');
             setIsPremium(!newPremiumStatus);
         }
     };
-
 
     const validateFormData = () => {
         const requiredFields = ['nome_fantasia', 'telefone', 'email', 'cep'];
         for (let field of requiredFields) {
             if (!formData[field]) {
-                alert(`O campo ${field} é obrigatório.`);
+                Swal.fire('Erro', `O campo ${field} é obrigatório.`, 'warning');
                 return false;
             }
         }
@@ -116,19 +123,18 @@ const Configuracao = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-const handleSaveChanges = async () => {
-    console.log('Botão clicado - handleSaveChanges chamado');
-    if (!validateFormData()) return;
+    const handleSaveChanges = async () => {
+        if (!validateFormData()) return;
 
-    const id = localStorage.getItem("id_cliente");
-    if (!id) {
-        alert('ID do cliente não encontrado');
-        return;
-    }
+        const id = localStorage.getItem("id_cliente");
+        if (!id) {
+            Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
+            return;
+        }
 
         try {
             const updatedFormData = { ...formData, cep: formData.cep.toString() };
-    
+
             const response = await fetch(`http://localhost:8080/2.0/touccan/infos/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -136,23 +142,21 @@ const handleSaveChanges = async () => {
                 },
                 body: JSON.stringify(updatedFormData),
             });
-    
+
             if (response.ok) {
-                await fetchUserData(); // Sincroniza os dados atualizados
+                await fetchUserData();
                 setIsEditing(false);
             } else {
                 const errorData = await response.json();
                 console.error('Erro ao atualizar os dados:', errorData);
-                alert(`Erro ao salvar alterações: ${errorData.message}`);
+                Swal.fire('Erro', `Erro ao salvar alterações: ${errorData.message}`, 'error');
             }
         } catch (error) {
             console.error('Erro ao salvar as alterações:', error);
-            alert('Erro ao salvar as alterações.');
+            Swal.fire('Erro', 'Erro ao salvar as alterações.', 'error');
         }
-};
+    };
 
-
-    
     useEffect(() => {
         fetchUserData();
     }, []);
@@ -350,8 +354,17 @@ const handleSaveChanges = async () => {
                 </div>
             )}
 
-            {/* Animação de Confetes */}
-            {showConfetti && <Confetti />}
+            {showConfetti && (
+                <Confetti
+                    recycle={false}
+                    numberOfPieces={300}
+                    gravity={0.1}
+                    initialVelocityY={30}
+                    initialVelocityX={30}
+                    width={window.innerWidth}
+                    height={window.innerHeight}
+                />
+            )}
         </div>
     );
 };

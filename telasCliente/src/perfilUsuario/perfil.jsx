@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import './App.css';
 import Sidebar from '../components/Sidebar.jsx';
 
 const PerfilUsuario = () => {
+  const { id } = useParams();
   const [mudarTab, setMudarTab] = useState('sobre');
-  const [dadosCliente, setDadosCliente] = useState(null);
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [endereco, setEndereco] = useState(null);
+  const [dadosUsuario, setDadosUsuario] = useState(null);
+  const [feedbacks, setFeedbacks] = useState([]); // Estado para armazenar os feedbacks
 
-  const handleTabChange = (tab) => {
-    setMudarTab(tab);
-  };
+  useEffect(() => {
+    if (!id) return;
+    fetchDadosUsuario(id);
+    fetchFeedbacks(id); // Carregar feedbacks ao carregar a página
+  }, [id]);
 
-  const fetchDadosCliente = async (id) => {
+  const fetchDadosUsuario = async (id) => {
     try {
       const response = await fetch(`http://localhost:8080/2.0/touccan/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Dados do Cliente:", data); // Verificando os dados do cliente retornados
-
-        if (data && data.usuario && data.usuario.length > 0) {
-          const cliente = data.usuario[0]; // Pegando o primeiro usuário da resposta
-          setDadosCliente(cliente);
-          fetchEndereco(cliente.cep);
-          fetchFeedbacks(id);
+        console.log('Dados retornados da API:', data);
+        if (data && data.usuario) {
+          setDadosUsuario(data.usuario);
         }
-      } else {
-        console.error('Erro na resposta da API para dados do cliente:', response.statusText);
       }
     } catch (error) {
       console.error('Erro na requisição da API:', error);
@@ -38,17 +35,16 @@ const PerfilUsuario = () => {
       const response = await fetch(`http://localhost:8080/2.0/touccan/feedback/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Feedbacks do Cliente:", data); // Verificando os feedbacks recebidos
-
-        if (Array.isArray(data.feedback)) {
-          setFeedbacks(data.feedback);
+        console.log('Feedbacks retornados da API:', data);
+        if (data.avaliacoes && Array.isArray(data.avaliacoes)) {
+          setFeedbacks(data.avaliacoes);
+          console.log('Feedbacks atualizados no estado:', data.avaliacoes);
         } else {
-          console.warn('A resposta da API não contém um array de feedbacks');
+          console.log("Nenhuma avaliação encontrada ou formato incorreto:", data);
           setFeedbacks([]);
         }
       } else {
         console.error('Erro ao buscar feedbacks:', response.statusText);
-        setFeedbacks([]);
       }
     } catch (error) {
       console.error('Erro ao buscar feedbacks:', error);
@@ -56,123 +52,124 @@ const PerfilUsuario = () => {
     }
   };
 
-  const fetchEndereco = async (cep) => {
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      if (!response.ok) {
-        throw new Error('Erro ao acessar o ViaCEP');
-      }
 
-      const enderecoData = await response.json();
-      console.log("Dados do Endereço:", enderecoData); // Verificando os dados do endereço
 
-      if (enderecoData.erro) {
-        throw new Error('CEP inválido');
-      }
 
-      setEndereco(enderecoData);
-    } catch (error) {
-      console.error('Erro ao obter o endereço:', error.message);
-      setEndereco(undefined);
+  const calcularIdade = (dataNascimento) => {
+    const hoje = new Date();
+    const nascimento = new Date(dataNascimento);
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+      idade--;
     }
+    return idade;
   };
-
-  useEffect(() => {
-    const id = localStorage.getItem("id_usuario");
-    console.log("ID do Usuário:", id); // Verificando o ID armazenado no localStorage
-    if (id) fetchDadosCliente(id);
-  }, []);
 
   return (
     <div className="tela-perfil-user">
       <Sidebar />
       <div className="infos-perfil-user">
-        <div className="pfp-perfil-cliente">
-          {dadosCliente ? (
-            dadosCliente.foto ? (
-              <img src={dadosCliente.foto} alt="Foto do Cliente" />
+        {/* Foto de perfil */}
+        <div className="pfp-perfil-usuario">
+          {dadosUsuario ? (
+            dadosUsuario.foto ? (
+              <img src={dadosUsuario.foto} alt="Foto do Usuário" />
             ) : (
               <img src="../img/semFtoo.png" alt="Sem Foto de Perfil" />
             )
           ) : 'Carregando...'}
         </div>
 
-        <span className="nome-perfil-user">
-          {dadosCliente ? dadosCliente.nome : 'Carregando...'}
+        {/* Nome e e-mail */}
+        <span className="nome-perfil-usuario">
+          {dadosUsuario ? `${dadosUsuario.nome}, ${calcularIdade(dadosUsuario.dataNascimento)}` : 'Carregando...'}
+        </span>
+        <span className="email-perfil-usuario">
+          {dadosUsuario ? dadosUsuario.email : 'Carregando...'}
         </span>
 
+        {/* Abas "Sobre mim" e "Feedback" */}
         <div className="tabs">
           <button
             className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
-            onClick={() => handleTabChange('sobre')}
+            onClick={() => setMudarTab('sobre')}
           >
-            Sobre Nós
+            Sobre mim
           </button>
           <button
             className={`tab-button ${mudarTab === 'feedback' ? 'active' : ''}`}
-            onClick={() => handleTabChange('feedback')}
+            onClick={() => setMudarTab('feedback')}
           >
             Feedback
           </button>
         </div>
 
+        {/* Conteúdo da aba "Sobre mim" */}
         {mudarTab === 'sobre' && (
-          <div className="tab-content" id="sobre-perfil-cliente">
-            <div className="inputs-perfil-user">
-              <div className="formacao-perfil-usuario">
-                <input
-                  type="text"
-                  disabled
-                  value={dadosCliente ? dadosCliente.formacao : 'Indefinido'}
-                />
-              </div>
+          <div className="inputs-perfil-user">
+            <div>
+              <label>Formação:</label>
+              <input
+                type="text"
+                disabled
+                value={dadosUsuario?.formacao || ''}
+              />
+            </div>
 
-              <div className="biografia-perfil-usuario">
-                <input
-                  type="text"
-                  value={dadosCliente ? dadosCliente.biografia : 'Indefinido'}
-                  disabled
-                />
-              </div>
+            <div>
+              <label>Biografia:</label>
+              <input
+                type="text"
+                disabled
+                value={dadosUsuario?.biografia || ''}
+              />
+            </div>
 
-              <div className="habilidade-perfil-usuario">
-                <input
-                  type="text"
-                  value={dadosCliente ? dadosCliente.habilidade : 'Indefinido'}
-                  disabled
-                />
-              </div>
+            <div>
+              <label>Habilidades:</label>
+              <input
+                type="text"
+                disabled
+                value={dadosUsuario?.habilidades || ''}
+              />
+            </div>
 
-              <div className="telefone-perfil-usuario">
-                <input
-                  type="tel"
-                  value={dadosCliente ? dadosCliente.telefone : 'Indefinido'}
-                  disabled
-                />
-              </div>
+            <div>
+              <label>Disponibilidade:</label>
+              <input
+                type="text"
+                disabled
+                value={dadosUsuario?.disponibilidade || ''}
+              />
             </div>
           </div>
         )}
 
+        {/*Não sei pq n esta aparecendo no front */}
         {mudarTab === 'feedback' && (
           <div className="tab-content" id="feedback-perfil-usuario">
             <div className="feedbacks-list-user">
               {feedbacks.length > 0 ? (
-                feedbacks.map((feedback) => (
-                  <div className="feedback-card-user" key={feedback.id}>
-                    <p><strong>Denúncia:</strong> {feedback.denuncia || 'Nenhuma denúncia registrada'}</p>
+                feedbacks.map((feedback, index) => (
+                  <div className="feedback-card-user" key={index}>
                     <p><strong>Avaliação:</strong> {feedback.avaliacao || 'Nenhuma avaliação registrada'}</p>
-                    <p><strong>Id Bico:</strong> {feedback.id_bico}</p>
-                    <p><strong>Id Cliente:</strong> {feedback.id_cliente}</p>
-                    <p><strong>Id Usuário:</strong> {feedback.id_usuario}</p>
+                    <p><strong>Nota:</strong> {feedback.nota || 'N/A'}</p>
+                    <p><strong>ID Bico:</strong> {feedback.id_bico || 'N/A'}</p>
                   </div>
                 ))
               ) : (
-                <p>Nenhum feedback encontrado. Verifique se há avaliações ou denúncias feitas por clientes.</p>
+                <p>🔍 Nenhum feedback encontrado. Verifique se há avaliações feitas por clientes.</p>
               )}
             </div>
           </div>
         )}
+
+
+
+
+
+
       </div>
     </div>
   );

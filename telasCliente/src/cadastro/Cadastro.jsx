@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'; // Importando o SweetAlert2
 
 function Cadastro() {
   const [formData, setFormData] = useState({
@@ -19,8 +20,8 @@ function Cadastro() {
 
   const [erros, setErros] = useState({});
   const [loading, setLoading] = useState(false);
-  const [senhaVisivel, setSenhaVisivel] = useState(false); // Para controlar visibilidade da senha
-  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(false); // Para controlar visibilidade da confirmar senha
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -180,18 +181,28 @@ function Cadastro() {
         return response.json();
       })
       .then(data => {
-        console.log("Sucesso:", data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Cadastro realizado com sucesso!',
+          text: 'Agora você pode fazer login e aproveitar os recursos.',
+          confirmButtonText: 'Ok'
+        });
         navigate('/');
       })
       .catch((error) => {
         console.error("Erro:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro ao cadastrar',
+          text: error.message,
+          confirmButtonText: 'Tentar novamente'
+        });
       })
       .finally(() => {
         setLoading(false);
       });
     }
   };
-
   return (
     <div>
       <div className='container'>
