@@ -1,6 +1,6 @@
 import React from 'react';
 import './DetalhesVaga.css';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'; // Importando o SweetAlert2
 
 const DetalhesVaga = ({ anuncio, onClose }) => {
@@ -55,18 +55,25 @@ const DetalhesVaga = ({ anuncio, onClose }) => {
         }
     };
 
+    // Verificação de dados antes de acessá-los
+    const cliente = anuncio.cliente?.[0] || {};
+    const dificuldade = anuncio.dificuldade?.[0] || {};
+
     return (
         <div className="detalhes-vaga">
             <div className="container-detalhes">
                 <div className="info-nome-dificuldade">
                     <div className="info-empresa">
                         <picture>
-                            <img src="../../img/person.png" alt="" />
+                            <img 
+                                src={cliente.foto || "../../img/person.png"} 
+                                alt={cliente.nome_fantasia || 'Imagem do cliente'} 
+                            />
                         </picture>
-                        <h2>{anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'}</h2>
+                        <h2>{cliente.nome_fantasia || 'Não disponível'}</h2>
                     </div>
                     <div className="info-dificuldade">
-                        <span>Dificuldade: {anuncio.dificuldade[0]?.dificuldade || 'Não especificada'}</span>
+                        <span>Dificuldade: {dificuldade.dificuldade || 'Não especificada'}</span>
                     </div>
                 </div>
 
@@ -78,10 +85,16 @@ const DetalhesVaga = ({ anuncio, onClose }) => {
                     <span>Início: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span> <br />
                     <span>Fim: {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     <div>
-                        <span>Pagamento: </span><span className='valor-pagamento'>R$ {anuncio.salario.toFixed(2)}</span>
+                        <span>Pagamento: </span>
+                        <span className='valor-pagamento'>
+                            {typeof anuncio.salario === 'number' && !isNaN(anuncio.salario)
+                                ? `R$ ${anuncio.salario.toFixed(2)}`
+                                : 'Não disponível'}
+                        </span>
                     </div>
                 </div>
             </div>
+
             <div className="container-botoes">
                 <button className="ver-candidatos" onClick={handleVerCandidatos}>
                     Ver candidatos
@@ -93,6 +106,6 @@ const DetalhesVaga = ({ anuncio, onClose }) => {
             </div>
         </div>
     );
-}
+};
 
 export default DetalhesVaga;
