@@ -82,7 +82,7 @@ const Perfil = () => {
 
   const fetchEndereco = async (cep) => {
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const response = await fetch(`http://localhost:8080/2.0/touccan/endereco/${id}`);
       if (!response.ok) {
         throw new Error('Erro ao acessar o ViaCEP');
       }

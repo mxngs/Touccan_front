@@ -17,7 +17,7 @@ function Historico() {
 
   const fetchData = async (id) => {
     try {
-      const response = await fetch(`${baseUrl}bico/candidato/${id}`, { 
+      const response = await fetch(`${baseUrl}cliente/historico/${id}`, { 
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -82,7 +82,7 @@ function Historico() {
                   </div>
                 </div>
                 <p className="histórico-client-name">{anuncio.nome_cliente}</p>
-                <p className="histórico-user-name">Usuário: {anuncio.nome_usuario || 'Indefinido'}</p>
+                <p className="histórico-user-name">Usuário: {anuncio.nome || 'Indefinido'}</p>
               </div>
             </div>
           ))
