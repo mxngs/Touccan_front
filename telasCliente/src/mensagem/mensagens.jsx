@@ -1,95 +1,115 @@
 import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar.jsx';
+import { Link } from 'react-router-dom';
 import './App.css';
-import { Link, useNavigate } from "react-router-dom"
+
+// Definição das conversas
+const conversas = {
+  conversa1: [
+    { tipo: 'recebida', texto: 'Oi, tudo bem?', nome: 'João' },
+  ],
+  conversa2: [
+    { tipo: 'recebida', texto: 'Olá', nome: 'Maria' },
+  ],
+  conversa3: [
+    { tipo: 'recebida', texto: 'Está chegando?', nome: 'Carlos' },
+  ]
+};
 
 const Mensagem = () => {
-  const [hasMessages, setHasMessages] = useState(true);  // Definido para "true" para mostrar as mensagens inicialmente
-  const [activeChat, setActiveChat] = useState(null);
+  // Estado para armazenar a conversa selecionada e a mensagem atual
+  const [chatSelecionado, setChatSelecionado] = useState(null);
+  const [novaMensagem, setNovaMensagem] = useState('');
 
-  const chats = [
-    { id: 1, name: "Mari Silva", message: "Oi, tudo bem?", time: "10:30", icon: "./Icon - perfil.png" },
-    { id: 2, name: "Lucas Santos", message: "Olá", time: "11:45", icon: "./Icon - perfil.png" },
-    { id: 3, name: "Ana Souza", message: "Está chegando?", time: "12:00", icon: "./Icon - perfil.png" },
-  ];
-
-  const toggleChat = (id) => {
-    setActiveChat(id === activeChat ? null : id);
+  // Função para selecionar a conversa
+  const selecionarConversa = (id) => {
+    console.log('Conversa selecionada:', id); // Verifica qual conversa está sendo selecionada
+    setChatSelecionado(id);
   };
 
-  const renderMessages = () => (
-    <div className="messages-container">
-      <div className="chat-list">
-        {chats.map((chat) => (
-          <div className="conversa" onClick={() => toggleChat(chat.id)} key={chat.id}>
-            <img src={chat.icon} alt="Perfil" className="icon-conversa" />
-            <div className="nome-conversa">{chat.name}</div>
-            <div className="mensagem-conversa">{chat.message}</div>
-            <div className="hora-conversa">{chat.time}</div>
-          </div>
-        ))}
-      </div>
+  // Função para enviar a mensagem
+  const enviarMensagem = () => {
+    if (novaMensagem.trim() !== '') {
+      // Adiciona a nova mensagem ao chat
+      const updatedConversas = { ...conversas };
+      updatedConversas[chatSelecionado] = [
+        ...updatedConversas[chatSelecionado],
+        { tipo: 'enviada', texto: novaMensagem }
+      ];
+      conversas[chatSelecionado] = updatedConversas[chatSelecionado]; // Atualiza no objeto global
 
-      {activeChat && (
-        <div className="chat">
-          <div className="chat-header">
-            <div className="btn-voltar-chat" onClick={() => setActiveChat(null)}>←</div>
-            <div className="nome-pessoa-chat">
-              {chats.find(chat => chat.id === activeChat)?.name}
-            </div>
-          </div>
-
-          <div className="chat-conversa">
-            <div className="msg-recebida">
-              <img src="./Imagem - Perfil.png" alt="Perfil" className="foto-perfil-recebido" />
-              <div className="mensagem-texto">Oi, tudo bem?</div>
-            </div>
-            <div className="msg-enviada">
-              <div className="mensagem-texto">Oi! Como você está?</div>
-              <img src="./jwhk 1.png" alt="Perfil" className="foto-perfil-enviado" />
-            </div>
-          </div>
-
-          <div className="input-mensagem">
-            <input type="text" className="input-texto" placeholder="Digite sua mensagem" />
-            <button className="btn-enviar-chat">Enviar</button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
-  const renderEmptyMessages = () => (
-    <div className="empty-messages">
-      <div className="empty-icon">✉</div>
-      <p className="empty-text">Você não possui mensagens...</p>
-    </div>
-  );
+      setNovaMensagem('');
+    }
+  };
 
   return (
     <div className="chat-container">
-      
+      {/* Menu Lateral */}
       <div className="menu-lateral">
-       <Link to="/home">
-       <button className="btn-voltar">&#8592;</button>
-       </Link>
-       
+        <Link to="/home" className="btn-voltar">
+          &#8592; Voltar
+        </Link>
       </div>
 
-      <div className="area-central">
-        <input type="text" className="barra-pesquisa" placeholder="Pesquisar conversa" />
-        <div className="linha-laranja"></div>
-        <div className="linha-preta"></div>
+      {/* Área Central com a lista de conversas */}
+      {!chatSelecionado ? (
+        <div className="area-central">
+          <input type="text" className="barra-pesquisa" placeholder="Pesquisar conversa" />
+          <div className="linha-laranja"></div>
+          <div className="linha-preta"></div>
 
-        {hasMessages ? renderMessages() : renderEmptyMessages()}
-      </div>
+          <div className="conversas">
+            {Object.keys(conversas).map((id) => {
+              const { nome } = conversas[id][0];
+              return (
+                <div key={id} className="conversa" onClick={() => selecionarConversa(id)}>
+                  <img src="./Imagem - Perfil.png" alt="Profile" className="icon-conversa" />
+                  <div className="nome-conversa">{nome}</div>
+                  <div className="mensagem-conversa">{conversas[id][conversas[id].length - 1].texto}</div>
+                  <div className="hora-conversa">10:30</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        // Exibição do chat selecionado
+        <div className="lado-direito">
+          <div className="chat">
+            <div className="chat-header">
+              <Link to="/" className="btn-voltar-chat">&#8592; Voltar</Link>
+              <div className="nome-pessoa-chat">
+                {conversas[chatSelecionado][0].nome}
+              </div>
+              <div className="linha-laranja"></div>
+            </div>
 
-      <div className="lado-direito">
-        <div className="icone-mensagem">✉</div>
-        <button className="btn-enviar" onClick={() => setHasMessages(!hasMessages)}>
-          {hasMessages ? 'Ver sem mensagens' : 'Ver com mensagens'}
-        </button>
-      </div>
+            <div className="chat-conversa">
+              {conversas[chatSelecionado].map((msg, index) => (
+                <div key={index} className={msg.tipo === 'enviada' ? 'msg-enviada' : 'msg-recebida'}>
+                  <img
+                    className={msg.tipo === 'enviada' ? 'foto-perfil-enviado' : 'foto-perfil-recebido'}
+                    src={msg.tipo === 'enviada' ? 'seu-perfil.png' : './Icon - perfil.png'}
+                    alt="Foto de Perfil"
+                  />
+                  <div className="mensagem-texto">{msg.texto}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Input de nova mensagem */}
+            <div className="input-mensagem">
+              <input
+                type="text"
+                className="input-texto"
+                value={novaMensagem}
+                onChange={(e) => setNovaMensagem(e.target.value)}
+                placeholder="Digite sua mensagem"
+              />
+              <button className="btn-enviar-chat" onClick={enviarMensagem}>Enviar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

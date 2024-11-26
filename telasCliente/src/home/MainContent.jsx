@@ -34,7 +34,9 @@ const MainContent = () => {
 
             const data = await response.json();
             console.log('Dados de anúncios recebidos:', data);
-            setAnuncios(data.bico || []);
+
+            // Verifica se o campo bico é um array e define o estado
+            setAnuncios(Array.isArray(data.bico) ? data.bico : []);
         } catch (error) {
             console.error('Erro ao buscar dados de anúncios:', error);
         } finally {
@@ -53,7 +55,9 @@ const MainContent = () => {
 
             const data = await response.json();
             console.log('Dados de trabalhos pendentes recebidos:', data);
-            setTrabalhosPendentes(data.historico || []);
+
+            // Verifica se o campo historico é um array e define o estado
+            setTrabalhosPendentes(Array.isArray(data.historico) ? data.historico : []);
         } catch (error) {
             console.error('Erro ao buscar dados de trabalhos pendentes:', error);
         }
@@ -64,9 +68,11 @@ const MainContent = () => {
     const fecharModal = () => setAnuncioSelecionado(null);
 
     const handleAvaliar = (anuncioId) => {
-        // Função chamada quando o botão de Avaliar é clicado
         console.log(`Avaliar trabalho/anúncio com ID: ${anuncioId}`);
-        // Aqui você pode implementar a lógica de avaliação, como abrir um modal ou redirecionar para outra página.
+    };
+
+    const handleVerCandidatos = (anuncioId) => {
+        console.log(`Ver candidatos para o anúncio com ID: ${anuncioId}`);
     };
 
     return (
@@ -95,16 +101,16 @@ const MainContent = () => {
                                 <h3 className="job-title">{anuncio.titulo}</h3>
                                 <p className="job-description">{anuncio.descricao}</p>
                                 <div className="job-timing">
-                                    Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
+                                    Local: {Array.isArray(anuncio.cliente) && anuncio.cliente.length > 0 ? anuncio.cliente[0].nome_fantasia : 'Não disponível'} <br />
                                     Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
                                     Preço: R$ {anuncio.salario.toFixed(2)}
                                 </div>
                                 <p className="job-difficulty">
-                                    <span>Dificuldade:</span> {anuncio.dificuldade[0]?.dificuldade || 'Não especificada'}
+                                    <span>Dificuldade:</span> {Array.isArray(anuncio.dificuldade) && anuncio.dificuldade.length > 0 ? anuncio.dificuldade[0]?.dificuldade : 'Não especificada'}
                                 </p>
-                                {/* Botão de Avaliar */}
-                                <button className="btn-avaliar" onClick={() => handleAvaliar(anuncio.id)}>
-                                    Avaliar
+                                {/* Botão para Ver Candidatos */}
+                                <button className="btn-ver-candidatos" onClick={() => handleVerCandidatos(anuncio.id)}>
+                                    Ver Candidatos
                                 </button>
                             </div>
                         </div>
@@ -119,17 +125,26 @@ const MainContent = () => {
                     trabalhosPendentes.map((trabalho) => (
                         <div className="job-card" key={trabalho.id} onClick={() => showDetalhesAnuncio(trabalho)}>
                             <div className="job-info">
-                                <h3 className="job-title">{trabalho.titulo}</h3>
-                                <p className="job-description">{trabalho.descricao}</p>
+
+                                <h3 className="job-name">
+                                    <img
+                                        src={trabalho.foto && trabalho.foto !== "" ? trabalho.foto : "caminho/para/imagem-padrao.jpg"}
+                                        alt={trabalho.nome}
+                                        className="job-image"
+                                    />
+                                    <span className="job-person-name">{trabalho.nome}</span>
+                                </h3>
+
+                                <div className='job-title'>{trabalho.titulo}</div>
+
+                                <div className='job-descricao'>{trabalho.descricao}</div>
+                            
                                 <div className="job-timing">
-                                    Local: {trabalho.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
+                                    Local: {Array.isArray(trabalho.cliente) && trabalho.cliente.length > 0 ? trabalho.cliente[0].nome_fantasia : 'Não disponível'} <br />
                                     Horário: {new Date(trabalho.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(trabalho.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
                                     Preço: {typeof trabalho.salario === 'number' ? `R$ ${trabalho.salario.toFixed(2)}` : 'Não disponível'}
                                 </div>
 
-                                <p className="job-difficulty">
-                                    <span>Dificuldade:</span> {trabalho.dificuldade[0]?.dificuldade || 'Não especificada'}
-                                </p>
                                 {/* Botão de Avaliar */}
                                 <button className="btn-avaliar" onClick={() => handleAvaliar(trabalho.id)}>
                                     Avaliar
