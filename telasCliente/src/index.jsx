@@ -12,7 +12,8 @@ import Candidatos from './candidatos/candidatos.jsx'
 import Configuracao from './configuracao/configuracao.jsx'
 import Notificacao from './notificacao/notificacao.jsx'
 import Historico from './historico/historico.jsx'
-import Mensagem from './mensagem/mensagens.jsx'
+import Chat from './chat/listarConversas.jsx'
+import Mensagens from './chat/chat.jsx'
 import PerfilUsuario from './perfilUsuario/perfil.jsx'
 import MudarSenha from './mudarSenha/mudarSenha.jsx'
 import RecuperarSenha from './recuperarSenha/recuperarSenha.jsx'
@@ -32,7 +33,12 @@ export default function App() {
                     <Route path="configuracao" element={< Configuracao />} />
                     <Route path="notificacao" element={< Notificacao />} />
                     <Route path="historico" element={< Historico />} />
-                    <Route path="mensagem" element={< Mensagem />} />
+                    <Route path="chat">
+            {/* Lista de Conversas */}
+            <Route index element={<Chat />} />
+            {/* Mensagens de uma conversa específica */}
+            <Route path=":chatId" element={<Mensagens />} />
+          </Route>
                   <Route path="candidatos" element={< Candidatos />} />
                   <Route path="/perfilUsuario/:id" element={< PerfilUsuario />} />
                   <Route path="/recuperarSenha" element={< RecuperarSenha />} />
