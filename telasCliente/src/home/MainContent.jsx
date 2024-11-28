@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importe o hook useNavigate
 import DetalhesVaga from '../components/DetalhesVaga.jsx';
 import AvaliarModal from '../components/Avaliacao.jsx'; // Componente para avaliação
 import './App.css'; // Adicione estilos CSS específicos
@@ -11,6 +12,8 @@ const MainContent = () => {
   const [anuncioSelecionado, setAnuncioSelecionado] = useState(null);
   const [trabalhoSelecionado, setTrabalhoSelecionado] = useState(null); // Para armazenar o trabalho selecionado para avaliar
   const [modalAvaliarAberto, setModalAvaliarAberto] = useState(false); // Controle do modal de avaliação
+
+  const navigate = useNavigate(); // Criação da instância do useNavigate
 
   useEffect(() => {
     const id = localStorage.getItem("id_cliente");
@@ -67,6 +70,8 @@ const MainContent = () => {
   const abrirModalAvaliar = (trabalho) => {
     setTrabalhoSelecionado(trabalho); // Define o trabalho selecionado para avaliação
     setModalAvaliarAberto(true); // Abre o modal de avaliação
+    // Redireciona para a página de avaliação (ajuste para corresponder ao formato da URL)
+    navigate(`/avaliacao/${trabalho.id}`); // Navega para a página de avaliação com o ID do trabalho
   };
 
   const fecharModalAvaliar = () => {
@@ -118,7 +123,11 @@ const MainContent = () => {
             <div className="job-card" key={trabalho.id} onClick={() => showDetalhesAnuncio(trabalho)}>
               <div className="job-info">
                 <h3 className="job-name">
-                  <img src={trabalho.foto || "caminho/para/imagem-padrao.jpg"}  className="job-image" />
+                  <img 
+                    src={trabalho.foto ? trabalho.foto : './img/semFtoo.jpg'} 
+                    className="job-image" 
+                    alt=""
+                  />
                   <span className="job-person-name">{trabalho.nome}</span>
                 </h3>
                 <div className="job-title">{trabalho.titulo}</div>

@@ -35,7 +35,7 @@ const ListaConversas = () => {
     <div className="area-central">
       {/* Botão de Voltar */}
       <div className="menu-lateral">
-        <Link to="/home" className="btn-voltar">
+        <Link to="/chat" className="btn-voltar">
           &#8592; Voltar
         </Link>
       </div>

@@ -13,12 +13,16 @@ const Avaliacao = () => {
     // Função para buscar os dados do trabalho
     const fetchTrabalho = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/historico/${id}`);
+        const response = await fetch(``);
         if (!response.ok) {
           throw new Error('Erro ao buscar dados do trabalho');
         }
         const data = await response.json();
-        setTrabalho(data);  // Define os dados do trabalho no estado
+        if (data) {
+          setTrabalho(data);  // Define os dados do trabalho no estado
+        } else {
+          throw new Error('Trabalho não encontrado');
+        }
       } catch (error) {
         console.error('Erro ao buscar trabalho:', error);
         Swal.fire({
@@ -103,7 +107,7 @@ const Avaliacao = () => {
           <div className="job-info">
             <h3 className="job-name">
               <img
-                src={trabalho.foto && trabalho.foto !== "" ? trabalho.foto : "caminho/para/imagem-padrao.jpg"}
+                src={trabalho.foto && trabalho.foto !== "" ? trabalho.foto : "/img/semFtoo.jpg"} // Foto padrão
                 alt={trabalho.nome}
                 className="job-image"
               />

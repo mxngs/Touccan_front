@@ -64,32 +64,45 @@ const Configuracao = () => {
             Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
             return;
         }
-
+    
         const confirmed = await Swal.fire({
             title: isPremium ? "Cancelar assinatura Premium?" : "Tornar-se Premium?",
-            text: isPremium ? "Tem certeza que deseja cancelar?" : "Tem certeza que deseja se tornar Premium?",
+            html: isPremium
+                ? "Tem certeza que deseja cancelar a assinatura Premium?"
+                : "<strong>Aviso:</strong> Ao se tornar Premium, será debitado R$15,00 mensalmente de sua conta. Você poderá cancelar quando quiser.",
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Sim',
-            cancelButtonText: 'Cancelar'
+            confirmButtonText: isPremium ? 'Sim, cancelar!' : 'Sim, tornar-me Premium!',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                confirmButton: 'custom-confirm-button',
+                cancelButton: 'custom-cancel-button',
+            },
+            buttonsStyling: false, // Desativa o estilo padrão do SweetAlert2
         });
-
+    
         if (!confirmed.isConfirmed) return;
-
+    
         const newPremiumStatus = isPremium ? 0 : 1;
         setIsPremium(newPremiumStatus);
-
+    
         try {
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/premium/cliente/${id}`, {
+            const response = await fetch(`http://localhost:8080/2.0/touccan/premium/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ premium: newPremiumStatus }),
             });
-
+    
             if (response.ok) {
-                Swal.fire('Sucesso', newPremiumStatus === 1 ? 'Agora você é Premium!' : 'Premium cancelado!', 'success');
+                Swal.fire(
+                    'Sucesso',
+                    newPremiumStatus === 1
+                        ? 'Agora você é Premium! Aproveite os benefícios.'
+                        : 'Assinatura Premium cancelada.',
+                    'success'
+                );
                 if (newPremiumStatus === 1) {
                     setShowConfetti(true);
                     setTimeout(() => setShowConfetti(false), 10000);
@@ -106,6 +119,8 @@ const Configuracao = () => {
             setIsPremium(!newPremiumStatus);
         }
     };
+    
+    
 
     const validateFormData = () => {
         const requiredFields = ['nome_fantasia', 'telefone', 'email', 'cep'];
@@ -164,6 +179,10 @@ const Configuracao = () => {
     return (
         <div className="container">
             <Sidebar toggleView={toggleView} />
+
+            <div className="logout-icon" onClick={handleLogout}>
+                        <img src="./img/sair.png" alt="Sair" className="logout-img" />
+                    </div>
 
             <div className="cards-panel">
                 <div className="card" onClick={() => toggleView('account')}>
@@ -276,9 +295,7 @@ const Configuracao = () => {
                             </div>
                         )}
                     </div>
-                    <div className="logout-icon" onClick={handleLogout}>
-                        <img src="./img/sair.png" alt="Sair" className="logout-img" />
-                    </div>
+                    
                 </div>
             )}
 

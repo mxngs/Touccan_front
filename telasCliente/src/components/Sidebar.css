@@ -4,8 +4,14 @@
     box-sizing: border-box;
     font-family: "Inter", system-ui;
   }
+  .sidebar {
+    height: 100%;
+    width: 500px;
+    
+    border-right: 3px solid rgba(0, 0, 0, 0.221); /* Borda transparente do lado direito */
+}
 
- 
+
 
   .sidebar-logo img {
     width: 500px; 

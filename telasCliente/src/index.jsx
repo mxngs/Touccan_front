@@ -6,7 +6,7 @@ import Cadastro from './cadastro/Cadastro.jsx'
 import AddBico from './adicionarBico/AddBico.jsx'
 import Home from './home/Home.jsx'
 import "./login/App.css"
-import Perfil from './perfil/perfil.jsx'
+import Perfil from './perfil/perfil.jsx'; 
 import Cofre from './cofre/cofre.jsx'
 import Candidatos from './candidatos/candidatos.jsx'
 import Configuracao from './configuracao/configuracao.jsx'

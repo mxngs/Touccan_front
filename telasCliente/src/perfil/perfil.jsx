@@ -38,35 +38,23 @@ const Perfil = () => {
     }
   };
 
-  const juntar = function (feedback) {
-    let ava = feedback.avaliacoes
-    let den = feedback.denuncias
-    let feedTotal = []
-
-    for (let index = 0; index < ava.length; index++) {
-      const element = ava[index];
-      feedTotal.push(element)
-    }
-    for (let index = 0; index < den.length; index++) {
-      const element = den[index];
-      feedTotal.push(element)
-    }
-    
-    return feedTotal
-  }
+  const juntar = (feedback) => {
+    const ava = feedback?.avaliacoes || [];
+    const den = feedback?.denuncias || [];
+    return [...ava, ...den];
+  };
 
   const fetchFeedbacks = async (id) => {
     try {
       const response = await fetch(`http://localhost:8080/2.0/touccan/feedback/cliente/${id}`);
       if (response.ok) {
         const data = await response.json();
-        let feedback = juntar(data)
-        console.log('Feedbacks recebidos:', feedback);
-
+        console.log('Dados brutos recebidos da API:', data);
+        const feedback = juntar(data); // Combina as avaliações e denúncias
         if (Array.isArray(feedback)) {
           setFeedbacks(feedback);
         } else {
-          console.warn('A resposta da API não contém um array de feedbacks');
+          console.warn('A resposta da API não contém um array válido de feedbacks.');
           setFeedbacks([]);
         }
       } else {
@@ -79,19 +67,16 @@ const Perfil = () => {
     }
   };
 
-
-  const fetchEndereco = async (cep) => {
+  const fetchEndereco = async (id_cliente) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/endereco/${id}`);
+      const response = await fetch(`http://localhost:8080/2.0/touccan/endereco/${id_cliente}`);
       if (!response.ok) {
-        throw new Error('Erro ao acessar o ViaCEP');
+        throw new Error(`Erro ao buscar o endereço: ${response.statusText}`);
       }
-
       const enderecoData = await response.json();
-      if (enderecoData.erro) {
-        throw new Error('CEP inválido');
+      if (!enderecoData || enderecoData.erro) {
+        throw new Error('Endereço não encontrado ou ID inválido.');
       }
-
       setEndereco(enderecoData);
     } catch (error) {
       console.error('Erro ao obter o endereço:', error.message);
@@ -280,47 +265,34 @@ const Perfil = () => {
                 disabled={!isEditing}
               />
             </div>
-
-            <div className="anuncios-perfil-cliente">
-              <span>Anúncios</span>
-              {anuncios.length > 0 ? (
-                anuncios.map((anuncio) => (
-                  <div className="job-card-perfil" key={anuncio.id}>
-                    <div className="job-info">
-                      <h3>{anuncio.titulo}</h3>
-                      <p>{anuncio.descricao}</p>
-                      <p>Local: {anuncio.cliente?.nome_fantasia || 'Não disponível'}</p>
-                      <p>Preço: R$ {anuncio.salario.toFixed(2)}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum anúncio encontrado.</p>
-              )}
-            </div>
           </div>
         )}
 
         {mudarTab === 'feedback' && (
-          <div className="tab-content" id="feedback-perfil-cliente">
-            <div className="feedbacks-list">
-              {feedbacks.length > 0 ? (
-                feedbacks.map((feedback) => (
-                  <div className="feedback-card" key={feedback.id}>
-                    <p><strong>Denúncia:</strong> {feedback.denuncia || 'Nenhuma denúncia registrada'}</p>
-                    <p><strong>Avaliação:</strong> {feedback.avaliacao || 'Nenhuma avaliação registrada'}</p>
-                    <p><strong>Id Bico:</strong> {feedback.id_bico}</p>
-                    <p><strong>Id Cliente:</strong> {feedback.id_cliente}</p>
-                    <p><strong>Id Usuário:</strong> {feedback.id_usuario}</p>
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum feedback encontrado. Verifique se há avaliações ou denúncias feitas por clientes.</p>
-              )}
-            </div>
+          <div id="feedback" className="tab-content">
+            {feedbacks.length > 0 ? (
+              feedbacks.map((feedback, index) => (
+                <div className="feedback-card" key={index}>
+                  {feedback.denuncia ? (
+                    <p><strong>Denúncia:</strong> {feedback.denuncia}</p>
+                  ) : (
+                    <p><strong>Denúncia:</strong> Nenhuma denúncia registrada</p>
+                  )}
+                  {feedback.avaliacao ? (
+                    <p><strong>Avaliação:</strong> {feedback.avaliacao}</p>
+                  ) : (
+                    <p><strong>Avaliação:</strong> Nenhuma avaliação registrada</p>
+                  )}
+                  <p><strong>Id Bico:</strong> {feedback.id_bico || 'Indefinido'}</p>
+                  <p><strong>Id Cliente:</strong> {feedback.id_cliente || 'Indefinido'}</p>
+                  <p><strong>Id Usuário:</strong> {feedback.id_usuario || 'Indefinido'}</p>
+                </div>
+              ))
+            ) : (
+              <p>Nenhum feedback encontrado. Verifique se há avaliações ou denúncias feitas por clientes.</p>
+            )}
           </div>
         )}
-
       </div>
     </div>
   );

@@ -34,7 +34,7 @@ const Chat = ({ conversas = {}, atualizarConversas }) => {
     <div className="lado-direito">
       <div className="chat">
         <div className="chat-header">
-          <Link to="/" className="btn-voltar-chat">&#8592; Voltar</Link>
+          <Link to="/home" className="btn-voltar-chat"></Link>
           <div className="nome-pessoa-chat">{nomeContato}</div>
           <div className="linha-laranja"></div>
         </div>
