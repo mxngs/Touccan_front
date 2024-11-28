@@ -6,7 +6,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 const Perfil = () => {
   const [mudarTab, setMudarTab] = useState('sobre');
   const [dadosCliente, setDadosCliente] = useState(null);
-  const [endereco, setEndereco] = useState(null);
+  const [endereco, setEndereco] = useState('');
   const [anuncios, setAnuncios] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
   const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const Perfil = () => {
           setDadosCliente(cliente);
           setEmail(cliente.email);
           setTelefone(cliente.telefone);
-          fetchEndereco(cliente.cep);
+          setEndereco(cliente.cep);
           fetchAnuncios(id);
           fetchFeedbacks(id);
         }
@@ -50,7 +50,7 @@ const Perfil = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Dados brutos recebidos da API:', data);
-        const feedback = juntar(data); // Combina as avaliações e denúncias
+        const feedback = juntar(data); 
         if (Array.isArray(feedback)) {
           setFeedbacks(feedback);
         } else {
@@ -67,22 +67,6 @@ const Perfil = () => {
     }
   };
 
-  const fetchEndereco = async (id_cliente) => {
-    try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/endereco/${id_cliente}`);
-      if (!response.ok) {
-        throw new Error(`Erro ao buscar o endereço: ${response.statusText}`);
-      }
-      const enderecoData = await response.json();
-      if (!enderecoData || enderecoData.erro) {
-        throw new Error('Endereço não encontrado ou ID inválido.');
-      }
-      setEndereco(enderecoData);
-    } catch (error) {
-      console.error('Erro ao obter o endereço:', error.message);
-      setEndereco(undefined);
-    }
-  };
 
   const fetchAnuncios = async (id) => {
     try {

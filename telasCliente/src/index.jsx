@@ -17,6 +17,7 @@ import Mensagens from './chat/chat.jsx'
 import PerfilUsuario from './perfilUsuario/perfil.jsx'
 import MudarSenha from './mudarSenha/mudarSenha.jsx'
 import RecuperarSenha from './recuperarSenha/recuperarSenha.jsx'
+import Avaliacao from './components/Avaliacao.jsx'
 
 
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
                   <Route path="/perfilUsuario/:id" element={< PerfilUsuario />} />
                   <Route path="/recuperarSenha" element={< RecuperarSenha />} />
                   <Route path="/mudarSenha" element={< MudarSenha />} />
+                  <Route path="/avaliacao/:id" element={< Avaliacao />} />
                     
                 </Route>
             </Routes>
