@@ -113,7 +113,8 @@ const Avaliacao = () => {
   };
 
   return (
-    <div className="avaliar-trabalho">
+    <div className="fundooo">
+    <div className="detalhes-vaga">
       {loading ? (
         <div>Carregando...</div>
       ) : trabalho ? (
@@ -171,7 +172,7 @@ const Avaliacao = () => {
       ) : (
         <p>Trabalho não encontrado.</p>
       )}
-    </div>
+    </div></div>
   );
 };
 

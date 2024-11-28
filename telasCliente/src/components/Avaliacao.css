@@ -4,10 +4,19 @@
     box-sizing: border-box;
     font-family: "Inter", system-ui;
   }
+
+
   .title {
     font-size: 24px;
     color: #333;
     margin-bottom: 10px;
+}
+
+.fundooo{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: black;
 }
 
 /* Card principal */
