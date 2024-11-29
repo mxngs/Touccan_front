@@ -17,7 +17,7 @@ const PerfilUsuario = () => {
 
   const fetchDadosUsuario = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/usuario/${id}`);
+      const response = await fetch(`https://touccan-backend-8a78.onrender.com/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
         console.log('Dados retornados da API:', data);
@@ -32,7 +32,7 @@ const PerfilUsuario = () => {
 
   const fetchFeedbacks = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/feedback/usuario/${id}`);
+      const response = await fetch(`https://touccan-backend-8a78.onrender.com/feedback/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
         console.log('Feedbacks retornados da API:', data);
