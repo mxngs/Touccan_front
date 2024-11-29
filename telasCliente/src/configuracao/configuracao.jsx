@@ -214,7 +214,7 @@ const Configuracao = () => {
                 </div>
                 <div className="card" onClick={() => toggleView('aboutUs')}>
                     <div className="card-content">
-                        <img src="./logo - preto.png" alt="Sobre Nós" className="card-icon" />
+                        <img src="../img/logoColorida.png" alt="Sobre Nós" className="card-icon" />
                         <div>
                             <div className="card-title">Sobre Nós</div>
                             <div className="card-description">Veja algumas informações sobre nossa comunidade</div>
@@ -223,7 +223,7 @@ const Configuracao = () => {
                 </div>
                 <div className="card" onClick={() => toggleView('premium')}>
                     <div className="card-content">
-                        <img src="./icons8-coroa-30 4.png" alt="Premium" className="card-icon" />
+                        <img src="../img/premium.png" alt="Premium" className="card-icon" />
                         <div>
                             <div className="card-title">Premium</div>
                             <div className="card-description">Tornar-se premium.</div>
@@ -235,7 +235,7 @@ const Configuracao = () => {
             <div className="separator"></div>
 
             <div className="image-panel" style={{ display: currentView === 'image' ? 'flex' : 'none' }}>
-                <img src="./img/tucano.png" alt="Descrição da Imagem" className="logo-image" />
+                <img src="../../img/tucano.png" alt="Descrição da Imagem" className="logo-image" />
                 <div className="image-description">O que deseja acessar?</div>
             </div>
 
@@ -304,7 +304,7 @@ const Configuracao = () => {
                     <h2 className="account-title">Vire Premium já!</h2>
                     <div className="premium-content">
                         <div className="premium-description">
-                            <img src="./img/premium.png" alt="Coroa" className="premium-icon" />
+                            <img src="../../img/premium.png" alt="Coroa" className="premium-icon" />
                             <p>Deseja sempre estar em primeiro nos anúncios? Assine já, para ter prioridade sempre.</p>
                             <p><strong>Apenas por R$15,00</strong></p>
                             <p className="premium-note">Valor cobrado mensalmente<br />Cancele quando quiser</p>
