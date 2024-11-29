@@ -25,10 +25,11 @@ const Perfil = () => {
         const data = await response.json();
         if (data && data.cliente) {
           const cliente = data.cliente;
+          const endereco = cliente.endereco[0]
           setDadosCliente(cliente);
           setEmail(cliente.email);
           setTelefone(cliente.telefone);
-          setEndereco(cliente.cep);
+          setEndereco(endereco);
           fetchAnuncios(id);
           fetchFeedbacks(id);
         }
@@ -50,7 +51,7 @@ const Perfil = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Dados brutos recebidos da API:', data);
-        const feedback = juntar(data); 
+        const feedback = juntar(data);
         if (Array.isArray(feedback)) {
           setFeedbacks(feedback);
         } else {
@@ -75,13 +76,15 @@ const Perfil = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_cliente: id }),
       });
-
       if (!response.ok) {
         throw new Error(`Erro: ${response.status} - ${response.statusText}`);
       }
 
       const data = await response.json();
+      console.log(data);
+
       setAnuncios(data.bico || []);
+
     } catch (error) {
       console.error('Erro ao buscar anúncios:', error);
     }
@@ -228,7 +231,7 @@ const Perfil = () => {
                 <input
                   type="text"
                   disabled
-                  value={endereco ? `Endereço: ${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade} - ${endereco.uf}` : 'Indefinido'}
+                  value={endereco ? `Endereço: ${endereco.rua}, ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}` : 'Indefinido'}
                 />
               </div>
 
@@ -251,6 +254,26 @@ const Perfil = () => {
             </div>
           </div>
         )}
+
+        <div className="extra-anuncios">
+          {anuncios.length > 0 ? (
+            anuncios.map((anuncio) => (
+              <div className="job-card" key={`extra-${anuncio.id}`} onClick={() => showDetalhesAnuncio(anuncio)}>
+                <div className="job-info">
+                  <h3 className="job-title">{anuncio.titulo}</h3>
+                  <p className="job-description">{anuncio.descricao}</p>
+                  <div className="job-timing">
+                    Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
+                    Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
+                    Preço: R$ {anuncio.salario.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>Nenhum anúncio adicional encontrado.</p>
+          )}
+        </div>
 
         {mudarTab === 'feedback' && (
           <div id="feedback" className="tab-content">
