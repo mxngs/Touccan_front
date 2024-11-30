@@ -41,7 +41,7 @@ const Configuracao = () => {
         }
 
         try {
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/cliente/${id}`);
+            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setUserData(data.cliente);
@@ -87,7 +87,7 @@ const Configuracao = () => {
         setIsPremium(newPremiumStatus);
     
         try {
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/premium/cliente/${id}`, {
+            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/premium/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ const Configuracao = () => {
         try {
             const updatedFormData = { ...formData, cep: formData.cep.toString() };
 
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/infos/cliente/${id}`, {
+            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/infos/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

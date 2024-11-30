@@ -165,7 +165,7 @@ function Cadastro() {
         confirmar_senha: undefined
       };
 
-      fetch('https://touccan-backend-8a78.onrender.com/cliente', {
+      fetch('https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
