@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importe o hook useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import DetalhesVaga from '../components/DetalhesVaga.jsx';
-import AvaliarModal from '../components/Avaliacao.jsx'; // Componente para avaliação
-import './App.css'; // Adicione estilos CSS específicos
+import AvaliarModal from '../components/Avaliacao.jsx'; 
+import './App.css'; 
 
 const MainContent = () => {
   const [activeTab, setActiveTab] = useState('perto');
@@ -10,16 +10,16 @@ const MainContent = () => {
   const [trabalhosPendentes, setTrabalhosPendentes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [anuncioSelecionado, setAnuncioSelecionado] = useState(null);
-  const [trabalhoSelecionado, setTrabalhoSelecionado] = useState(null); // Para armazenar o trabalho selecionado para avaliar
-  const [modalAvaliarAberto, setModalAvaliarAberto] = useState(false); // Controle do modal de avaliação
+  const [trabalhoSelecionado, setTrabalhoSelecionado] = useState(null); 
+  const [modalAvaliarAberto, setModalAvaliarAberto] = useState(false); 
 
-  const navigate = useNavigate(); // Criação da instância do useNavigate
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const id = localStorage.getItem("id_cliente");
     if (id) {
-      fetchData(id); // Buscar os anúncios
-      fetchTrabalhosPendentes(id); // Buscar os trabalhos pendentes
+      fetchData(id); 
+      fetchTrabalhosPendentes(id); 
     } else {
       console.error('ID do cliente não encontrado no localStorage');
     }
@@ -68,15 +68,15 @@ const MainContent = () => {
   const fecharModal = () => setAnuncioSelecionado(null);
 
   const abrirModalAvaliar = (trabalho) => {
-    setTrabalhoSelecionado(trabalho); // Define o trabalho selecionado para avaliação
-    setModalAvaliarAberto(true); // Abre o modal de avaliação
-    // Redireciona para a página de avaliação (ajuste para corresponder ao formato da URL)
-    navigate(`/avaliacao/${trabalho.id}`); // Navega para a página de avaliação com o ID do trabalho
+    setTrabalhoSelecionado(trabalho); 
+    setModalAvaliarAberto(true); 
+    
+    navigate(`/avaliacao/${trabalho.id}`); 
   };
 
   const fecharModalAvaliar = () => {
     setModalAvaliarAberto(false);
-    setTrabalhoSelecionado(null); // Limpa o trabalho selecionado
+    setTrabalhoSelecionado(null); 
   };
 
   return (
@@ -108,7 +108,7 @@ const MainContent = () => {
                   Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
                   Preço: R$ {anuncio.salario.toFixed(2)}
                 </div>
-                <button className="btn-ver-candidatos">Ver Candidatos</button>
+                <button className="btn-ver-candidatos">Ver detalhes</button>
               </div>
             </div>
           ))

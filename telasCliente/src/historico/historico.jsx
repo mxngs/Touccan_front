@@ -61,8 +61,10 @@ function Historico() {
   };
 
   return (
-    <div className="histórico-container">
+    <div className="bla">
       <Sidebar />
+    <div className="histórico-container">
+      
       <h1 className="histórico-title">Histórico</h1>
 
       {loading ? (
@@ -95,6 +97,7 @@ function Historico() {
           ))
         )
       )}
+    </div>
     </div>
   );
 }

@@ -18,6 +18,7 @@ import PerfilUsuario from './perfilUsuario/perfil.jsx'
 import MudarSenha from './mudarSenha/mudarSenha.jsx'
 import RecuperarSenha from './recuperarSenha/recuperarSenha.jsx'
 import Avaliacao from './components/Avaliacao.jsx'
+import DetalhesVaga from './components/DetalhesVaga.jsx'
 
 
 export default function App() {
@@ -45,6 +46,7 @@ export default function App() {
                   <Route path="/recuperarSenha" element={< RecuperarSenha />} />
                   <Route path="/mudarSenha" element={< MudarSenha />} />
                   <Route path="/avaliacao/:id" element={< Avaliacao />} />
+                  <Route path="/detalhesVaga/:id" element={< DetalhesVaga />} />
                     
                 </Route>
             </Routes>
