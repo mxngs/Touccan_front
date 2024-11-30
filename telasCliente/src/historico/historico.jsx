@@ -3,7 +3,7 @@ import './App.css';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar.jsx';
 
-const baseUrl = 'http://localhost:8080/2.0/touccan/';
+const baseUrl = 'https://touccan-backend-8a78.onrender.com/';
 
 function Historico() {
   const [anuncios, setAnuncios] = useState([]);

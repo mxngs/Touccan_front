@@ -21,7 +21,7 @@ const Candidatos = () => {
         console.log(`Buscando candidatos para o bico com ID: ${id_bico}`);
         
         try {
-            const url = `http://localhost:8080/2.0/touccan/candidato/${id_bico}`;
+            const url = `https://touccan-backend-8a78.onrender.com/candidato/${id_bico}`;
             console.log(`URL para buscar candidatos: ${url}`);
             
             const response = await fetch(url);
@@ -59,7 +59,7 @@ const Candidatos = () => {
         console.log("Requisição PUT:", requestBody);
     
         try {
-            const response = await fetch('http://localhost:8080/2.0/touccan/candidato', {
+            const response = await fetch('https://touccan-backend-8a78.onrender.com/candidato', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ const Candidatos = () => {
         const requestBody = { id_user: id_candidato, id_bico: id_bico };
     
         try {
-            const response = await fetch('http://localhost:8080/2.0/touccan/candidato', {
+            const response = await fetch('https://touccan-backend-8a78.onrender.com/candidato', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
