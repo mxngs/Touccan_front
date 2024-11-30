@@ -2,35 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const ListaConversas = () => {
-  const [conversas, setConversas] = useState({});
+  const [usuarios, setUsuarios] = useState([]);
   const [erro, setErro] = useState(null);
 
-  const fetchConversas = async (id) => {
+  const fetchUsuarios = async (id_cliente) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/relacoes/${id}`);
-      
+      const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/relacoes/${id_cliente}`);
+
       if (!response.ok) {
-        throw new Error(`Erro ao buscar conversas: ${response.status}`);
+        throw new Error(`Erro ao buscar usuários: ${response.status}`);
       }
 
       const data = await response.json();
-      
-      if (data && data.status === true && typeof data.conversas === 'object') {
-        setConversas(data.conversas);
+      if (data && data.status_code === 200 && Array.isArray(data.usuarios)) {
+        setUsuarios(data.usuarios);
       } else {
-        setConversas({}); // 
-        console.log('Sem conversas disponíveis');
+        setUsuarios([]);
+        console.log('Sem usuários disponíveis');
       }
     } catch (error) {
-      console.error('Erro ao buscar as conversas:', error);
-      setErro('Houve um problema ao buscar as conversas. Tente novamente mais tarde.');
+      console.error('Erro ao buscar os usuários:', error);
+      setErro('Houve um problema ao buscar os usuários. Tente novamente mais tarde.');
     }
   };
 
   useEffect(() => {
     const id = localStorage.getItem("id_cliente");
     if (id) {
-      fetchConversas(id); 
+      fetchUsuarios(id);
     } else {
       setErro('ID do cliente não encontrado no localStorage');
       console.error('ID do cliente não encontrado no localStorage');
@@ -43,38 +42,30 @@ const ListaConversas = () => {
 
   return (
     <div className="area-central">
-    
       <div className="menu-lateral">
-        <Link to="/home" className="btn-voltar">  
+        <Link to="/home" className="btn-voltar">
           &#8592; Voltar
         </Link>
       </div>
 
-    
-      <input type="text" className="barra-pesquisa" placeholder="Pesquisar conversa" />
+      <input type="text" className="barra-pesquisa" placeholder="Pesquisar usuário" />
       <div className="linha-laranja"></div>
       <div className="linha-preta"></div>
 
       <div className="conversas">
-        {Object.keys(conversas).length > 0 ? (
-          Object.keys(conversas).map((id) => {
-            const conversa = conversas[id] && conversas[id][0]; // Acessa a primeira conversa, se existir
-            if (!conversa) return null; // Se não houver dados, retorna null
-            const { nome, texto } = conversa;
-            
-            return (
-              <Link to={`/chat/${id}`} key={id} className="conversa">
-                <img src="./Imagem - Perfil.png" alt="Profile" className="icon-conversa" />
-                <div className="nome-conversa">{nome}</div>
-                <div className="mensagem-conversa">{texto}</div>
-                <div className="hora-conversa">10:30</div>
-              </Link>
-            );
-          })
-        ) : (
-          <p>Sem conversas disponíveis.</p>
-        )}
-      </div>
+  {usuarios.length > 0 ? (
+    usuarios.map(({ id_usuario, nome_usuario, foto_usuario }, index) => (
+      <Link to={`/chat/${id_usuario}`} key={`${id_usuario}-${index}`} className="conversa">
+        <img src={foto_usuario} alt="Profile" className="icon-conversa" />
+        <div className="nome-conversa">{nome_usuario}</div>
+        <div className="hora-conversa">10:30</div>
+      </Link>
+    ))
+  ) : (
+    <p>Sem usuários disponíveis.</p>
+  )}
+</div>
+
     </div>
   );
 };
