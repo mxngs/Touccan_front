@@ -15,21 +15,40 @@
 }
 
 .barra-pesquisa{
-  margin-left: 170px;
-  width: 600px;
+  margin-left: 110px;
+  width: 650px;
 }
 
 .menu-lateral {
-  width: 160px;
+  width: 100px;
   border-right: 3px solid rgba(0, 0, 0, 0.162);
   height: 100%;  
   position: fixed;
-  
+  display: flex; 
+  flex-direction: column; 
+  padding-top: 300px; 
+  gap: 40px; 
+  box-sizing: border-box; 
+}
+
+
+.menu-lateral img {
+  width: 43px;
+  height: 43px;
+  margin-right: 8px;
+}
+
+.chatContainer{
+  height: 100vh;
+  width: 100vh;
 }
 
 .btn-voltar {
   text-decoration: none;
-  color: #ff7b00;
+  top: 5px;
+  left: 20px;
+  position: fixed;
+  color: #000000;
 }
 
 
@@ -37,7 +56,7 @@
 .conversas {
   display: flex;
   flex-direction: column;
-  margin-left: 170px;
+  margin-left: 110px;
 }
 
 .conversa {
@@ -45,6 +64,7 @@
   padding: 10px;
   border-bottom: 1px solid #ddd;
   cursor: pointer;
+  width: 650px;
 }
 
 .icon-conversa {
@@ -99,8 +119,8 @@
 .linha-laranja {
   height: 2px;
   background-color: rgba(0, 0, 0, 0.096);
-  margin-left: 160px;
-  width: 650px;
+  margin-left: 100px;
+  width: 660px;
 }
 
 .chat-conversa {

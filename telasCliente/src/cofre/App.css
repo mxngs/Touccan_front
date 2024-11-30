@@ -67,16 +67,26 @@ body {
     gap: 20px;
 }
 
+.containerChat {
+    display: flex;                  
+    justify-content: center;       
+              
+    height: 100vh;                  
+    gap: 100px;                      
+                 
+}
+
 .caixas-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-height: 600px;
+    width: 500px;
     overflow: hidden;
-    margin-left: 50px;
-    margin-top: 60px;
-    width: 50%;
-}
+    
+   
+} 
+
+
 
 .cartao-info {
     display: flex;
