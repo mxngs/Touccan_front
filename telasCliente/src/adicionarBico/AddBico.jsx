@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar.jsx';
-import Swal from 'sweetalert2'; // Importando o SweetAlert2
+import Swal from 'sweetalert2';
 import './App.css';
 
 const AddBico = () => {
@@ -20,6 +20,7 @@ const AddBico = () => {
         id_categoria: ''
     });
 
+    const [salarioExibido, setSalarioExibido] = useState(''); // Salário formatado para exibição
     const [erros, setErros] = useState({});
     const [idCliente, setIdCliente] = useState(null);
 
@@ -42,25 +43,41 @@ const AddBico = () => {
 
     useEffect(() => {
         const id = localStorage.getItem("id_cliente");
-        console.log('ID recuperado:', id);
-
         if (id) {
             setIdCliente(id);
         } else {
             console.error('ID do cliente não encontrado no localStorage');
         }
-
         preencherSelectCategoria();
     }, []);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        const parsedValue = (name === 'id_dificuldade' || name === 'id_categoria') ? parseInt(value, 10) : value;
 
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: parsedValue
-        }));
+        if (name === 'salario') {
+            const numericValue = value.replace(/[^0-9]/g, '');
+            setSalarioExibido(
+                numericValue
+                    ? `R$ ${Number(numericValue / 100).toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                    })}`
+                    : ''
+            );
+            setFormData(prevData => ({
+                ...prevData,
+                salario: numericValue / 100 // Armazena o valor bruto no state
+            }));
+        } else {
+            const formattedValue =
+                (name === 'titulo' || name === 'descricao') && value
+                    ? value.charAt(0).toUpperCase() + value.slice(1)
+                    : value;
+
+            setFormData(prevData => ({
+                ...prevData,
+                [name]: formattedValue
+            }));
+        }
     };
 
     const validateForm = () => {
@@ -81,71 +98,38 @@ const AddBico = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
         if (!idCliente) {
             console.error("ID do cliente não encontrado para o envio");
             return;
         }
-    
 
-        
-        const salarioValue = parseFloat(formData.salario);
-        if (isNaN(salarioValue)) {
-            Swal.fire({
-                title: 'Erro',
-                text: 'Por favor, insira um valor de salário válido.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-    
-        const salarioComDesconto = salarioValue * 0.9;
-    
-        const confirmacao = await Swal.fire({
-            title: 'Confirmar anúncio',
-            text: `O salário informado é R$ ${salarioValue.toFixed(2)}. Após aplicar a taxa de serviço de 10%, o salário final será R$ ${salarioComDesconto.toFixed(2)}. Deseja criar o anúncio com esse salário?`,
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonText: 'Sim, criar anúncio',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
-        });
-    
-        if (confirmacao.isConfirmed) {
-            if (validateForm()) {
-                const dadosLimpos = {
-                    ...formData,
-                    id_cliente: parseInt(idCliente, 10),
-                    salario: salarioComDesconto // Envia o salário **com o desconto de 10%** AAAA FUNCIONA
-                };
-    
-                try {
-                    console.log(dadosLimpos);
-                    const response = await fetch(`${baseUrl}/bicos`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(dadosLimpos),
-                    });
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Anúncio criado com sucesso:', result);
-                        navigate('/home');
-                    } else {
-                        console.error('Erro ao criar anúncio');
-                    }
-                } catch (error) {
-                    console.error('Erro de rede:', error);
+        if (validateForm()) {
+            const dadosLimpos = {
+                ...formData,
+                id_cliente: parseInt(idCliente, 10),
+                salario: formData.salario // Valor bruto sem formatação
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/bicos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosLimpos),
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    Swal.fire('Sucesso', 'Anúncio criado com sucesso!', 'success');
+                    navigate('/home');
+                } else {
+                    Swal.fire('Erro', 'Erro ao criar o anúncio.', 'error');
                 }
+            } catch (error) {
+                console.error('Erro de rede:', error);
             }
-        } else {
-            
-            console.log("Usuário cancelou a criação do anúncio.");
         }
     };
-    
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -157,56 +141,91 @@ const AddBico = () => {
                     <h1>Criar Anúncio</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="bico-input-container">
-                            <label>Titulo</label>
-                            <input type='text' name='titulo' value={formData.titulo} onChange={handleInputChange} />
+                            <label>Título</label>
+                            <input
+                                type='text'
+                                name='titulo'
+                                value={formData.titulo}
+                                onChange={handleInputChange}
+                            />
                             {erros.titulo && <span className="error">{erros.titulo}</span>}
                         </div>
 
                         <div className="bico-input-container">
                             <label>Descrição</label>
-                            <textarea name="descricao" value={formData.descricao} onChange={handleInputChange}></textarea>
+                            <textarea
+                                name="descricao"
+                                value={formData.descricao}
+                                onChange={handleInputChange}
+                            ></textarea>
                             {erros.descricao && <span className="error">{erros.descricao}</span>}
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Horário início - Espediente</label>
-                            <input type='time' name='horario_inicio' value={formData.horario_inicio} onChange={handleInputChange} />
+                            <label>Horário Início</label>
+                            <input
+                                type='time'
+                                name='horario_inicio'
+                                value={formData.horario_inicio}
+                                onChange={handleInputChange}
+                            />
                             {erros.horario_inicio && <span className="error">{erros.horario_inicio}</span>}
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Data início</label>
-                            <input type='date' name='data_inicio' min={today} value={formData.data_inicio} onChange={handleInputChange} />
+                            <label>Data Início</label>
+                            <input
+                                type='date'
+                                name='data_inicio'
+                                min={today}
+                                value={formData.data_inicio}
+                                onChange={handleInputChange}
+                            />
                             {erros.data_inicio && <span className="error">{erros.data_inicio}</span>}
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Horário Final - Espediente</label>
-                            <input type='time' name='horario_limite' value={formData.horario_limite} onChange={handleInputChange} />
+                            <label>Horário Final</label>
+                            <input
+                                type='time'
+                                name='horario_limite'
+                                value={formData.horario_limite}
+                                onChange={handleInputChange}
+                            />
                             {erros.horario_limite && <span className="error">{erros.horario_limite}</span>}
                         </div>
 
                         <div className="bico-input-container">
                             <label>Data Limite</label>
-                            <input type='date' name='data_limite' min={today} value={formData.data_limite} onChange={handleInputChange} />
+                            <input
+                                type='date'
+                                name='data_limite'
+                                min={today}
+                                value={formData.data_limite}
+                                onChange={handleInputChange}
+                            />
                             {erros.data_limite && <span className="error">{erros.data_limite}</span>}
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Salário - Considere os 10% da taxa de serviço </label>
+                            <label>Salário</label>
                             <input
-                                type='number'
+                                type='text'
                                 name='salario'
-                                value={formData.salario}
+                                value={salarioExibido}
                                 onChange={handleInputChange}
-                                placeholder="Digite o valor"
+                                placeholder="R$ 0,00"
                             />
                             {erros.salario && <span className="error">{erros.salario}</span>}
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Nível de dificuldade</label>
-                            <select name='id_dificuldade' value={formData.id_dificuldade} onChange={handleInputChange}>
+                            <label>Nível de Dificuldade</label>
+                            <select
+                                name='id_dificuldade'
+                                value={formData.id_dificuldade}
+                                onChange={handleInputChange}
+                            >
                                 <option value="">Selecione um nível</option>
                                 <option value="1">Baixa</option>
                                 <option value="2">Média</option>
@@ -217,7 +236,11 @@ const AddBico = () => {
 
                         <div className="bico-input-container">
                             <label>Categoria</label>
-                            <select name='id_categoria' id='categoria-select' onChange={handleInputChange}>
+                            <select
+                                name='id_categoria'
+                                id='categoria-select'
+                                onChange={handleInputChange}
+                            >
                                 <option value="">Selecione uma categoria</option>
                             </select>
                             {erros.id_categoria && <span className="error">{erros.id_categoria}</span>}

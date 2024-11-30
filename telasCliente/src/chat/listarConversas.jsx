@@ -41,31 +41,65 @@ const ListaConversas = () => {
   }
 
   return (
-    <div className="area-central">
+    <div className="chatContainer">
+
       <div className="menu-lateral">
         <Link to="/home" className="btn-voltar">
-          &#8592; Voltar
+          <img src="../img/voltar.png" alt="" />
+        </Link>
+
+        <Link to="/home">
+          <a href="">
+            <img src="../img/home.png" alt="" />
+          </a>
+        </Link>
+
+        <Link to="/chat">
+          <a href="">
+          <img src="../img/chat.png" alt=""/>
+          </a>
+        </Link>
+
+        <Link to="/historico">
+        <a href="">
+          <img src="../img/historico.png" alt=""/>
+          </a>
+        </Link>
+
+        <Link to="/cofre">
+        <a href="">
+          <img src="../img/cofrinho.png" alt=""/>
+          </a>
+        </Link>
+
+        <Link to="/configuracao">
+        <a href="">
+          <img src="../img/configurações.png" alt=""/>
+          </a>
         </Link>
       </div>
 
-      <input type="text" className="barra-pesquisa" placeholder="Pesquisar usuário" />
-      <div className="linha-laranja"></div>
-      <div className="linha-preta"></div>
+      <div className="area-central">
 
-      <div className="conversas">
-  {usuarios.length > 0 ? (
-    usuarios.map(({ id_usuario, nome_usuario, foto_usuario }, index) => (
-      <Link to={`/chat/${id_usuario}`} key={`${id_usuario}-${index}`} className="conversa">
-        <img src={foto_usuario} alt="Profile" className="icon-conversa" />
-        <div className="nome-conversa">{nome_usuario}</div>
-        <div className="hora-conversa">10:30</div>
-      </Link>
-    ))
-  ) : (
-    <p>Sem usuários disponíveis.</p>
-  )}
-</div>
+        <input type="text" className="barra-pesquisa" placeholder="Pesquisar usuário" />
+        <div className="linha-laranja"></div>
+        <div className="linha-preta"></div>
 
+        <div className="conversas">
+          {usuarios.length > 0 ? (
+            usuarios.map(({ id_usuario, nome_usuario, foto_usuario }, index) => (
+              <Link to={`/chat/${id_usuario}`} key={`${id_usuario}-${index}`} className="conversa">
+                <img src={foto_usuario} alt="Profile" className="icon-conversa" />
+                <div className="nome-conversa">{nome_usuario}</div>
+                <div className="hora-conversa">10:30</div>
+              </Link>
+            ))
+          ) : (
+            <p>Sem usuários disponíveis.</p>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 };
