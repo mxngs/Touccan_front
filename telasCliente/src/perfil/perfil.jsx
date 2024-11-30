@@ -20,7 +20,7 @@ const Perfil = () => {
 
   const fetchDadosCliente = async (id) => {
     try {
-      const response = await fetch(`https://touccan-backend-8a78.onrender.com/cliente/${id}`);
+      const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`);
       if (response.ok) {
         const data = await response.json();
         if (data && data.cliente) {
@@ -47,7 +47,7 @@ const Perfil = () => {
 
   const fetchFeedbacks = async (id) => {
     try {
-      const response = await fetch(`https://touccan-backend-8a78.onrender.com/feedback/cliente/${id}`);
+      const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/feedback/cliente/${id}`);
       if (response.ok) {
         const data = await response.json();
         console.log('Dados brutos recebidos da API:', data);
@@ -71,7 +71,7 @@ const Perfil = () => {
 
   const fetchAnuncios = async (id) => {
     try {
-      const response = await fetch('https://touccan-backend-8a78.onrender.com/bico', {
+      const response = await fetch('https://touccan-backend-8a78.onrender.com/2.0/touccan/bico', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_cliente: id }),
@@ -146,7 +146,7 @@ const Perfil = () => {
     };
 
     try {
-      const response = await fetch(`https://touccan-backend-8a78.onrender.com/cliente/${id}`, {
+      const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

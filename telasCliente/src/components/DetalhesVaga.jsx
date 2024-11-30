@@ -25,7 +25,7 @@ const DetalhesVaga = ({ anuncio, onClose }) => {
 
         if (confirmDelete.isConfirmed) {
             try {
-                const response = await fetch(`https://touccan-backend-8a78.onrender.com/bico/${anuncio.id}`, {
+                const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/bico/${anuncio.id}`, {
                     method: 'DELETE',
                 });
 

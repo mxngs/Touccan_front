@@ -59,7 +59,7 @@ const Cofre = () => {
 
     const fetchCartao = async (id) => {
         try {
-            const response = await axios.get(`https://touccan-backend-8a78.onrender.com/cliente/cartao/${id}`);
+            const response = await axios.get(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/cartao/${id}`);
             const cartao = response.data;
             if (cartao) {
                 setCartaoCadastrado(true);
@@ -121,8 +121,8 @@ const Cofre = () => {
         console.log('Dados a serem enviados:', cartaoData);
 
         const url = cartaoCadastrado
-            ? `https://touccan-backend-8a78.onrender.com/cliente/cartao/${idCliente}`
-            : 'https://touccan-backend-8a78.onrender.com/cliente/cartao';
+            ? `https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/cartao/${idCliente}`
+            : 'https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/cartao';
 
         const method = cartaoCadastrado ? 'PUT' : 'POST';
 
