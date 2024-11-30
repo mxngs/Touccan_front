@@ -1,50 +1,110 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getDatabase, ref, push, onValue } from 'firebase/database';
 import { useParams, Link } from 'react-router-dom';
 import './App.css';
+import { initializeApp } from "firebase/app";
 
-const Chat = ({ conversas = {}, atualizarConversas }) => {
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBslNgrhtDObgNFm3-CIeBp96WlI9GklL4",
+  authDomain: "touccan-chat.firebaseapp.com",
+  databaseURL: "https://touccan-chat-default-rtdb.firebaseio.com",
+  projectId: "touccan-chat",
+  storageBucket: "touccan-chat.firebasestorage.app",
+  messagingSenderId: "647816113687",
+  appId: "1:647816113687:web:1c28374f44bd236d26f652"
+};
+const id_cliente = localStorage.getItem('id_cliente')
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+const Chat = () => {
   const { chatId } = useParams();
   const [novaMensagem, setNovaMensagem] = useState('');
+  const [mensagens, setMensagens] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [usuario, setUsuario] = useState({ nome: '', foto: '', id: '' }); // Adicionando 'id'
 
-  // Dados fictícios caso o chatId não exista
-  const conversaPadrao = [
-    { tipo: 'recebida', texto: 'Olá! Tudo bem?', nome: 'Contato Exemplo' },
-    { tipo: 'recebida', texto: 'Eu sou apenas uma conversa simulada.', nome: 'Contato Exemplo' },
-  ];
+  // Função para carregar as mensagens do Firebase
+  useEffect(() => {
+    const chatRef = ref(database, `chats/${chatId}`);
+    const mensagensListener = onValue(chatRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const mensagensArray = Object.values(data);
+        setMensagens(mensagensArray);
+      }
+      setLoading(false);
+    });
 
-  // Pega a conversa atual ou usa a conversa padrão
-  const mensagens = conversas[chatId] || conversaPadrao;
+    return () => {
+      mensagensListener(); // Remove listener ao sair da tela
+    };
+  }, [chatId]);
 
-  // Nome do contato (usado no cabeçalho)
-  const nomeContato = mensagens[0]?.nome || 'Contato Desconhecido';
+  // Função para buscar os dados do usuário
+  useEffect(() => {
+    const fetchUsuario = async () => {
+      try {
+        const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/usuario/${chatId}`);
+        const data = await response.json();
+        if (data && data.status_code === 200) {
+          setUsuario({
+            nome: data.usuario?.nome || 'Usuário Desconhecido',
+            foto: data.usuario?.foto || '../../img/person.png',
+            id: data.usuario?.id || '' // Supondo que o id do usuário seja retornado aqui
+          });
+        } else {
+          console.error('Erro ao buscar dados do usuário');
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
+    };
+
+    fetchUsuario();
+  }, [chatId]);
 
   const enviarMensagem = () => {
     if (novaMensagem.trim() !== '') {
-      const mensagem = { tipo: 'enviada', texto: novaMensagem };
-      if (atualizarConversas) {
-        atualizarConversas(chatId, mensagem);
-      } else {
-        console.log('Mensagem enviada (simulada):', mensagem);
-      }
-      setNovaMensagem('');
+      const mensagem = {
+        tipo: 'enviada',
+        texto: novaMensagem,
+        timestamp: new Date().toISOString(), // Timestamp para ordenação
+        id_cliente: id_cliente, // Adicionando o ID do usuário que enviou a mensagem
+      };
+
+      // Salvar a mensagem no Firebase
+      const chatRef = ref(database, `chats/${chatId}`);
+      push(chatRef, mensagem)
+        .then(() => {
+          setNovaMensagem(''); // Limpa o campo de mensagem
+        })
+        .catch((error) => console.error('Erro ao enviar mensagem:', error));
     }
   };
+
+  if (loading) {
+    return <p>Carregando...</p>;
+  }
 
   return (
     <div className="lado-direito">
       <div className="chat">
         <div className="chat-header">
           <Link to="/home" className="btn-voltar-chat"></Link>
-          <div className="nome-pessoa-chat">{nomeContato}</div>
+          <div className="nome-pessoa-chat">{usuario.nome}</div>
           <div className="linha-laranja"></div>
         </div>
 
         <div className="chat-conversa">
           {mensagens.map((msg, index) => (
-            <div key={index} className={msg.tipo === 'enviada' ? 'msg-enviada' : 'msg-recebida'}>
+            <div key={index} className={msg.id_cliente === id_cliente ? 'msg-enviada' : 'msg-recebida'}>
               <img
-                className={msg.tipo === 'enviada' ? 'foto-perfil-enviado' : 'foto-perfil-recebido'}
-                src={msg.tipo === 'enviada' ? 'seu-perfil.png' : './Icon - perfil.png'}
+                className={msg.id_cliente === id_cliente ? 'foto-perfil-enviado' : 'foto-perfil-recebido'}
+                src={msg.id_cliente === id_cliente ? 'seu-perfil.png' : usuario.foto}
                 alt="Foto de Perfil"
               />
               <div className="mensagem-texto">{msg.texto}</div>

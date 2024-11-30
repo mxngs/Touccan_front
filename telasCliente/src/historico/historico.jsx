@@ -23,11 +23,10 @@ function Historico() {
 
   const fetchData = async (id) => {
     try {
-      const response = await fetch(`${baseUrl}cliente/historico/${id}`, { 
+      const response = await fetch(`${baseUrl}cliente/historico/${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-
 
       if (!response.ok) {
         console.error('Erro ao buscar dados:', response.statusText);
@@ -51,6 +50,7 @@ function Historico() {
       setLoading(false);
     }
   };
+  
 
   const handleFinalize = async (id_bico) => {
     try {
@@ -107,33 +107,43 @@ function Historico() {
         {loading ? (
           <p className="histórico-loading">Carregando...</p>
         ) : (
-          anuncios.length === 0 ? (
-            <p>Nenhum bico ativo encontrado.</p>
-          ) : (
-            anuncios.map((anuncio, index) => (
-              <div key={index} className="histórico-card">
-                <div className="histórico-decorative-line"></div>
-                <div className="histórico-card-content">
-                  <div className="histórico-card-header">
-                    <h2> {anuncio.nome || 'Indefinido'}  - {anuncio.titulo || 'Título não disponível'}</h2>
-                    <div className="histórico-card-footer">
-                      <button
-                        className={`histórico-finalize-button ${anuncio.finalizado === 1 ? 'disabled' : ''}`}
-                        onClick={() => handleFinalize(anuncio.id)} 
-                        disabled={anuncio.finalizado === 1}
-                      >
-                        {anuncio.finalizado === 1 ? 'Finalizado' : 'Finalizar'}
-                      </button>
-                      <p className="histórico-date">Horário de início: {isNaN(new Date(anuncio.horario_inicio)) ? 'Indefinido' : new Date(anuncio.horario_inicio).toLocaleString()}</p>
-                      <p className="histórico-date">Horário limite: {isNaN(new Date(anuncio.horario_limite)) ? 'Indefinido' : new Date(anuncio.horario_limite).toLocaleString()}</p>
-                    </div>
-                  </div>
+          anuncios.map((anuncio, index) => (
+            <div key={index} className="histórico-card">
+              <div className="histórico-decorative-line"></div>
+              <div className="histórico-card-content">
+                <div className="histórico-card-header">
+                  <h2>{anuncio.titulo || 'Título não disponível'}</h2>
+                  <img
+                    src={anuncio.foto || 'https://via.placeholder.com/150'}
+                    alt="Imagem do anúncio"
+                    className="histórico-card-image"
+                  />
+                </div>
+                <div className="histórico-card-body">
+                  <p className="histórico-description">{anuncio.descricao || 'Descrição não fornecida.'}</p>
+                  <p className="histórico-client-name">{anuncio.nome || 'Cliente não identificado'}</p>
+                  <p className="histórico-salary">Salário: R$ {anuncio.salario?.toFixed(2) || '0.00'}</p>
+                  <p className="histórico-date">
+                    Data Início: {new Date(anuncio.data_inicio).toLocaleString() || 'Indefinido'}
+                  </p>
+                  <p className="histórico-date">
+                    Data Limite: {new Date(anuncio.data_limite).toLocaleString() || 'Indefinido'}
+                  </p>
+                </div>
+                <div className="histórico-card-footer">
+                  <button
+                    className="histórico-finalize-button"
+                    onClick={() => handleFinalize(anuncio.id)}
+                  >
+                    Finalizar
+                  </button>
                 </div>
               </div>
-            ))
-          )
-        )}
-      </div>
+            </div>
+          ))          
+        )
+      )}
+    </div>
     </div>
   );
 }
