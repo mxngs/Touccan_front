@@ -7,7 +7,7 @@ const ListaConversas = () => {
 
   const fetchUsuarios = async (id_cliente) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/relacoes/${id_cliente}`);
+      const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/relacoes/${id_cliente}`);
 
       if (!response.ok) {
         throw new Error(`Erro ao buscar usuários: ${response.status}`);

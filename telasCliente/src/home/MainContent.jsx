@@ -27,7 +27,7 @@ const MainContent = () => {
 
   const fetchData = async (id) => {
     try {
-      const response = await fetch('http://localhost:8080/2.0/touccan/bico', {
+      const response = await fetch('https://touccan-backend-8a78.onrender.com/2.0/touccan/bico', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_cliente: id }),
@@ -49,7 +49,7 @@ const MainContent = () => {
 
   const fetchTrabalhosPendentes = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/historico/${id}`);
+      const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/historico/${id}`);
 
       if (!response.ok) {
         throw new Error(`Erro: ${response.status} - ${response.statusText}`);

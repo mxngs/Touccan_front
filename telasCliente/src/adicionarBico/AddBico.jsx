@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import './App.css';
 
 const AddBico = () => {
-    const baseUrl = 'http://localhost:8080/2.0/touccan';
+    const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan';
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({

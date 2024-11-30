@@ -3,7 +3,7 @@ import './App.css';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar.jsx';
 
-const baseUrl = 'http://localhost:8080/2.0/touccan/';
+const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan/';
 
 function Historico() {
   const [anuncios, setAnuncios] = useState([]);
@@ -78,7 +78,7 @@ function Historico() {
               <div className="histórico-decorative-line"></div>
               <div className="histórico-card-content">
                 <div className="histórico-card-header">
-                  <h2>{anuncio.titulo || 'Título não disponível'}</h2>
+                  <h2> {anuncio.nome || 'Indefinido'}  - {anuncio.titulo || 'Título não disponível'}</h2>
                   <div className="histórico-card-footer">
                     <button
                       className="histórico-finalize-button"
@@ -90,8 +90,8 @@ function Historico() {
                     <p className="histórico-date">Horário limite: {isNaN(new Date(anuncio.horario_limite)) ? 'Indefinido' : new Date(anuncio.horario_limite).toLocaleString()}</p>
                   </div>
                 </div>
-                <p className="histórico-client-name">{anuncio.nome_cliente || 'Cliente não identificado'}</p>
-                <p className="histórico-user-name">Usuário: {anuncio.nome || 'Indefinido'}</p>
+                
+                
               </div>
             </div>
           ))

@@ -18,6 +18,7 @@ const Cofre = () => {
     });
     const [idCliente, setIdCliente] = useState(null);
     const [historico, setHistorico] = useState([]);
+    const [notificationVisible, setNotificationVisible] = useState(false); // Novo estado para controle da notificação
 
     const updateNotifications = () => historico.slice(startIndex, startIndex + maxNotifications);
 
@@ -30,20 +31,51 @@ const Cofre = () => {
         if (e.target === e.currentTarget) setIsEditing(false);
     };
 
-    const handleSave = () => {
-        console.log('Salvando dados do cartão:', formData);
-        // Adicione aqui a lógica para salvar o cartão, seja via API ou localmente
-        setIsEditing(false);
-    };
-
-    useEffect(() => {
-        const id = localStorage.getItem('id_cliente');
-        if (id) {
-            setIdCliente(id);
-        } else {
-            console.error('ID do cliente não encontrado no localStorage');
+    const handleSave = async () => {
+        if (!idCliente) {
+            console.error('ID do cliente não encontrado');
+            return;
         }
-    }, []);
+
+        const cartaoData = {
+            numero: formatNumeroCartao(formData.numero),
+            validade: formatValidade(formData.validade),
+            cvv: formatCVV(formData.cvv),
+            nome_titular: formData.nome_titular,
+            cpf: formatCPF(formData.cpf),
+            apelido: formData.apelido,
+            id_cliente: idCliente
+        };
+
+        console.log('Dados a serem enviados:', cartaoData);
+
+        const url = cartaoCadastrado
+            ? `http://localhost:8080/2.0/touccan/cliente/cartao/${idCliente}`
+            : 'http://localhost:8080/2.0/touccan/cliente/cartao';
+
+        const method = cartaoCadastrado ? 'PUT' : 'POST';
+
+        try {
+            const response = await axios({
+                method: method,
+                url: url,
+                data: cartaoData
+            });
+            console.log('Resposta da requisição:', response);
+            setCartaoCadastrado(true); // Marca o cartão como cadastrado
+            setNotificationVisible(true);
+            setTimeout(() => {
+                setNotificationVisible(false);
+                setIsEditing(false);
+            }, 3000);
+
+            // Busca as informações do cartão após salvar
+            fetchCartao(idCliente);
+
+        } catch (error) {
+            console.error('Erro ao fazer a requisição do histórico:', error);
+        }
+    };
 
     useEffect(() => {
         if (idCliente && !cartaoCadastrado) {
@@ -55,8 +87,8 @@ const Cofre = () => {
     const fetchCartao = async (id_cliente) => {
         try {
             const response = await axios.get(`http://localhost:8080/2.0/touccan/cliente/cartao/${id_cliente}`);
-            if (response.data && response.data.cartao && response.data.cartao.length > 0) {
-                const cartao = response.data.cartao[0];
+            const cartao = response.data;
+            if (cartao) {
                 setCartaoCadastrado(true);
                 setFormData({
                     numero: cartao.numero || '',
@@ -70,35 +102,28 @@ const Cofre = () => {
                 setCartaoCadastrado(false);
             }
         } catch (error) {
-            console.error('Erro ao fazer a requisição do cartão:', error);
-            setCartaoCadastrado(false);
+            console.error('Erro ao buscar o cartão:', error);
         }
     };
 
     const fetchHistorico = async (id_cliente) => {
         try {
             const response = await axios.get(`http://localhost:8080/2.0/touccan/cliente/historico/${id_cliente}`);
-            if (response.data && response.data.historico) {
-                setHistorico(response.data.historico);
-            } else {
-                setHistorico([]);
-            }
+            setHistorico(response.data);
         } catch (error) {
-            console.error('Erro ao fazer a requisição do histórico:', error);
+            console.error('Erro ao buscar histórico:', error);
         }
     };
 
-    const handlePayment = (itemId) => {
-        console.log(`Pagamento realizado para o item com ID: ${itemId}`);
-        // Lógica para processar o pagamento
-    };
-
+    const formatNumeroCartao = (value) => value.replace(/\D/g, '').slice(0, 16);
+    const formatValidade = (value) => value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
+    const formatCVV = (value) => value.replace(/\D/g, '').slice(0, 3);
+    const formatCPF = (value) => value.replace(/\D/g, '').slice(0, 11);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     };
 
-    // Função para formatar o salário com R$ e vírgulas
     const formatarSalario = (valor) => {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
@@ -211,18 +236,15 @@ const Cofre = () => {
                                     value={formData.apelido}
                                     onChange={(e) => setFormData({ ...formData, apelido: e.target.value })}
                                 />
-                            </div>
 
-                            <div className="botoes">
-                                <button className="botao-salvar" onClick={handleSave}>
-                                    {cartaoCadastrado ? 'Salvar alterações' : 'Adicionar cartão'}
-                                </button>
-                                <button className="botao-cancelar" onClick={() => setIsEditing(false)}>
-                                    Cancelar
-                                </button>
+                                <button className="botao-salvar" onClick={handleSave}>Salvar</button>
                             </div>
                         </div>
                     </div>
+                )}
+
+                {notificationVisible && (
+                    <div className="notification">Cartão salvo com sucesso!</div>
                 )}
             </div>
         </div>

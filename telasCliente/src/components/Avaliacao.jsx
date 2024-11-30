@@ -16,7 +16,7 @@ const Avaliacao = () => {
   useEffect(() => {
     const fetchTrabalho = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/2.0/touccan/bico/historico/${id}`);
+        const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/bico/historico/${id}`);
         if (!response.ok) {
           throw new Error('Erro ao buscar dados do trabalho');
         }
@@ -81,7 +81,7 @@ const Avaliacao = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/2.0/touccan/avaliacao/cliente', {
+      const response = await fetch('https://touccan-backend-8a78.onrender.com/2.0/touccan/avaliacao/cliente', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
