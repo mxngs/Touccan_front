@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import './Avaliacao.css';
+import { Link } from 'react-router-dom';
 
 const Avaliacao = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [trabalho, setTrabalho] = useState(null);
   const [avaliacao, setAvaliacao] = useState('');
   const [nota, setNota] = useState(1);
@@ -17,18 +20,15 @@ const Avaliacao = () => {
         if (!response.ok) {
           throw new Error('Erro ao buscar dados do trabalho');
         }
-        const data = await response.json(); 
-        let separar = data.bicos[0]     
-        console.log(separar)
-
-        if (data) {
-          setTrabalho(data);
+        const data = await response.json();
+        if (data && data.bicos && data.bicos.length > 0) {
+          let separar = data.bicos[0];
+          setTrabalho(separar);
           setIdUsuario(separar.id_usuario);
         } else {
           throw new Error('Trabalho não encontrado');
         }
       } catch (error) {
-        console.error('Erro ao buscar trabalho:', error);
         Swal.fire({
           icon: 'error',
           title: 'Erro',
@@ -97,9 +97,10 @@ const Avaliacao = () => {
         icon: 'success',
         title: 'Avaliação Enviada',
         text: 'Sua avaliação foi enviada com sucesso!',
+      }).then(() => {
+        navigate('/home');
       });
     } catch (error) {
-      console.error('Erro ao enviar avaliação:', error);
       Swal.fire({
         icon: 'error',
         title: 'Erro',
@@ -114,65 +115,71 @@ const Avaliacao = () => {
 
   return (
     <div className="fundooo">
-    <div className="detalhes-vaga">
-      {loading ? (
-        <div>Carregando...</div>
-      ) : trabalho ? (
-        <div>
-          <h2>Avalie o Trabalho: {trabalho.titulo}</h2>
-          <div className="job-info">
-            <h3 className="job-name">
-              <img
-                src={trabalho.foto && trabalho.foto !== '' ? trabalho.foto : '/img/semFtoo.jpg'}
-                alt={trabalho.nome}
-                className="job-image"
-              />
-              <span className="job-person-name">{trabalho.nome}</span>
-            </h3>
-            <div className="job-title">{trabalho.titulo}</div>
-            <div className="job-descricao">{trabalho.descricao}</div>
-            <div className="job-timing">
-              Início: {new Date(trabalho.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              <br />
-              Término: {new Date(trabalho.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              <br />
-              Pagamento:{' '}
-              {typeof trabalho.salario === 'number' ? `R$ ${trabalho.salario.toFixed(2)}` : 'Não disponível'}
-            </div>
-          </div>
-
-          <div className="avaliacao-form">
-            <div>
-              <label>Avaliação:</label>
-              <textarea
-                value={avaliacao}
-                onChange={(e) => setAvaliacao(e.target.value)}
-                placeholder="Escreva sua avaliação..."
-              />
-            </div>
-
-            <div>
-              <label>Avalie o trabalho:</label>
-              <div className="stars">
-                {[1, 2, 3, 4, 5].map((valor) => (
-                  <span
-                    key={valor}
-                    style={{ cursor: 'pointer', fontSize: '30px', color: valor <= nota ? 'gold' : 'gray' }}
-                    onClick={() => handleNotaClick(valor)}
-                  >
-                    {valor <= nota ? '★' : '☆'}
-                  </span>
-                ))}
+      <div className="fundooo">
+        <Link to="/home" className="botao-voltar">
+          &lt;
+        </Link>
+        <div className="detalhes-vaga"></div>
+      </div>
+      <div className="detalhes-vaga">
+        {loading ? (
+          <div>Carregando...</div>
+        ) : trabalho ? (
+          <div>
+            <h2>Avalie o Trabalho: {trabalho.titulo}</h2>
+            <div className="job-info">
+              <h3 className="job-name">
+                <img
+                  src={trabalho.foto ? trabalho.foto : '/img/semFtoo.jpg'}
+                  alt={trabalho.nome || 'Imagem do trabalho'}
+                  className="job-image"
+                />
+                <span className="job-person-name">{trabalho.nome || 'Nome não disponível'}</span>
+              </h3>
+              <div className="job-title">{trabalho.titulo || 'Título não disponível'}</div>
+              <div className="job-timing">
+                Início: {new Date(trabalho.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <br />
+                Término: {new Date(trabalho.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <br />
+                Pagamento:{' '}
+                {typeof trabalho.salario === 'number' ? `R$ ${trabalho.salario.toFixed(2)}` : 'Não disponível'}
               </div>
             </div>
 
-            <button onClick={handleEnviarAvaliacao}>Enviar Avaliação</button>
+            <div className="avaliacao-form">
+              <div>
+                <label>Deixe seu comentario:</label>
+                <textarea
+                  value={avaliacao}
+                  onChange={(e) => setAvaliacao(e.target.value)}
+                  placeholder="Escreva sua avaliação..."
+                />
+              </div>
+
+              <div>
+                <label>Avalie o trabalho:</label>
+                <div className="stars">
+                  {[1, 2, 3, 4, 5].map((valor) => (
+                    <span
+                      key={valor}
+                      style={{ cursor: 'pointer', fontSize: '30px', color: valor <= nota ? 'gold' : 'gray' }}
+                      onClick={() => handleNotaClick(valor)}
+                    >
+                      {valor <= nota ? '★' : '☆'}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <button onClick={handleEnviarAvaliacao}>Enviar Avaliação</button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <p>Trabalho não encontrado.</p>
-      )}
-    </div></div>
+        ) : (
+          <p>Trabalho não encontrado.</p>
+        )}
+      </div>
+    </div>
   );
 };
 
