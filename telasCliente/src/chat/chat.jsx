@@ -14,7 +14,7 @@ const firebaseConfig = {
   messagingSenderId: "647816113687",
   appId: "1:647816113687:web:1c28374f44bd236d26f652"
 };
-const id_cliente = localStorage.getItem('id_cliente')
+const id_cliente = localStorage.getItem('id_cliente');
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -25,10 +25,17 @@ const Chat = () => {
   const [novaMensagem, setNovaMensagem] = useState('');
   const [mensagens, setMensagens] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [usuario, setUsuario] = useState({ nome: '', foto: '', id: '' }); // Adicionando 'id'
+  const [usuario, setUsuario] = useState({ nome: '', foto: '', id: '' });
 
   // Função para carregar as mensagens do Firebase
   useEffect(() => {
+    const [id_usuario_1, id_usuario_2] = chatId.split('_');
+    if (id_usuario_1 !== id_cliente && id_usuario_2 !== id_cliente) {
+      // Verifica se o chat não pertence ao cliente logado
+      console.error('Você não tem acesso a este chat');
+      return;
+    }
+
     const chatRef = ref(database, `chats/${chatId}`);
     const mensagensListener = onValue(chatRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -54,7 +61,7 @@ const Chat = () => {
           setUsuario({
             nome: data.usuario?.nome || 'Usuário Desconhecido',
             foto: data.usuario?.foto || '../../img/person.png',
-            id: data.usuario?.id || '' // Supondo que o id do usuário seja retornado aqui
+            id: data.usuario?.id || ''
           });
         } else {
           console.error('Erro ao buscar dados do usuário');
@@ -72,12 +79,15 @@ const Chat = () => {
       const mensagem = {
         tipo: 'enviada',
         texto: novaMensagem,
-        timestamp: new Date().toISOString(), // Timestamp para ordenação
+        timestamp: new Date().toISOString(),
         id_cliente: id_cliente, // Adicionando o ID do usuário que enviou a mensagem
       };
 
+      // Monta o caminho do chat com os IDs dos dois usuários
+      const [id_usuario_1, id_usuario_2] = chatId.split('_');
+      const chatRef = ref(database, `chats/${chatId}/conversa_unica_${Date.now()}`);
+      
       // Salvar a mensagem no Firebase
-      const chatRef = ref(database, `chats/${chatId}`);
       push(chatRef, mensagem)
         .then(() => {
           setNovaMensagem(''); // Limpa o campo de mensagem

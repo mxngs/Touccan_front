@@ -97,6 +97,7 @@ function Historico() {
       }
     }
   };
+  console.log(anuncios)
 
   return (
     <div className="bla">
@@ -133,7 +134,7 @@ function Historico() {
                 <div className="histórico-card-footer">
                   <button
                     className="histórico-finalize-button"
-                    onClick={() => handleFinalize(anuncio.id)}
+                    onClick={() => handleFinalize(anuncio.id_bico)}
                   >
                     Finalizar
                   </button>
@@ -142,7 +143,7 @@ function Historico() {
             </div>
           ))          
         )
-      )}
+      }
     </div>
     </div>
   );
