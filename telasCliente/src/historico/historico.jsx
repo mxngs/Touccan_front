@@ -12,7 +12,7 @@ function Historico() {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [currentAnuncio, setCurrentAnuncio] = useState(null);
-  const [preferenceId, setPreferenceId] = useState(null); // Armazenar a preference_id gerada
+  const [preferenceId, setPreferenceId] = useState(null); 
 
   useEffect(() => {
     const id = localStorage.getItem('id_cliente');
@@ -58,7 +58,7 @@ function Historico() {
     // Criação da preferência de pagamento no backend
     const createPaymentPreference = async () => {
       try {
-        const response = await axios.post('http://localhost:5000/criar-pagamento', {
+        const response = await axios.post('http://localhost:8080/criar-pagamento', {
           amount,
           id_bico,
         });
@@ -98,7 +98,7 @@ function Historico() {
 
   useEffect(() => {
     if (window.MercadoPago && preferenceId) {
-      const mp = new window.MercadoPago('TEST-9e1740aa-6df5-4a3e-b2ba-993d0ec0fb17'); // Substitua pela sua chave pública
+      const mp = new window.MercadoPago('TEST-9e1740aa-6df5-4a3e-b2ba-993d0ec0fb17'); 
 
       // Configuração do pagamento com Mercado Pago
       mp.checkout({
