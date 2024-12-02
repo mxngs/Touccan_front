@@ -69,11 +69,10 @@ const MainContent = () => {
 
   const abrirModalAvaliar = (trabalho) => {
     setTrabalhoSelecionado(trabalho); 
-    setModalAvaliarAberto(true); 
-    
-    navigate(`/avaliacao/${trabalho.id}`); 
+    navigate(`/avaliacao/${trabalho.id}`); // Redireciona antes de abrir o modal
+    setModalAvaliarAberto(true); // Só abre o modal depois que a navegação é feita
   };
-
+  
   const fecharModalAvaliar = () => {
     setModalAvaliarAberto(false);
     setTrabalhoSelecionado(null); 

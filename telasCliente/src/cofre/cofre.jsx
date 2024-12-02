@@ -14,16 +14,17 @@ const Cofre = () => {
         cvv: '',
         nome_titular: '',
         cpf: '',
-        apelido: ''
+        apelido: '',
     });
-    const [idCliente, setIdCliente] = useState(null);
+    const [idCliente, setIdCliente] = useState(1); // Alterar para o ID correto em produção
     const [historico, setHistorico] = useState([]);
-    const [notificationVisible, setNotificationVisible] = useState(false); // Novo estado para controle da notificação
+    const [notification, setNotification] = useState({ visible: false, message: '', type: '' });
 
-    const updateNotifications = () => historico.slice(startIndex, startIndex + maxNotifications);
+    const updateNotifications = () => historico;
 
-    const handleUpClick = () => setStartIndex(prev => Math.max(prev - 1, 0));
-    const handleDownClick = () => setStartIndex(prev => Math.min(prev + 1, historico.length - maxNotifications));
+    const handleUpClick = () => setStartIndex((prev) => Math.max(prev - 1, 0));
+    const handleDownClick = () =>
+        setStartIndex((prev) => Math.min(prev + 1, historico.length - maxNotifications));
 
     const handleEditClick = () => setIsEditing(true);
 
@@ -31,9 +32,23 @@ const Cofre = () => {
         if (e.target === e.currentTarget) setIsEditing(false);
     };
 
+    const showNotification = (message, type) => {
+        setNotification({ visible: true, message, type });
+        setTimeout(() => setNotification({ visible: false, message: '', type: '' }), 3000);
+    };
+
     const handleSave = async () => {
-        if (!idCliente) {
-            console.error('ID do cliente não encontrado');
+        const requiredFields = ['numero', 'validade', 'cvv', 'nome_titular', 'cpf', 'apelido'];
+        const errors = {};
+
+        requiredFields.forEach((field) => {
+            if (!formData[field].trim()) {
+                errors[field] = 'Este campo é obrigatório';
+            }
+        });
+
+        if (Object.keys(errors).length > 0) {
+            showNotification('Preencha todos os campos obrigatórios.', 'error');
             return;
         }
 
@@ -44,10 +59,8 @@ const Cofre = () => {
             nome_titular: formData.nome_titular,
             cpf: formatCPF(formData.cpf),
             apelido: formData.apelido,
-            id_cliente: idCliente
+            id_cliente: idCliente,
         };
-
-        console.log('Dados a serem enviados:', cartaoData);
 
         const url = cartaoCadastrado
             ? `http://localhost:8080/2.0/touccan/cliente/cartao/${idCliente}`
@@ -57,63 +70,54 @@ const Cofre = () => {
 
         try {
             const response = await axios({
-                method: method,
-                url: url,
-                data: cartaoData
+                method,
+                url,
+                data: cartaoData,
             });
-            console.log('Resposta da requisição:', response);
-            setCartaoCadastrado(true); // Marca o cartão como cadastrado
-            setNotificationVisible(true);
-            setTimeout(() => {
-                setNotificationVisible(false);
-                setIsEditing(false);
-            }, 3000);
-
-            // Busca as informações do cartão após salvar
+            showNotification('Cartão salvo com sucesso!', 'success');
+            setCartaoCadastrado(true);
+            setIsEditing(false);
             fetchCartao(idCliente);
-
         } catch (error) {
-            console.error('Erro ao fazer a requisição do histórico:', error);
+            console.error(`Erro na requisição ${method}:`, error.response?.data || error.message);
+            showNotification('Erro ao salvar o cartão. Verifique os dados.', 'error');
         }
     };
 
     useEffect(() => {
-        if (idCliente && !cartaoCadastrado) {
+        if (idCliente) {
             fetchCartao(idCliente);
             fetchHistorico(idCliente);
         }
-    }, [idCliente, cartaoCadastrado]);
+    }, [idCliente]);
 
     const fetchCartao = async (id_cliente) => {
         try {
             const response = await axios.get(`http://localhost:8080/2.0/touccan/cliente/cartao/${id_cliente}`);
-            const cartao = response.data;
-            if (cartao) {
-                setCartaoCadastrado(true);
-                setFormData({
-                    numero: cartao.numero || '',
-                    validade: cartao.validade || '',
-                    cvv: cartao.cvv || '',
-                    nome_titular: cartao.nome_titular || '',
-                    cpf: cartao.cpf || '',
-                    apelido: cartao.apelido || ''
-                });
-            } else {
-                setCartaoCadastrado(false);
-            }
+            console.log('Cartão encontrado:', response.data);
         } catch (error) {
-            console.error('Erro ao buscar o cartão:', error);
+            console.error('Erro ao buscar o cartão:', error.response?.data || error.message);
+            if (error.response?.status === 404) {
+                showNotification('Cartão não encontrado. Cadastre um novo.', 'error');
+            } else {
+                showNotification('Erro ao buscar o cartão. Tente novamente mais tarde.', 'error');
+            }
         }
     };
 
     const fetchHistorico = async (id_cliente) => {
         try {
-            const response = await axios.get(`http://localhost:8080/2.0/touccan/cliente/historico/${id_cliente}`);
-            setHistorico(response.data);
+            const response = await axios.get(
+                `http://localhost:8080/2.0/touccan/cliente/historico/${id_cliente}`
+            );
+            console.log('Histórico retornado:', response.data);  // Exibe o conteúdo do histórico
+            setHistorico(response.data.historico || []);  // Atualiza o estado com os dados retornados
         } catch (error) {
-            console.error('Erro ao buscar histórico:', error);
+            console.error('Erro ao buscar histórico:', error.response?.data || error.message);
+            setHistorico([]); // Caso não haja histórico, deixe vazio
         }
     };
+
 
     const formatNumeroCartao = (value) => value.replace(/\D/g, '').slice(0, 16);
     const formatValidade = (value) => value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
@@ -127,7 +131,7 @@ const Cofre = () => {
     const formatarSalario = (valor) => {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
-            currency: 'BRL'
+            currency: 'BRL',
         }).format(valor);
     };
 
@@ -135,31 +139,32 @@ const Cofre = () => {
         <div className="content-principal">
             <Sidebar />
             <div className="content">
-                <h1 className="titulo">Cofre</h1>
-                <div className="linha-laranja"></div>
-
+                <h1 className="tituloo">Cofre</h1>
+                <div className="linha-laranjaa"></div>
                 <div className="containerChat">
                     <div className="caixas-container" id="caixas-container">
-                        {updateNotifications()
-                            .map((caixa, index) => (
-                                <div className="caixa" key={index}>
-                                    <h2 className="titulo-caixa">{caixa.nome} - {caixa.titulo}</h2>
-                                    <p className="salario">{formatarSalario(caixa.salario)}</p> {/* Salário formatado */}
-                                    <p className="data_inicio">{formatDate(caixa.data_inicio)}</p>
-
-                                    {caixa.finalizar === 1 ? (
-                                        <button
-                                            className="botao-pagar"
-                                            onClick={() => handlePayment(caixa.id)}
-                                        >
-                                            Pagar
-                                        </button>
-                                    ) : (
-                                        <p className="status-pendente">Pendente</p>
-                                    )}
-                                </div>
-                            ))}
+                        {historico.map((caixa, index) => (
+                            <div className="caixaa" key={index}>
+                                <h2 className="titulo-caixa">
+                                    {caixa.nome || 'Sem Nome'} - {caixa.titulo || 'Sem Título'}
+                                </h2>
+                                <p className="salarioCofre">{formatarSalario(caixa.salario || 0)}</p>
+                                <p className="dataCofre">{formatDate(caixa.data_inicio)}</p>
+                                {caixa.finalizado === 1 ? (
+                                    <p className="status-pendente">Pagamento feito com sucesso</p>
+                                ) : (
+                                    <button
+                                        className="botao-pagar"
+                                        onClick={() => console.log(`Pagamento iniciado para ID: ${caixa.id}`)}
+                                    >
+                                        Pagar
+                                    </button>
+                                )}
+                            </div>
+                        ))}
                     </div>
+
+
 
                     <div className="cartao-info">
                         <div className="linha-decorativa"></div>
@@ -170,13 +175,17 @@ const Cofre = () => {
 
                         {cartaoCadastrado ? (
                             <div className="caixa-cartao">
-                                <img src="/cartao.png" className="icon-cartao" alt="Ícone do Cartão" />
+                                <img
+                                    src="/cartao.png"
+                                    className="icon-cartao"
+                                    alt="Ícone do Cartão"
+                                />
                                 <div className="detalhes-cartao">
                                     <div className="titulo-detalhe">
                                         {formData.apelido || 'Apelido não definido'} • Débito
                                     </div>
                                     <div className="subtitulo-detalhe">
-                                        {formData.numero ? `•••• ${formData.numero.slice(-4)}` : '•••• ****'}
+                                        {formData.numero ? `•••• ${formData.numero.slice(-4)}` : '•••• •••• •••• ••••'}
                                     </div>
                                 </div>
                             </div>
@@ -184,7 +193,7 @@ const Cofre = () => {
                             <p className="sem-cartao">Nenhum cartão cadastrado.</p>
                         )}
 
-                        <button className="botao-editar" onClick={handleEditClick}>
+                        <button className="botao-editaar" onClick={handleEditClick}>
                             {cartaoCadastrado ? 'Editar cartão' : 'Cadastrar cartão'}
                         </button>
                     </div>
@@ -232,19 +241,22 @@ const Cofre = () => {
                                 <input
                                     type="text"
                                     name="apelido"
-                                    placeholder="Apelido"
+                                    placeholder="Apelido do Cartão"
                                     value={formData.apelido}
                                     onChange={(e) => setFormData({ ...formData, apelido: e.target.value })}
                                 />
-
-                                <button className="botao-salvar" onClick={handleSave}>Salvar</button>
+                                <button className="botao-editaar" onClick={handleSave}>
+                                    Salvar
+                                </button>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {notificationVisible && (
-                    <div className="notification">Cartão salvo com sucesso!</div>
+                {notification.visible && (
+                    <div className={`notification ${notification.type}`}>
+                        {notification.message}
+                    </div>
                 )}
             </div>
         </div>

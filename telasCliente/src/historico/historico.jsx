@@ -10,9 +10,12 @@ const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan/';
 function Historico() {
   const [anuncios, setAnuncios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [currentAnuncio, setCurrentAnuncio] = useState(null);
+  const [preferenceId, setPreferenceId] = useState(null); // Armazenar a preference_id gerada
 
   useEffect(() => {
-    const id = localStorage.getItem("id_cliente");
+    const id = localStorage.getItem('id_cliente');
     if (id) {
       fetchData(id);
     } else {
@@ -35,10 +38,10 @@ function Historico() {
       }
 
       const data = await response.json();
-      console.log('Dados retornados da API:', data); 
+      console.log('Dados retornados da API:', data);
 
       if (data.historico && Array.isArray(data.historico)) {
-        const bicosAtivos = data.historico.filter(bico => bico && bico.finalizado === 0);
+        const bicosAtivos = data.historico.filter((bico) => bico && bico.finalizado === 0);
         setAnuncios(bicosAtivos || []);
       } else {
         console.error('A chave "historico" não foi encontrada ou não é um array válido');
@@ -50,54 +53,67 @@ function Historico() {
       setLoading(false);
     }
   };
-  
 
-  const handleFinalize = async (id_bico) => {
-    try {
-      const paymentData = {
-        id_bico: id_bico, 
-        final_c: 1, 
-      };
-
-      console.log('Dados que estão sendo enviados:', paymentData);
-
-      const response = await axios.post(`${baseUrl}finalizar/cliente`, paymentData);
-
-      if (response.data && response.data.sucesso) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Sucesso!',
-          text: 'Bico finalizado com sucesso!',
+  const handleFinalize = (id_bico, amount) => {
+    // Criação da preferência de pagamento no backend
+    const createPaymentPreference = async () => {
+      try {
+        const response = await axios.post('http://localhost:5000/criar-pagamento', {
+          amount,
+          id_bico,
         });
-        setAnuncios(anuncios.map(anuncio => 
-          anuncio.id === id_bico ? { ...anuncio, finalizado: 1 } : anuncio
-        ));
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Erro!',
-          text: response.data?.message || 'Erro desconhecido ao finalizar o bico.',
-        });
+        if (response.data.preference_id) {
+          setPreferenceId(response.data.preference_id); // Armazenando o preference_id
+          setCurrentAnuncio({ id_bico, amount });
+          setShowPaymentModal(true);
+        } else {
+          console.error('Erro ao criar a preferência de pagamento');
+          alert('Erro ao criar a preferência de pagamento');
+        }
+      } catch (error) {
+        console.error('Erro ao criar a preferência de pagamento:', error);
+        alert('Erro ao criar a preferência de pagamento');
       }
-    } catch (error) {
-      console.error('Erro ao tentar finalizar:', error);
+    };
 
-      if (error.response) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Erro!',
-          text: `Erro ao finalizar o bico: ${error.response.data.message || "Erro desconhecido."}`,
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Erro!',
-          text: 'Erro desconhecido ao tentar finalizar o bico.',
-        });
-      }
-    }
+    createPaymentPreference();
   };
-  console.log(anuncios)
+
+  const handlePaymentSuccess = () => {
+    // Atualiza o estado de "finalizado" localmente após o pagamento bem-sucedido
+    setAnuncios((prevAnuncios) =>
+      prevAnuncios.map((anuncio) =>
+        anuncio.id === currentAnuncio.id_bico ? { ...anuncio, finalizado: 1 } : anuncio
+      )
+    );
+
+    // Fecha o modal de pagamento e mostra o alerta de sucesso
+    setShowPaymentModal(false);
+    Swal.fire({
+      icon: 'success',
+      title: 'Pagamento Concluído!',
+      text: 'O pagamento foi concluído com sucesso.',
+    });
+  };
+
+  useEffect(() => {
+    if (window.MercadoPago && preferenceId) {
+      const mp = new window.MercadoPago('TEST-9e1740aa-6df5-4a3e-b2ba-993d0ec0fb17'); // Substitua pela sua chave pública
+
+      // Configuração do pagamento com Mercado Pago
+      mp.checkout({
+        preference: {
+          id: preferenceId,
+        },
+        render: {
+          container: '#payment-button', // Renderiza o botão de pagamento no container
+          label: 'Pagar', // Texto do botão de pagamento
+        },
+      });
+    }
+  }, [preferenceId]);
+
+  console.log(anuncios);
 
   return (
     <div className="bla">
@@ -134,17 +150,38 @@ function Historico() {
                 <div className="histórico-card-footer">
                   <button
                     className="histórico-finalize-button"
-                    onClick={() => handleFinalize(anuncio.id_bico)}
+                    onClick={() => handleFinalize(anuncio.id_bico, anuncio.salario)}
+                    disabled={anuncio.finalizado !== 0}
+                    style={{
+                      backgroundColor: anuncio.finalizado === 1 ? '#B0B0B0' : '#E97911',
+                      cursor: anuncio.finalizado !== 0 ? 'not-allowed' : 'pointer',
+                    }}
                   >
-                    Finalizar
+                    {anuncio.finalizado === 0
+                      ? 'Finalizar'
+                      : anuncio.finalizado === 1
+                      ? 'Finalizado'
+                      : 'Pagamento Pendente'}
                   </button>
                 </div>
               </div>
             </div>
-          ))          
-        )
-      }
-    </div>
+          ))
+        )}
+      </div>
+
+      {/* Modal de pagamento */}
+      {showPaymentModal && (
+        <div className="payment-modal">
+          <div className="payment-modal-content">
+            <h2>Finalizar Pagamento</h2>
+            <div id="payment-button"></div> {/* Aqui o botão do Mercado Pago será renderizado */}
+            <button onClick={() => setShowPaymentModal(false)} className="close-modal-button">
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

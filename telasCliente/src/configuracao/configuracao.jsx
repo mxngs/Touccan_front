@@ -187,7 +187,7 @@ const Configuracao = () => {
             <div className="cards-panel">
                 <div className="card" onClick={() => toggleView('account')}>
                     <div className="card-content">
-                        <i className="fas fa-info-circle card-icon"></i>
+                    <img src="../img/usuario.png" alt="Sobre Nós" className="card-icon" />
                         <div>
                             <div className="card-title">Informações da conta</div>
                             <div className="card-description">Veja as informações da conta, como telefone e endereço de e-mail</div>
@@ -196,7 +196,7 @@ const Configuracao = () => {
                 </div>
                 <div className="card" onClick={() => toggleView('security')}>
                     <div className="card-content">
-                        <i className="fas fa-lock card-icon"></i>
+                    <img src="../img/senha.png" alt="Sobre Nós" className="card-icon" />
                         <div>
                             <div className="card-title">Segurança</div>
                             <div className="card-description">Gerencie a segurança da sua conta</div>
@@ -205,7 +205,7 @@ const Configuracao = () => {
                 </div>
                 <div className="card" onClick={() => toggleView('support')}>
                     <div className="card-content">
-                        <i className="fas fa-headset card-icon"></i>
+                    <img src="../img/suporte.png" alt="Sobre Nós" className="card-icon" />
                         <div>
                             <div className="card-title">Suporte</div>
                             <div className="card-description">Entre em contato conosco de qualquer lugar</div>
@@ -241,16 +241,17 @@ const Configuracao = () => {
 
             {currentView === 'account' && userData && (
                 <div className="account-details">
-                    <h2 className="account-title">Informações da Conta</h2>
+                    <h2 className="account-titlee">Informações da Conta</h2>
+                    
                     <div className="account-card">
                         {isEditing ? (
                             <div>
                                 <div className="info">
-                                    <label>Nome do Usuário:</label>
+                                    <label>Nome do Usuário:</label> 
                                     <input
                                         type="text"
                                         name="nome_fantasia"
-                                        value={formData.nome_fantasia || ''}
+                                        value= {formData.nome_fantasia || ''}
                                         onChange={handleFormChange}
                                     />
                                 </div>
@@ -282,17 +283,23 @@ const Configuracao = () => {
                                         onChange={handleFormChange}
                                     />
                                 </div>
+                                <div className="infoConta">
                                 <button onClick={handleSaveChanges}>Salvar Alterações</button>
                                 <button onClick={() => setIsEditing(false)}>Cancelar</button>
+                                </div>
                             </div>
                         ) : (
                             <div>
-                                <div className="info"><strong>Nome do Usuário:</strong> {userData.nome_fantasia}</div>
-                                <div className="info"><strong>Telefone:</strong> {userData.telefone}</div>
-                                <div className="info"><strong>E-mail:</strong> {userData.email}</div>
-                                <div className="info"><strong>CEP:</strong> {userData.cep}</div>
+                            <div className="infos"><strong>Nome do Usuário:</strong> <br /> {userData.nome_fantasia}</div>
+                            <div className="infos"><strong>Telefone:</strong> <br /> {userData.telefone}</div>
+                            <div className="infos"><strong>E-mail:</strong> <br /> {userData.email}</div>
+                            <div className="infos"><strong>CEP:</strong> <br /> {userData.cep}</div>
+                            
+                            <div className="button-container">
                                 <button onClick={() => setIsEditing(true)}>Editar Informações</button>
                             </div>
+                        </div>
+                        
                         )}
                     </div>
                     
@@ -301,7 +308,7 @@ const Configuracao = () => {
 
             {currentView === 'premium' && (
                 <div className="premium-details">
-                    <h2 className="account-title">Vire Premium já!</h2>
+                    <h2 className="account-titlee">Vire Premium já!</h2>
                     <div className="premium-content">
                         <div className="premium-description">
                             <img src="../../img/premium.png" alt="Coroa" className="premium-icon" />
@@ -320,8 +327,8 @@ const Configuracao = () => {
 
             {currentView === 'security' && (
                 <div className="security-settings">
-                    <h2 className="account-title">Segurança</h2>
-                    <div className="account-card">
+                    <h2 className="account-titlee">Segurança</h2>
+                    <div className="account-cardSeg">
                         <div className="security-form">
                             <div className="info">
                                 <div className="info-title">Senha Atual:</div>
@@ -343,8 +350,8 @@ const Configuracao = () => {
 
             {currentView === 'support' && (
                 <div className="support-panel">
-                    <h2 className="account-title">Suporte</h2>
-                    <div className="account-card">
+                    <h2 className="account-titlee">Suporte</h2>
+                    <div className="account-cardSuport">
                         <div className="contato">E-mail para contato</div>
                         <div className="info-value">contato.touccan@gmail.com</div>
                         <div className="info-title">Encontrou algum problema? reporte para nós</div>
@@ -357,8 +364,8 @@ const Configuracao = () => {
 
             {currentView === 'aboutUs' && (
                 <div className="about-us">
-                    <h2 className="account-title">Sobre Nós</h2>
-                    <div className="account-card">
+                    <h2 className="account-titlee">Sobre Nós</h2>
+                    <div className="account-cardAbout">
                         <div className="sub-title">Quem Somos</div>
                         <div className="info-value">
                             Touccan é uma forma inovadora de conectar pessoas que precisam de empregos temporários de alta remuneração a alguém que precisa de serviços de curto prazo e eficientes. Nossa plataforma permite que as pessoas realizem suas tarefas e contrate-as, com foco naqueles que precisam apenas por um curto período.

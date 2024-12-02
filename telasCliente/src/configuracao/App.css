@@ -102,7 +102,7 @@ body {
 .account-title {
     margin-bottom: 10px;
     margin-top: 120px;
-    margin-left: 200px;
+    margin-left: 180px;
     position: relative;
 }
 
@@ -117,23 +117,55 @@ body {
     margin-left: 200px;
 }
 
+.account-cardSuport {
+    background-color: #fafafa;
+    border: 1px solid #dbdbdb;
+    border-radius: 7px;
+    padding: 30px;
+    width: 400px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    margin-left: 200px;
+}
+.account-cardSeg {
+    background-color: #fafafa;
+    border: 1px solid #dbdbdb;
+    border-radius: 7px;
+    padding: 30px;
+    width: 400px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    margin-left: 200px;
+}
+
+.account-cardAbout {
+    background-color: #fafafa;
+    border: 1px solid #dbdbdb;
+    border-radius: 7px;
+    padding: 30px;
+    width: 400px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-left: 200px;
+}
+
 .account-title {
     position: relative;
 }
 
-.account-title {
-    font-weight: bold;
-    text-align: center;
+.account-titlee {
+    position: fixed;
     margin-bottom: 10px;
     margin-top: 120px;
     margin-left: 200px;
     position: relative;
+    text-align: center;
 }
 
-.account-title::after {
+.account-titlee::after {
     content: '';
     display: block;
-    width: 50%;
+    width: 50;
     height: 2px;
     background-color: #F07B07;
     margin: 10px auto 0;
@@ -142,7 +174,9 @@ body {
 .info {
     margin-bottom: 25px;
     text-align: left;
+    display: block;
 }
+
 
 .info-title {
     font-weight: bold;
@@ -159,6 +193,32 @@ body {
     align-self: center;
 }
 
+.infos {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    gap: 20px;
+}
+
+
+
+.button-container button {
+    width: 100%; 
+    padding: 12px; 
+    font-size: 16px; 
+}
+
+.infoConta {
+    display: flex;         
+    justify-content: space-between; 
+    gap: 20px;             
+}
+
+
+.infoConta button {
+    flex: 1;                
+    padding: 10px;          
+    font-size: 16px;        
+}
 .logout-button:hover {
     background-color: #D06506;
 }
@@ -234,6 +294,20 @@ body {
     margin-bottom: 20px;
     background-color: rgba(217, 217, 217, 0.62);
 }
+
+.account-cardSeg {
+    margin-bottom: 20px;
+    background-color: rgba(217, 217, 217, 0.62);
+}
+.account-cardSuport {
+    margin-bottom: 20px;
+    background-color: rgba(217, 217, 217, 0.62);
+}
+.account-cardAbout {
+    margin-bottom: 20px;
+    background-color: rgba(217, 217, 217, 0.62);
+}
+
 
 .suporte textarea {
     width: 100%;

@@ -15,25 +15,25 @@ body {
     top: 100px;
 }
 
-.titulo {
-    font-size: 24px;
+.tituloo {
+    font-size: 30px;
     font-weight: bold;
     margin: 0;
     position: absolute;
     top: 0;
-    left: 30px;
+    left: 200px;
     padding: 10px;
 }
 
-.linha-laranja {
+.linha-laranjaa {
     width: 70%;
     height: 1px;
     background-color: #F07B07;
-    margin-top: 40px; 
+    margin-top: 48px; 
     margin-left: 5px;
 }
 
-.caixa {
+.caixaa {
     width: 100%;
     max-width: 600px; 
     height: 100px; 
@@ -76,10 +76,30 @@ body {
                  
 }
 
+.salarioCofre{
+    color: black;
+    font-size: 16px; 
+    margin-right: 390px;
+}
+
+.dataCofre{
+    color: black;
+    font-size: 16px; 
+    margin-left: 370px;
+    margin-top: -30px;
+}
+
+.status-pendente{
+    font-size: 16px;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
 .caixas-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-top: 30px;
     width: 500px;
     overflow: hidden;
     
@@ -97,7 +117,7 @@ body {
 
 .titulo-cartao {
     font-size: 24px;
-    font-weight: bold;
+    font-weight: bolder;
     margin-top: 70px;
     margin-left: 70px;
     margin-bottom: 10px;
@@ -141,16 +161,19 @@ body {
     color: #666; 
 }
 
-.botao-editar {
+.botao-editaar {
     background-color: #F07B07;
+    width: 220px;
+    height: 40px;
     color: white;
     border: none;
     padding: 10px 20px;
     margin-top: 25px;
-    margin-left: 60px;
+    margin-left: 30px;
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
+    font-weight: lighter;
     align-self: flex-start; 
 }
 
@@ -170,6 +193,14 @@ body {
     font-size: 16px;
     margin: 0 20px;
     margin-top: 50px;
+}
+
+.sem-cartao{
+    font-size: 14px;
+    color: #F07B07;
+    margin-left: 10px;
+    font-size: 18px;
+    font-weight:bolder ;
 }
 
 .botao-seta:disabled {
@@ -216,13 +247,6 @@ body {
     width: 25%; 
 }
 
-input {
-    width: 95%; 
-    padding: 10px;
-    margin: 5px 0; 
-    border: 1px solid #ccc;
-    border-radius: 5px; 
-}
 
 .botao-salvar {
     background-color: #F07B07; 
