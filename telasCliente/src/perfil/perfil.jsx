@@ -271,7 +271,9 @@ const Perfil = () => {
               </div>
             ))
           ) : (
-            <p>Nenhum anúncio adicional encontrado.</p>
+            <div className="semAnuncios">
+              <p>Você não tem anúncios</p> {/* Mensagem para quando não houver anúncios */}
+            </div>
           )}
         </div>
 
@@ -296,10 +298,16 @@ const Perfil = () => {
                 </div>
               ))
             ) : (
-              <p>Nenhum feedback encontrado. Verifique se há avaliações ou denúncias feitas por clientes.</p>
+              <div className="semFeedbacks">
+                <p>Você não tem feedbacks.</p> {/* Mensagem para quando não houver feedbacks */}
+              </div>
             )}
           </div>
         )}
+
+
+
+
       </div>
     </div>
   );

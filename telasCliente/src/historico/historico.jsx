@@ -12,7 +12,7 @@ function Historico() {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [currentAnuncio, setCurrentAnuncio] = useState(null);
-  const [preferenceId, setPreferenceId] = useState(null); 
+  const [preferenceId, setPreferenceId] = useState(null);
 
   useEffect(() => {
     const id = localStorage.getItem('id_cliente');
@@ -98,7 +98,7 @@ function Historico() {
 
   useEffect(() => {
     if (window.MercadoPago && preferenceId) {
-      const mp = new window.MercadoPago('TEST-9e1740aa-6df5-4a3e-b2ba-993d0ec0fb17'); 
+      const mp = new window.MercadoPago('TEST-9e1740aa-6df5-4a3e-b2ba-993d0ec0fb17');
 
       // Configuração do pagamento com Mercado Pago
       mp.checkout({
@@ -122,7 +122,11 @@ function Historico() {
         <h1 className="histórico-title">Histórico</h1>
 
         {loading ? (
-          <p className="histórico-loading">Carregando...</p>
+          <div className="carregar">
+            <div className="custom-loader"></div>
+          </div>
+        ) : anuncios.length === 0 ? (
+          <p className="sem-historico">Você ainda não tem <br /> nenhum histórico de anúncios.</p>
         ) : (
           anuncios.map((anuncio, index) => (
             <div key={index} className="histórico-card">
@@ -160,8 +164,8 @@ function Historico() {
                     {anuncio.finalizado === 0
                       ? 'Finalizar'
                       : anuncio.finalizado === 1
-                      ? 'Finalizado'
-                      : 'Pagamento Pendente'}
+                        ? 'Finalizado'
+                        : 'Pagamento Pendente'}
                   </button>
                 </div>
               </div>

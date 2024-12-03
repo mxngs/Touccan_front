@@ -62,6 +62,13 @@ body {
     background-color: #636363;
 } */
 
+.semAnuncio p{
+    color: #9795957e;
+    font-size: 18px;
+    font-weight: bolder;
+    font-style: oblique;
+}
+
 .dificuldade-alta {
     color: red; 
   }

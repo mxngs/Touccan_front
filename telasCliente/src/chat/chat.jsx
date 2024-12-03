@@ -20,21 +20,14 @@ const id_cliente = localStorage.getItem('id_cliente'); // ID do cliente logado
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-const Chat = () => {
-  const { chatId } = useParams(); // Esse chatId será o identificador único do chat
+const Chat = ({ chatId }) => {
   const [novaMensagem, setNovaMensagem] = useState('');
   const [mensagens, setMensagens] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [usuario, setUsuario] = useState({ nome: '', foto: ''});
-  const [isSameUser, setIsSameUser] = useState(false); // Verifica se o ID do usuário é o mesmo do cliente
+  const [usuario, setUsuario] = useState({ nome: '', foto: '' });
+  const [isSameUser, setIsSameUser] = useState(false);
 
-  // Gerar um chatId único baseado nos IDs dos dois participantes
-  const gerarChatId = (id_cliente, id_usuario) => {
-    return `C${id_cliente}_U${id_usuario}`;
-  };
-
-  // O chatId que estamos usando agora é gerado com base nos IDs do cliente e do usuário
-  const chatIdUnico = gerarChatId(id_cliente, chatId);
+  const chatIdUnico = `C${id_cliente}_U${chatId}`;
 
   // Carregar mensagens do Firebase para o chat específico
   useEffect(() => {
@@ -43,12 +36,9 @@ const Chat = () => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         const mensagensArray = Object.values(data);
-
-        // Filtra as mensagens para mostrar apenas as relevantes para o cliente logado
         const mensagensFiltradas = mensagensArray.filter(msg =>
           msg.id_cliente === id_cliente || msg.id_usuario === chatId
         );
-
         setMensagens(mensagensFiltradas);
       }
       setLoading(false);
@@ -59,7 +49,6 @@ const Chat = () => {
     };
   }, [chatIdUnico, id_cliente, chatId]);
 
-  // Buscar dados do usuário (verificando o id_usuario do chat)
   useEffect(() => {
     const fetchUsuario = async () => {
       try {
@@ -71,9 +60,7 @@ const Chat = () => {
             nome: usuarioData?.nome || 'Usuário Desconhecido',
             foto: usuarioData?.foto || '../../img/person.png',
           });
-
-          // Verifica se o id_cliente corresponde ao id do usuário para permitir a exibição das imagens
-          setIsSameUser(usuarioData?.id === chatId); // Se os IDs forem iguais, renderiza as imagens
+          setIsSameUser(usuarioData?.id === chatId);
         } else {
           console.error('Erro ao buscar dados do usuário');
         }
@@ -85,65 +72,57 @@ const Chat = () => {
     fetchUsuario();
   }, [chatId]);
 
-  // Enviar mensagem para o chat específico
   const enviarMensagem = () => {
     if (novaMensagem.trim() !== '') {
       const mensagem = {
         tipo: 'enviada',
         texto: novaMensagem,
-        timestamp: new Date().toISOString(), // Timestamp para ordenação
-        id_cliente: id_cliente, // ID do usuário que enviou a mensagem
+        timestamp: new Date().toISOString(),
+        id_cliente: id_cliente,
       };
 
-      // Salvar a mensagem no Firebase dentro de 'conversa'
       const chatRef = ref(database, `chats/${chatIdUnico}/conversa`);
       push(chatRef, mensagem)
         .then(() => {
-          setNovaMensagem(''); // Limpar o campo de mensagem
+          setNovaMensagem('');
         })
         .catch((error) => console.error('Erro ao enviar mensagem:', error));
     }
   };
 
-  if (loading) {
-    return <p>Carregando...</p>;
-  }
+  if (loading) return <div>Carregando...</div>;
 
   return (
     <div className="lado-direito">
-      <div className="chat">
-        <div className="chat-header">
-          <Link to="/home" className="btn-voltar-chat"></Link>
-          <div className="nome-pessoa-chat">{usuario.nome}</div>
-          <div className="linha-laranja"></div>
-        </div>
+      <div className="chat-header">
+        <img src={usuario.foto} alt="Foto do usuário" className="foto-perfil-enviado" />
+        <span className="nome-pessoa-chat">{usuario.nome}</span>
+      </div>
 
-        <div className="chat-conversa">
-          {mensagens.map((msg, index) => (
-            <div key={index} className={msg.id_cliente === id_cliente ? 'msg-enviada' : 'msg-recebida'}>
-              {/* Exibe a foto de perfil somente se os IDs forem iguais */}
-              {isSameUser && (
-                <img
-                  className={msg.id_cliente === id_cliente ? 'foto-perfil-enviado' : 'foto-perfil-recebido'}
-                  src={msg.id_cliente === id_cliente ? 'seu-perfil.png' : usuario.foto}
-                  alt="Foto de Perfil"
-                />
-              )}
+      <div className="chat-conversa">
+        {mensagens.length > 0 ? (
+          mensagens.map((msg, index) => (
+            <div key={index} className={`msg-${msg.tipo}`}>
+              <div className="foto-perfil-enviado"></div>
               <div className="mensagem-texto">{msg.texto}</div>
             </div>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p>Sem mensagens ainda.</p>
+        )}
+      </div>
 
-        <div className="input-mensagem">
-          <input
-            type="text"
-            className="input-texto"
-            value={novaMensagem}
-            onChange={(e) => setNovaMensagem(e.target.value)}
-            placeholder="Digite sua mensagem"
-          />
-          <button className="btn-enviar-chat" onClick={enviarMensagem}>Enviar</button>
-        </div>
+      <div className="input-mensagem">
+        <input
+          type="text"
+          className="input-texto"
+          placeholder="Digite sua mensagem..."
+          value={novaMensagem}
+          onChange={(e) => setNovaMensagem(e.target.value)}
+        />
+        <button className="btn-enviar-chat" onClick={enviarMensagem}>
+          Enviar
+        </button>
       </div>
     </div>
   );

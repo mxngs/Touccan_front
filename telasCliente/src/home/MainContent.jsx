@@ -112,7 +112,10 @@ const MainContent = () => {
             </div>
           ))
         ) : (
-          <p>Nenhum anúncio encontrado.</p>
+          <div className="semAnuncio">
+            <p>Nenhum anúncio encontrado.</p>
+            </div>
+          
         )}
       </div>
 
@@ -143,7 +146,10 @@ const MainContent = () => {
             </div>
           ))
         ) : (
-          <p>Sem trabalhos pendentes.</p>
+          <div className="semAnuncio">
+             <p>Sem trabalhos pendentes.</p>
+          </div>
+         
         )}
       </div>
 

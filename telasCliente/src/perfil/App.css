@@ -14,10 +14,17 @@
     display: grid;
     grid-template-areas: a1 a2;
 }
+.semAnuncios p{
+    margin-top: 50px;
+    color: #b7b5b587;
+    font-size: 18px;
+    font-weight: bolder;
+    font-style: oblique;
+}
 
 .infos-perfil-cliente {
     padding-top: 100px;
-    padding-right: 30%;
+    
     display: grid;
     grid-area: a2;
     place-items: center;
