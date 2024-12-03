@@ -118,6 +118,12 @@
   margin-right: 10px;
 }
 
+.payment-modal-content{
+  position: fixed;
+  left: 300px;
+
+}
+
 .nome-conversa {
   font-weight: bold;
 }

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar.jsx';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import PaymentForm from './paymentForm.jsx';
 
 const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan/';
 
@@ -12,7 +13,7 @@ function Historico() {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [currentAnuncio, setCurrentAnuncio] = useState(null);
-  const [preferenceId, setPreferenceId] = useState(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   useEffect(() => {
     const id = localStorage.getItem('id_cliente');
@@ -55,65 +56,60 @@ function Historico() {
   };
 
   const handleFinalize = (id_bico, amount) => {
-    // Criação da preferência de pagamento no backend
-    const createPaymentPreference = async () => {
-      try {
-        const response = await axios.post('http://localhost:8080/criar-pagamento', {
-          amount,
-          id_bico,
-        });
-        if (response.data.preference_id) {
-          setPreferenceId(response.data.preference_id); // Armazenando o preference_id
-          setCurrentAnuncio({ id_bico, amount });
-          setShowPaymentModal(true);
-        } else {
-          console.error('Erro ao criar a preferência de pagamento');
-          alert('Erro ao criar a preferência de pagamento');
-        }
-      } catch (error) {
-        console.error('Erro ao criar a preferência de pagamento:', error);
-        alert('Erro ao criar a preferência de pagamento');
-      }
-    };
+    console.log('Enviando dados de pagamento:', { amount, id_bico });
 
-    createPaymentPreference();
+    setShowPaymentModal(true);
+    setCurrentAnuncio({ id_bico, amount });
   };
 
-  const handlePaymentSuccess = () => {
-    // Atualiza o estado de "finalizado" localmente após o pagamento bem-sucedido
-    setAnuncios((prevAnuncios) =>
-      prevAnuncios.map((anuncio) =>
-        anuncio.id === currentAnuncio.id_bico ? { ...anuncio, finalizado: 1 } : anuncio
-      )
-    );
+  // Função para exibir mensagens de sucesso ou erro com SweetAlert2
+  const showPaymentStatus = (status, message) => {
+    console.log(`Status do pagamento: ${status} - ${message}`);
 
-    // Fecha o modal de pagamento e mostra o alerta de sucesso
-    setShowPaymentModal(false);
-    Swal.fire({
-      icon: 'success',
-      title: 'Pagamento Concluído!',
-      text: 'O pagamento foi concluído com sucesso.',
-    });
-  };
-
-  useEffect(() => {
-    if (window.MercadoPago && preferenceId) {
-      const mp = new window.MercadoPago('TEST-9e1740aa-6df5-4a3e-b2ba-993d0ec0fb17');
-
-      // Configuração do pagamento com Mercado Pago
-      mp.checkout({
-        preference: {
-          id: preferenceId,
-        },
-        render: {
-          container: '#payment-button', // Renderiza o botão de pagamento no container
-          label: 'Pagar', // Texto do botão de pagamento
-        },
+    if (status === 'success') {
+      Swal.fire({
+        title: 'Pagamento realizado com sucesso!',
+        text: message,
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      });
+    } else if (status === 'error') {
+      Swal.fire({
+        title: 'Erro no pagamento!',
+        text: message,
+        icon: 'error',
+        confirmButtonText: 'Tentar novamente',
       });
     }
-  }, [preferenceId]);
+  };
 
-  console.log(anuncios);
+  const processPayment = () => {
+    console.log("Iniciando o processo de pagamento...");
+    setIsProcessingPayment(true); // Marca que o pagamento está sendo processado
+
+    // Simula 50% de chance de sucesso no pagamento
+    const isPaymentSuccess = Math.random() > 0.5;
+
+    setTimeout(() => { // Simula um delay no processo de pagamento
+      if (isPaymentSuccess) {
+        console.log("Pagamento bem-sucedido!");
+        showPaymentStatus('success', 'Pagamento processado com sucesso e anúncio finalizado.');
+
+        // Atualiza o status do anúncio localmente para finalizado
+        setAnuncios(prevAnuncios =>
+          prevAnuncios.map(anuncio =>
+            anuncio.id_bico === currentAnuncio.id_bico ? { ...anuncio, finalizado: 1 } : anuncio
+          )
+        );
+
+      } else {
+        console.log("Erro no pagamento!");
+        showPaymentStatus('error', 'Erro ao processar o pagamento. Tente novamente.');
+      }
+
+      setIsProcessingPayment(false); // Finaliza o processamento do pagamento
+    }, 2000); // Simula 2 segundos de delay no processo de pagamento
+  };
 
   return (
     <div className="bla">
@@ -134,33 +130,27 @@ function Historico() {
               <div className="histórico-card-content">
                 <div className="histórico-card-header">
                   <h2>{anuncio.titulo || 'Título não disponível'} - {anuncio.nome || 'Cliente não identificado'} </h2>
-                 
                 </div>
                 <div className="histórico-card-body">
                   <p className="histórico-description">{anuncio.descricao || 'Descrição não fornecida.'}</p>
-                
-                  {/* <p className="histórico-salary">Salário: R$ {anuncio.salario?.toFixed(2) || '0.00'}</p> */}
                   <p className="histórico-date">
-                  {new Date(anuncio.data_inicio).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }) || 'Indefinido'}
-
+                    {new Date(anuncio.data_inicio).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }) || 'Indefinido'}
                   </p>
-                 
                 </div>
                 <div className="histórico-card-footer">
                   <button
                     className="histórico-finalize-button"
-                    onClick={() => handleFinalize(anuncio.id_bico, anuncio.salario)}
-                    disabled={anuncio.finalizado !== 0}
+                    onClick={() => {
+                      setCurrentAnuncio(anuncio); // Atualiza o anúncio selecionado
+                      handleFinalize(anuncio.id_bico, anuncio.salario); // Inicia o processo de pagamento
+                    }}
+                    disabled={anuncio.finalizado !== 0 || isProcessingPayment} // Desabilita o botão durante o processamento do pagamento
                     style={{
-                      backgroundColor: anuncio.finalizado === 1 ? '#B0B0B0' : '#E97911',
-                      cursor: anuncio.finalizado !== 0 ? 'not-allowed' : 'pointer',
+                      backgroundColor: anuncio.finalizado === 1 || isProcessingPayment ? '#B0B0B0' : '#E97911',
+                      cursor: anuncio.finalizado !== 0 || isProcessingPayment ? 'not-allowed' : 'pointer',
                     }}
                   >
-                    {anuncio.finalizado === 0
-                      ? 'Finalizar'
-                      : anuncio.finalizado === 1
-                        ? 'Finalizado'
-                        : 'Pagamento Pendente'}
+                    {anuncio.finalizado === 0 ? (isProcessingPayment ? 'Processando...' : 'Finalizar') : anuncio.finalizado === 1 ? 'Finalizado' : 'Pagamento Pendente'}
                   </button>
                 </div>
               </div>
@@ -169,16 +159,26 @@ function Historico() {
         )}
       </div>
 
-      {showPaymentModal && (
-        <div className="payment-modal">
-          <div className="payment-modal-content">
-            <h2>Finalizar Pagamento</h2>
-            <div id="payment-button"></div> {/* Aqui o botão do Mercado Pago será renderizado */}
-            <button onClick={() => setShowPaymentModal(false)} className="close-modal-button">
-              Fechar
-            </button>
-          </div>
-        </div>
+      {/* Modal de pagamento */}
+      {showPaymentModal && currentAnuncio && (
+        <PaymentForm
+          amount={currentAnuncio.amount}
+          id_bico={currentAnuncio.id_bico}
+          onSuccess={() => {
+            setShowPaymentModal(false);
+            // Atualize o status do anúncio para "finalizado" após sucesso no pagamento
+            setAnuncios(prevAnuncios =>
+              prevAnuncios.map(anuncio =>
+                anuncio.id_bico === currentAnuncio.id_bico ? { ...anuncio, finalizado: 1 } : anuncio
+              )
+            );
+            showPaymentStatus('success', 'Pagamento realizado com sucesso!');
+          }}
+          onError={(errorMessage) => {
+            setShowPaymentModal(false);
+            showPaymentStatus('error', `Erro no pagamento: ${errorMessage}`);
+          }}
+        />
       )}
     </div>
   );
