@@ -29,13 +29,15 @@
   border-radius: 20px;
   color: white;
   width: 300px;
+  
 }
 
 .mensagem-enviar{
   position: fixed;
-  right: 23%;
+  right: 20%;
   text-align: center;
   top: 420px;
+  z-index: -1;
 }
 
 .mensagem-enviar img{
@@ -132,18 +134,20 @@
 /* Estilos do Chat */
 .lado-direito {
   margin-left: 72vh;
-  margin-top: 50px;
-  
+  height: 900px;
+  width: 1030px;
   display: flex;
   flex-direction: column;
-  height: 90%;
+  position: fixed;
+  top: 60px;
+  
   
 }
 
 .chat {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  
   
 }
 

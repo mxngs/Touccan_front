@@ -133,23 +133,18 @@ function Historico() {
               <div className="histórico-decorative-line"></div>
               <div className="histórico-card-content">
                 <div className="histórico-card-header">
-                  <h2>{anuncio.titulo || 'Título não disponível'}</h2>
-                  <img
-                    src={anuncio.foto || 'https://via.placeholder.com/150'}
-                    alt="Imagem do anúncio"
-                    className="histórico-card-image"
-                  />
+                  <h2>{anuncio.titulo || 'Título não disponível'} - {anuncio.nome || 'Cliente não identificado'} </h2>
+                 
                 </div>
                 <div className="histórico-card-body">
                   <p className="histórico-description">{anuncio.descricao || 'Descrição não fornecida.'}</p>
-                  <p className="histórico-client-name">{anuncio.nome || 'Cliente não identificado'}</p>
-                  <p className="histórico-salary">Salário: R$ {anuncio.salario?.toFixed(2) || '0.00'}</p>
+                
+                  {/* <p className="histórico-salary">Salário: R$ {anuncio.salario?.toFixed(2) || '0.00'}</p> */}
                   <p className="histórico-date">
-                    Data Início: {new Date(anuncio.data_inicio).toLocaleString() || 'Indefinido'}
+                  {new Date(anuncio.data_inicio).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }) || 'Indefinido'}
+
                   </p>
-                  <p className="histórico-date">
-                    Data Limite: {new Date(anuncio.data_limite).toLocaleString() || 'Indefinido'}
-                  </p>
+                 
                 </div>
                 <div className="histórico-card-footer">
                   <button
@@ -174,7 +169,6 @@ function Historico() {
         )}
       </div>
 
-      {/* Modal de pagamento */}
       {showPaymentModal && (
         <div className="payment-modal">
           <div className="payment-modal-content">
