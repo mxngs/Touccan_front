@@ -118,7 +118,6 @@ const Cofre = () => {
         }
     };
 
-
     const formatNumeroCartao = (value) => value.replace(/\D/g, '').slice(0, 16);
     const formatValidade = (value) => value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
     const formatCVV = (value) => value.replace(/\D/g, '').slice(0, 3);
@@ -143,27 +142,19 @@ const Cofre = () => {
                 <div className="linha-laranjaa"></div>
                 <div className="containerChat">
                     <div className="caixas-container" id="caixas-container">
-                        {historico.map((caixa, index) => (
-                            <div className="caixaa" key={index}>
-                                <h2 className="titulo-caixa">
-                                    {caixa.nome || 'Sem Nome'} - {caixa.titulo || 'Sem Título'}
-                                </h2>
-                                <p className="salarioCofre">{formatarSalario(caixa.salario || 0)}</p>
-                                <p className="dataCofre">{formatDate(caixa.data_inicio)}</p>
-                                {caixa.finalizado === 1 ? (
-                                    <p className="status-pendente">Pagamento feito com sucesso</p>
-                                ) : (
-                                    <button
-                                        className="botao-pagar"
-                                        onClick={() => console.log(`Pagamento iniciado para ID: ${caixa.id}`)}
-                                    >
-                                        Pagar
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
+    {historico
+        .filter((caixa) => caixa.finalizado === 1)  // Filtrando pelo campo "finalizado"
+        .map((caixa, index) => (
+            <div className="caixaa" key={index}>
+                <h2 className="titulo-caixa">
+                    {caixa.nome || 'Sem Nome'} - {caixa.titulo || 'Sem Título'}
+                </h2>
+                <p className="salarioCofre">{formatarSalario(caixa.salario || 0)}</p>
+                <p className="dataCofre">{formatDate(caixa.data_inicio)}</p>
+                <p className="status-pendente">Pagamento feito com sucesso</p>
+            </div>
+        ))}
+</div>
 
 
                     <div className="cartao-info">
@@ -254,7 +245,7 @@ const Cofre = () => {
                 )}
 
                 {notification.visible && (
-                    <div className={`notification ${notification.type}`}>
+                    <div className={notification.type}>
                         {notification.message}
                     </div>
                 )}
