@@ -127,29 +127,32 @@ const Configuracao = () => {
         for (let field of requiredFields) {
             if (!formData[field]) {
                 Swal.fire('Erro', `O campo ${field} é obrigatório.`, 'warning');
+                console.log("Erro: Campo obrigatório não preenchido:", field);  // Adicione este log
                 return false;
             }
         }
+        console.log("Validação bem-sucedida", formData);  // Log para ver os dados
         return true;
     };
-
+    
     const handleFormChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-
     const handleSaveChanges = async () => {
         if (!validateFormData()) return;
-
+    
+        console.log("Salvando alterações...");  // Adicione isso para verificar se a função está sendo chamada
+    
         const id = localStorage.getItem("id_cliente");
         if (!id) {
             Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
             return;
         }
-
+    
         try {
             const updatedFormData = { ...formData, cep: formData.cep.toString() };
-
+    
             const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/infos/cliente/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -157,10 +160,11 @@ const Configuracao = () => {
                 },
                 body: JSON.stringify(updatedFormData),
             });
-
+    
             if (response.ok) {
                 await fetchUserData();
                 setIsEditing(false);
+                Swal.fire('Sucesso', 'As alterações foram salvas com sucesso!', 'success');
             } else {
                 const errorData = await response.json();
                 console.error('Erro ao atualizar os dados:', errorData);
@@ -168,9 +172,10 @@ const Configuracao = () => {
             }
         } catch (error) {
             console.error('Erro ao salvar as alterações:', error);
-            Swal.fire('Erro', 'Erro ao salvar as alterações.', 'error');
+            Swal.fire('Erro', 'Erro ao salvar as alterações. Tente novamente.', 'error');
         }
     };
+    
 
     useEffect(() => {
         fetchUserData();
@@ -308,7 +313,7 @@ const Configuracao = () => {
 
             {currentView === 'premium' && (
                 <div className="premium-details">
-                    <h2 className="account-titlee">Vire Premium já!</h2>
+                    <h2 className="accountt-titlee">Vire Premium já!</h2>
                     <div className="premium-content">
                         <div className="premium-description">
                             <img src="../../img/premium.png" alt="Coroa" className="premium-icon" />

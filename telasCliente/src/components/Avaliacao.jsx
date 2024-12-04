@@ -8,8 +8,9 @@ const Avaliacao = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [trabalho, setTrabalho] = useState(null);
-  const [avaliacao, setAvaliacao] = useState('');
-  const [nota, setNota] = useState(1);
+  const [comentario, setComentario] = useState(''); // Para a avaliação ou denúncia
+  const [nota, setNota] = useState(1); // Para avaliação
+  const [isDenuncia, setIsDenuncia] = useState(false); // Controle do tipo de ação (avaliação ou denúncia)
   const [loading, setLoading] = useState(true);
   const [idUsuario, setIdUsuario] = useState(null);
 
@@ -43,7 +44,7 @@ const Avaliacao = () => {
   }, [id]);
 
   const handleEnviarAvaliacao = async () => {
-    if (!avaliacao.trim() || !nota) {
+    if (!comentario.trim() || !nota) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
@@ -76,7 +77,7 @@ const Avaliacao = () => {
       id_usuario: parseInt(idUsuario),
       id_cliente: parseInt(idCliente),
       id_bico: parseInt(id),
-      avaliacao: avaliacao,
+      avaliacao: comentario,
       nota: nota,
     };
 
@@ -109,8 +110,79 @@ const Avaliacao = () => {
     }
   };
 
+  const handleEnviarDenuncia = async () => {
+    if (!comentario.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo incompleto',
+        text: 'Por favor, forneça uma descrição para a denúncia.',
+      });
+      return;
+    }
+
+    if (!idUsuario) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Usuário não encontrado.',
+      });
+      return;
+    }
+
+    const idCliente = localStorage.getItem('id_cliente');
+
+    if (!idCliente) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Cliente não encontrado.',
+      });
+      return;
+    }
+
+    const dadosDenuncia = {
+      id_usuario: parseInt(idUsuario),
+      id_cliente: parseInt(idCliente),
+      id_bico: parseInt(id),
+      denuncia: comentario,
+    };
+
+    try {
+      const response = await fetch('https://touccan-backend-8a78.onrender.com/2.0/touccan/denuncia/cliente', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dadosDenuncia),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao enviar denúncia');
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Denúncia Enviada',
+        text: 'Sua denúncia foi enviada com sucesso!',
+      }).then(() => {
+        navigate('/home');
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Não foi possível enviar a denúncia.',
+      });
+    }
+  };
+
   const handleNotaClick = (valor) => {
     setNota(valor);
+  };
+
+  const handleToggleForm = () => {
+    setIsDenuncia(!isDenuncia); // Alterna entre avaliação e denúncia
+    setComentario(''); // Limpa o campo de texto ao alternar
   };
 
   return (
@@ -119,14 +191,13 @@ const Avaliacao = () => {
         <Link to="/home" className="botao-voltar">
           &lt;
         </Link>
-        <div className="detalhes-vaga"></div>
       </div>
       <div className="detalhes-vaga">
         {loading ? (
           <div>Carregando...</div>
         ) : trabalho ? (
           <div>
-            <h2>Avalie o Trabalho: {trabalho.titulo}</h2>
+            <h2>{isDenuncia ? 'Faça sua Denúncia' : 'Avalie o Trabalho'}: {trabalho.titulo}</h2>
             <div className="job-info">
               <h3 className="job-name">
                 <img
@@ -147,32 +218,40 @@ const Avaliacao = () => {
               </div>
             </div>
 
-            <div className="avaliacao-form">
+            <div className="formulario">
               <div>
-                <label>Deixe seu comentario:</label>
+                <label>{isDenuncia ? 'Faça sua denúncia:' : 'Deixe seu comentário:'}</label>
                 <textarea
-                  value={avaliacao}
-                  onChange={(e) => setAvaliacao(e.target.value)}
-                  placeholder="Escreva sua avaliação..."
+                  value={comentario}
+                  onChange={(e) => setComentario(e.target.value)}
+                  placeholder={isDenuncia ? 'Escreva sua denúncia...' : 'Escreva sua avaliação...'}
                 />
               </div>
 
-              <div>
-                <label>Avalie o trabalho:</label>
-                <div className="stars">
-                  {[1, 2, 3, 4, 5].map((valor) => (
-                    <span
-                      key={valor}
-                      style={{ cursor: 'pointer', fontSize: '30px', color: valor <= nota ? 'gold' : 'gray' }}
-                      onClick={() => handleNotaClick(valor)}
-                    >
-                      {valor <= nota ? '★' : '☆'}
-                    </span>
-                  ))}
+              {!isDenuncia ? (
+                <div>
+                  <label>Avalie o trabalho:</label>
+                  <div className="stars">
+                    {[1, 2, 3, 4, 5].map((valor) => (
+                      <span
+                        key={valor}
+                        style={{ cursor: 'pointer', fontSize: '30px', color: valor <= nota ? 'gold' : 'gray' }}
+                        onClick={() => handleNotaClick(valor)}
+                      >
+                        {valor <= nota ? '★' : '☆'}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
-              <button onClick={handleEnviarAvaliacao}>Enviar Avaliação</button>
+              <button onClick={isDenuncia ? handleEnviarDenuncia : handleEnviarAvaliacao}>
+                {isDenuncia ? 'Enviar Denúncia' : 'Enviar Avaliação'}
+              </button>
+
+              <button onClick={handleToggleForm} className="toggle-button">
+                {isDenuncia ? 'Cancelar Denúncia e Avaliar' : 'Denunciar'}
+              </button>
             </div>
           </div>
         ) : (

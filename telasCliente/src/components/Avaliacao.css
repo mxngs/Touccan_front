@@ -12,6 +12,17 @@
     backdrop-filter: blur(8px);
   }
   
+  .buttons-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .cancelar p{
+    color: white;
+  }
+  
   .detalhes-vaga {
     position: absolute;
     top: 50%;
