@@ -14,6 +14,7 @@ const firebaseConfig = {
   appId: "1:906368056826:web:0e8f0b08a2ae94acce3843",
   measurementId: "G-646HZZSX54"
 };
+
 const id_cliente = localStorage.getItem('id_cliente'); // ID do cliente logado
 
 // Inicializar Firebase
@@ -75,15 +76,10 @@ const Chat = ({ chatId }) => {
   const enviarMensagem = () => {
     if (novaMensagem.trim() !== '') {
       const mensagem = {
-        tipo: 'enviada',
+        tipo: 'enviada',  // Tipo de mensagem enviada
         texto: novaMensagem,
-        id_cliente: id_cliente  // O ID do cliente é sempre necessário
+        id_cliente: id_cliente  // ID do cliente (quem está enviando)
       };
-
-      // Se for uma mensagem do usuário, adiciona o id_usuario
-      if (chatId !== id_cliente) {
-        mensagem.id_usuario = chatId; // Se não for o cliente, significa que é o usuário respondendo
-      }
 
       const chatRef = ref(database, `chats/${chatIdUnico}/conversa`);
       push(chatRef, mensagem)

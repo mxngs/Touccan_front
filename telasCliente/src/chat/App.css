@@ -184,8 +184,6 @@
   flex-direction: column;
   position: fixed;
   top: 60px;
-  
-  
 }
 
 .chat {
@@ -219,7 +217,6 @@
 }
 
 .chat-conversa {
- 
   flex-grow: 1;
   padding: 10px;
   background-color: #fff;
