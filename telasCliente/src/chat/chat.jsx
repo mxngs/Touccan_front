@@ -77,15 +77,18 @@ const Chat = ({ chatId }) => {
       const mensagem = {
         tipo: 'enviada',
         texto: novaMensagem,
-        timestamp: new Date().toISOString(),
-        id_cliente: id_cliente,
-        id_usuario: chatId // Adicionando o id_usuario para identificar a mensagem
+        id_cliente: id_cliente  // O ID do cliente é sempre necessário
       };
+
+      // Se for uma mensagem do usuário, adiciona o id_usuario
+      if (chatId !== id_cliente) {
+        mensagem.id_usuario = chatId; // Se não for o cliente, significa que é o usuário respondendo
+      }
 
       const chatRef = ref(database, `chats/${chatIdUnico}/conversa`);
       push(chatRef, mensagem)
         .then(() => {
-          setNovaMensagem('');
+          setNovaMensagem('');  // Limpar o campo de entrada
         })
         .catch((error) => console.error('Erro ao enviar mensagem:', error));
     }
@@ -103,20 +106,22 @@ const Chat = ({ chatId }) => {
   return (
     <div className="lado-direito">
       <div className="chat-header">
-        <img src={usuario.foto} alt="Foto do usuário" className="foto-perfil-enviado" />
         <span className="nome-pessoa-chat">{usuario.nome}</span>
       </div>
 
       <div className="chat-conversa" ref={chatConversaRef}>
         {mensagens.length > 0 ? (
-          mensagens.map((msg, index) => (
-            <div key={index} className={`msg-${msg.id_cliente === id_cliente ? 'cliente' : 'usuario'}`}>
-              <div className="foto-perfil-enviado">
-                <img src={msg.id_cliente === id_cliente ? '../../img/person.png' : usuario.foto} alt="Foto" />
+          mensagens.map((msg, index) => {
+            const isCliente = msg.id_cliente === id_cliente;  // Mensagem do cliente
+            const isUsuario = msg.id_usuario === chatId;  // Mensagem do usuário
+
+            return (
+              <div key={index} className={`msg-${isCliente ? 'cliente' : 'usuario'}`}>
+                {/* Removido a exibição das imagens */}
+                <div className="mensagem-texto">{msg.texto}</div>
               </div>
-              <div className="mensagem-texto">{msg.texto}</div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <p>Sem mensagens ainda.</p>
         )}
