@@ -18,7 +18,7 @@ import PerfilUsuario from './perfilUsuario/perfil.jsx'
 import MudarSenha from './mudarSenha/mudarSenha.jsx'
 import RecuperarSenha from './recuperarSenha/recuperarSenha.jsx'
 import Avaliacao from './components/Avaliacao.jsx'
-import DetalhesVaga from './components/DetalhesVaga.jsx'
+import DetalhesVaga from './components/DetalhesVaga';
 
 
 export default function App() {

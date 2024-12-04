@@ -4,15 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar.jsx';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import PaymentForm from './paymentForm.jsx';
 
 const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan/';
 
-function Historico() {
+const Historico = () => {
   const [anuncios, setAnuncios] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [currentAnuncio, setCurrentAnuncio] = useState(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   useEffect(() => {
@@ -42,8 +39,20 @@ function Historico() {
       console.log('Dados retornados da API:', data);
 
       if (data.historico && Array.isArray(data.historico)) {
-        const bicosAtivos = data.historico.filter((bico) => bico && bico.finalizado === 0);
-        setAnuncios(bicosAtivos || []);
+        // Carregar os dados do histórico
+        let anunciosAtivos = data.historico.filter((bico) => bico && bico.finalizado === 0);
+        
+        // Verificar no localStorage se algum anúncio já foi finalizado
+        const finalizados = JSON.parse(localStorage.getItem('anuncios_finalizados')) || [];
+        anunciosAtivos = anunciosAtivos.map((anuncio) => {
+          // Marcar como finalizado se já estiver no localStorage
+          if (finalizados.includes(anuncio.id_bico)) {
+            anuncio.finalizado = 1;
+          }
+          return anuncio;
+        });
+
+        setAnuncios(anunciosAtivos || []);
       } else {
         console.error('A chave "historico" não foi encontrada ou não é um array válido');
       }
@@ -56,59 +65,40 @@ function Historico() {
   };
 
   const handleFinalize = (id_bico, amount) => {
-    console.log('Enviando dados de pagamento:', { amount, id_bico });
+    console.log('Finalizando pagamento para o anúncio:', { amount, id_bico });
 
-    setShowPaymentModal(true);
-    setCurrentAnuncio({ id_bico, amount });
-  };
-
-  // Função para exibir mensagens de sucesso ou erro com SweetAlert2
-  const showPaymentStatus = (status, message) => {
-    console.log(`Status do pagamento: ${status} - ${message}`);
-
-    if (status === 'success') {
-      Swal.fire({
-        title: 'Pagamento realizado com sucesso!',
-        text: message,
-        icon: 'success',
-        confirmButtonText: 'Ok',
-      });
-    } else if (status === 'error') {
-      Swal.fire({
-        title: 'Erro no pagamento!',
-        text: message,
-        icon: 'error',
-        confirmButtonText: 'Tentar novamente',
-      });
-    }
-  };
-
-  const processPayment = () => {
-    console.log("Iniciando o processo de pagamento...");
-    setIsProcessingPayment(true); // Marca que o pagamento está sendo processado
-
-    // Simula 50% de chance de sucesso no pagamento
-    const isPaymentSuccess = Math.random() > 0.5;
-
-    setTimeout(() => { // Simula um delay no processo de pagamento
-      if (isPaymentSuccess) {
-        console.log("Pagamento bem-sucedido!");
-        showPaymentStatus('success', 'Pagamento processado com sucesso e anúncio finalizado.');
-
-        // Atualiza o status do anúncio localmente para finalizado
-        setAnuncios(prevAnuncios =>
-          prevAnuncios.map(anuncio =>
-            anuncio.id_bico === currentAnuncio.id_bico ? { ...anuncio, finalizado: 1 } : anuncio
-          )
-        );
-
-      } else {
-        console.log("Erro no pagamento!");
-        showPaymentStatus('error', 'Erro ao processar o pagamento. Tente novamente.');
+    Swal.fire({
+      title: 'Finalizar Expediente',
+      text: `Você está prestes a finalizar um expediente. Deseja continuar?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleFinalizePayment(id_bico, amount);
       }
+    });
+  };
 
-      setIsProcessingPayment(false); // Finaliza o processamento do pagamento
-    }, 2000); // Simula 2 segundos de delay no processo de pagamento
+  const handleFinalizePayment = (id_bico, amount) => {
+    Swal.fire({
+      title: 'Pagamento Finalizado',
+      text: `O pagamento de R$${amount} foi retirado da sua conta.`,
+      icon: 'success',
+      confirmButtonText: 'Ok',
+    });
+
+    // Atualiza o estado de "anúncios" localmente
+    setAnuncios((prevAnuncios) =>
+      prevAnuncios.map((anuncio) =>
+        anuncio.id_bico === id_bico ? { ...anuncio, finalizado: 1 } : anuncio
+      )
+    );
+
+    // Armazenar o id_bico no localStorage para persistir a finalização
+    const finalizados = JSON.parse(localStorage.getItem('anuncios_finalizados')) || [];
+    localStorage.setItem('anuncios_finalizados', JSON.stringify([...finalizados, id_bico]));
   };
 
   return (
@@ -118,39 +108,52 @@ function Historico() {
         <h1 className="histórico-title">Histórico</h1>
 
         {loading ? (
-          <div className="carregar">
+          <div className="carregar1">
             <div className="custom-loader"></div>
           </div>
         ) : anuncios.length === 0 ? (
-          <p className="sem-historico">Você ainda não tem <br /> nenhum histórico de anúncios.</p>
+          <p className="sem-historico">
+            Você ainda não tem <br /> nenhum histórico de anúncios.
+          </p>
         ) : (
           anuncios.map((anuncio, index) => (
             <div key={index} className="histórico-card">
               <div className="histórico-decorative-line"></div>
               <div className="histórico-card-content">
                 <div className="histórico-card-header">
-                  <h2>{anuncio.titulo || 'Título não disponível'} - {anuncio.nome || 'Cliente não identificado'} </h2>
+                  <h2>
+                    {anuncio.titulo || 'Título não disponível'} - {anuncio.nome || 'Cliente não identificado'}
+                  </h2>
                 </div>
                 <div className="histórico-card-body">
-                  <p className="histórico-description">{anuncio.descricao || 'Descrição não fornecida.'}</p>
+                  <p className="histórico-description">
+                    {anuncio.descricao || 'Descrição não fornecida.'}
+                  </p>
                   <p className="histórico-date">
-                    {new Date(anuncio.data_inicio).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }) || 'Indefinido'}
+                    {new Date(anuncio.data_inicio).toLocaleDateString('pt-BR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    }) || 'Indefinido'}
                   </p>
                 </div>
                 <div className="histórico-card-footer">
                   <button
                     className="histórico-finalize-button"
                     onClick={() => {
-                      setCurrentAnuncio(anuncio); // Atualiza o anúncio selecionado
-                      handleFinalize(anuncio.id_bico, anuncio.salario); // Inicia o processo de pagamento
+                      handleFinalize(anuncio.id_bico, anuncio.salario);
                     }}
-                    disabled={anuncio.finalizado !== 0 || isProcessingPayment} // Desabilita o botão durante o processamento do pagamento
+                    disabled={anuncio.finalizado !== 0 || isProcessingPayment}
                     style={{
                       backgroundColor: anuncio.finalizado === 1 || isProcessingPayment ? '#B0B0B0' : '#E97911',
                       cursor: anuncio.finalizado !== 0 || isProcessingPayment ? 'not-allowed' : 'pointer',
                     }}
                   >
-                    {anuncio.finalizado === 0 ? (isProcessingPayment ? 'Processando...' : 'Finalizar') : anuncio.finalizado === 1 ? 'Finalizado' : 'Pagamento Pendente'}
+                    {anuncio.finalizado === 0
+                      ? 'Finalizar'
+                      : anuncio.finalizado === 1
+                      ? 'Finalizado'
+                      : 'Pagamento Pendente'}
                   </button>
                 </div>
               </div>
@@ -158,30 +161,8 @@ function Historico() {
           ))
         )}
       </div>
-
-      {/* Modal de pagamento */}
-      {showPaymentModal && currentAnuncio && (
-        <PaymentForm
-          amount={currentAnuncio.amount}
-          id_bico={currentAnuncio.id_bico}
-          onSuccess={() => {
-            setShowPaymentModal(false);
-            // Atualize o status do anúncio para "finalizado" após sucesso no pagamento
-            setAnuncios(prevAnuncios =>
-              prevAnuncios.map(anuncio =>
-                anuncio.id_bico === currentAnuncio.id_bico ? { ...anuncio, finalizado: 1 } : anuncio
-              )
-            );
-            showPaymentStatus('success', 'Pagamento realizado com sucesso!');
-          }}
-          onError={(errorMessage) => {
-            setShowPaymentModal(false);
-            showPaymentStatus('error', `Erro no pagamento: ${errorMessage}`);
-          }}
-        />
-      )}
     </div>
   );
-}
+};
 
 export default Historico;

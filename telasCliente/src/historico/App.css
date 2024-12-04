@@ -18,6 +18,12 @@ body {
     
 }
 
+.carregar1{
+    position: fixed;
+    left: 58%;
+    top: 300px;
+}
+
 .histórico-description{
      color: #8d8b8b;
      font-size: 16px;

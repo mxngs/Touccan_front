@@ -64,19 +64,15 @@ const MainContent = () => {
   };
 
   const handleTabChange = (tab) => setActiveTab(tab);
-
-  const showDetalhesAnuncio = (anuncio) => {
-    // Navega para a página de detalhes do anúncio com o id do bico na URL
-    navigate(`/detalhes/${anuncio.id}`);
-  };
+  const showDetalhesAnuncio = (anuncio) => setAnuncioSelecionado(anuncio);
+  const fecharModal = () => setAnuncioSelecionado(null);
 
   const abrirModalAvaliar = (trabalho) => {
-    console.log(trabalho)
-    setTrabalhoSelecionado(trabalho);
-    navigate(`/avaliacao/${trabalho.id_bico}`); // Redireciona para a página de avaliação
-    setModalAvaliarAberto(true); // Só abre o modal após a navegação
+    setTrabalhoSelecionado(trabalho); 
+    navigate(`/avaliacao/${trabalho.id}`); // Redireciona antes de abrir o modal
+    setModalAvaliarAberto(true); // Só abre o modal depois que a navegação é feita
   };
-
+  
   const fecharModalAvaliar = () => {
     setModalAvaliarAberto(false);
     setTrabalhoSelecionado(null); 
@@ -118,14 +114,15 @@ const MainContent = () => {
         ) : (
           <div className="semAnuncio">
             <p>Nenhum anúncio encontrado.</p>
-          </div>
+            </div>
+          
         )}
       </div>
 
       <div className={`tab-content ${activeTab === 'urgente' ? 'active' : ''}`}>
         {trabalhosPendentes.length > 0 ? (
           trabalhosPendentes.map((trabalho) => (
-            <div className="job-card" key={trabalho.id}>
+            <div className="job-card" key={trabalho.id} onClick={() => showDetalhesAnuncio(trabalho)}>
               <div className="job-info">
                 <h3 className="job-name">
                   <img 
@@ -142,7 +139,6 @@ const MainContent = () => {
                   Horário: {new Date(trabalho.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(trabalho.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
                   Preço: {typeof trabalho.salario === 'number' ? `R$ ${trabalho.salario.toFixed(2)}` : 'Não disponível'}
                 </div>
-                {console.log(trabalho)}
                 <button className="btn-avaliar" onClick={() => abrirModalAvaliar(trabalho)}>
                   Avaliar
                 </button>
@@ -151,8 +147,9 @@ const MainContent = () => {
           ))
         ) : (
           <div className="semAnuncio">
-            <p>Sem trabalhos pendentes.</p>
+             <p>Sem trabalhos pendentes.</p>
           </div>
+         
         )}
       </div>
 

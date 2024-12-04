@@ -50,6 +50,16 @@ const Chat = ({ chatId }) => {
   }, [chatIdUnico]);
 
   useEffect(() => {
+    if (chatConversaRef.current) {
+      // Só rolar se a altura da conversa for maior que a altura do contêiner
+      const { scrollHeight, clientHeight } = chatConversaRef.current;
+      if (scrollHeight > clientHeight) {
+        chatConversaRef.current.scrollTop = scrollHeight; // Rolagem até o final
+      }
+    }
+  }, [mensagens]);
+
+  useEffect(() => {
     const fetchUsuario = async () => {
       try {
         const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/usuario/${chatId}`);
@@ -97,7 +107,14 @@ const Chat = ({ chatId }) => {
     }
   }, [mensagens]);
 
-  if (loading) return <div>Carregando...</div>;
+  // Função para tratar o envio com Enter
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      enviarMensagem();
+    }
+  };
+
+  
 
   return (
     <div className="lado-direito">
@@ -124,16 +141,19 @@ const Chat = ({ chatId }) => {
       </div>
 
       <div className="input-mensagem">
-        <input
-          type="text"
-          className="input-texto"
-          placeholder="Digite sua mensagem..."
-          value={novaMensagem}
-          onChange={(e) => setNovaMensagem(e.target.value)}
-        />
-        <button className="btn-enviar-chat" onClick={enviarMensagem}>
-          Enviar
-        </button>
+        <div className="input-container">
+          <input
+            type="text"
+            className="input-texto"
+            placeholder="Digite sua mensagem..."
+            value={novaMensagem}
+            onChange={(e) => setNovaMensagem(e.target.value)}
+            onKeyDown={handleKeyDown}  // Adicionando evento de tecla
+          />
+          <button className="btn-enviar-chat" onClick={enviarMensagem}>
+            <img src="../img/enviar.png" alt="Enviar" className="btn-imagem" />
+          </button>
+        </div>
       </div>
     </div>
   );

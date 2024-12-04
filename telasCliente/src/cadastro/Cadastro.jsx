@@ -284,12 +284,14 @@ function Cadastro() {
                   onChange={handleInputChange}
                   placeholder="Senha"
                 />
+                <div className="olho1">
                 <img
                   src="../img/olho.png"
                   alt="Mostrar Senha"
                   style={{ cursor: 'pointer' }}
                   onClick={() => togglePasswordVisibility('senha')}
                 />
+                </div>
                 {erros.senha && <p style={{ color: 'red' }}>{erros.senha}</p>}
               </div>
 
@@ -302,12 +304,15 @@ function Cadastro() {
                   onChange={handleInputChange}
                   placeholder="Confirmar Senha"
                 />
+                <div className="olho">
                 <img
                   src="../img/olho.png"
                   alt="Mostrar Senha"
                   style={{ cursor: 'pointer' }}
                   onClick={() => togglePasswordVisibility('confirmar_senha')}
                 />
+                </div>
+                
                 {erros.confirmar_senha && <p style={{ color: 'red' }}>{erros.confirmar_senha}</p>}
               </div>
             </div>
@@ -320,8 +325,9 @@ function Cadastro() {
 
         <p>
           <Link to="/" style={{ color: '#E25401' }}>
-            Já possui conta? <br />
-            Faça seu Login</Link>
+          <div className="possui">Já possui conta?</div>
+             
+            <div className="fazLogin">Faça seu Login</div></Link>
         </p>
       </div>
     </div>

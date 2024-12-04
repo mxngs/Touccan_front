@@ -6,6 +6,11 @@ import Swal from 'sweetalert2'; // Importando o SweetAlert2
 const DetalhesVaga = ({ anuncio, onClose }) => {
     const navigate = useNavigate();
 
+    if (!anuncio) {
+        // Se anuncio for undefined ou null, não renderiza o componente e mostra um erro
+        return <div>Erro: Anúncio não encontrado!</div>;
+    }
+
     const handleVerCandidatos = () => {
         localStorage.setItem("id_bico", anuncio.id);
         navigate('/candidatos');
@@ -56,8 +61,8 @@ const DetalhesVaga = ({ anuncio, onClose }) => {
     };
 
     // Verificação de dados antes de acessá-los
-    const cliente = anuncio.cliente?.[0] || {};
-    const dificuldade = anuncio.dificuldade?.[0] || {};
+    const cliente = anuncio.cliente?.[0] || {}; // Se cliente não existir, retorna um objeto vazio
+    const dificuldade = anuncio.dificuldade?.[0] || {}; // Se dificuldade não existir, retorna um objeto vazio
 
     return (
         <div className="detalhes-vaga">

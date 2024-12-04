@@ -85,9 +85,17 @@ body {
     padding: 30px 20px;
     border-radius: 8px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 300px;
+    max-width: 500px;
     margin-bottom: 30px; /* Espaço entre a caixa e os outros elementos */
+}
+
+.botaoLoginVlt{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 18px;
+    font-weight: bolder;
+    color: #d7700b;
 }
 
 h2 {
@@ -97,12 +105,37 @@ h2 {
     margin-top: 0;
 }
 
+.btLaranja button{
+    width: 150px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+
+}
+
+
+.cardSenha input{
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 350px;
+}
+
+.cardSenha p{
+    color: #d7700b;
+    font-size: 16px;
+}
+
 .codigo-inputs {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-top: 15px;
+
 }
+
+.codigo-inputs input{
+    width: 30px;
+}
+
 
 .codigo-digit {
     width: 30px;

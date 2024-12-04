@@ -9,6 +9,28 @@ body{
   background-color: #EBEBEB;
 }
 
+.olho{
+  margin-left: 330px;
+  z-index: 2;
+  position: absolute;
+  bottom: 210px;
+}
+
+.possui{
+  color: gray;
+  font-size: 16px;
+}
+
+.fazLogin{
+  font-size: 16px;
+}
+
+.olho1{
+  margin-left: 330px;
+  z-index: 2;
+  position: absolute;
+  bottom: 270px;
+}
 
 .decoracaoLaranja {
   position: absolute;
