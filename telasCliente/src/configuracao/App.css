@@ -309,6 +309,16 @@ body {
     background-color: rgba(217, 217, 217, 0.62);
 }
 
+.support-panel{
+    
+    margin-top: 30px;
+    margin-left: 40px;
+}
+
+.about-us{
+    margin-top: 30px;
+    margin-left: 40px;
+}
 
 .suporte textarea {
     width: 100%;
@@ -397,6 +407,33 @@ body {
     margin-bottom: 10px;
 }
 
+/* Estilo personalizado para os botões do SweetAlert2 */
+.swal2-popup .swal2-styled {
+    background-color: #FF7F00; /* Cor laranja */
+    color: white; /* Cor do texto */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 250px;
+    transition: background-color 0.3s ease;
+    margin: 0 10px; /* Gap entre os botões */
+  }
+  
+  /* Hover (efeito ao passar o mouse sobre os botões) */
+  .swal2-popup .swal2-styled:hover {
+    background-color: #FF4500; /* Cor laranja mais escuro para hover */
+  }
+  
+  /* Separação entre os botões */
+  .swal2-popup .swal2-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Ajusta o espaço entre os botões */
+  }
+  
+
 .premium-content h2 {
     font-size: 24px;
     color: #333;
@@ -411,6 +448,8 @@ body {
 
 .premium-description p {
     margin: 5px 0;
+    color: #595656;
+    font-size: 16px;
 }
 
 .premium-description strong {

@@ -20,7 +20,7 @@ const AddBico = () => {
         id_categoria: ''
     });
 
-    const [salarioExibido, setSalarioExibido] = useState(''); // Salário formatado para exibição
+    const [salarioExibido, setSalarioExibido] = useState(''); 
     const [erros, setErros] = useState({});
     const [idCliente, setIdCliente] = useState(null);
 
@@ -162,7 +162,7 @@ const AddBico = () => {
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Horário Início</label>
+                            <label>Horário Início - Espediente</label>
                             <input
                                 type='time'
                                 name='horario_inicio'
@@ -173,7 +173,7 @@ const AddBico = () => {
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Data Início</label>
+                            <label>Data Início - Espediente</label>
                             <input
                                 type='date'
                                 name='data_inicio'
@@ -185,7 +185,7 @@ const AddBico = () => {
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Horário Final</label>
+                            <label>Horário Final - Espediente</label>
                             <input
                                 type='time'
                                 name='horario_limite'
@@ -196,7 +196,7 @@ const AddBico = () => {
                         </div>
 
                         <div className="bico-input-container">
-                            <label>Data Limite</label>
+                            <label>Data Limite - Anúncio</label>
                             <input
                                 type='date'
                                 name='data_limite'

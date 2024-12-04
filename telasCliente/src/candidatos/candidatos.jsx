@@ -162,7 +162,8 @@ const Candidatos = () => {
                             </div>
                         ))
                     ) : (
-                        <p>Não há candidatos disponíveis.</p>
+                        <div className="semCand"><p>Não há candidatos disponíveis.</p></div>
+                        
                     )
                 )}
             </div>
