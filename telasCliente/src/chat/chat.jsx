@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getDatabase, ref, push, onValue } from 'firebase/database';
-import { useParams, Link } from 'react-router-dom';
 import './App.css';
 import { initializeApp } from "firebase/app";
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBslNgrhtDObgNFm3-CIeBp96WlI9GklL4",
-  authDomain: "touccan-chat.firebaseapp.com",
-  databaseURL: "https://touccan-chat-default-rtdb.firebaseio.com",
-  projectId: "touccan-chat",
-  storageBucket: "touccan-chat.firebasestorage.app",
-  messagingSenderId: "647816113687",
-  appId: "1:647816113687:web:1c28374f44bd236d26f652"
+  apiKey: "AIzaSyAm4r7cDuQWBT4dLTnNqj6ijVKvNVIJ-As",
+  authDomain: "touccan-firebase.firebaseapp.com",
+  databaseURL: "https://touccan-firebase-default-rtdb.firebaseio.com",
+  projectId: "touccan-firebase",
+  storageBucket: "touccan-firebase.firebasestorage.app",
+  messagingSenderId: "906368056826",
+  appId: "1:906368056826:web:0e8f0b08a2ae94acce3843",
+  measurementId: "G-646HZZSX54"
 };
 const id_cliente = localStorage.getItem('id_cliente'); // ID do cliente logado
 
@@ -28,6 +28,7 @@ const Chat = ({ chatId }) => {
   const [isSameUser, setIsSameUser] = useState(false);
 
   const chatIdUnico = `C${id_cliente}_U${chatId}`;
+  const chatConversaRef = useRef(null); // Referência para o container de mensagens
 
   // Carregar mensagens do Firebase para o chat específico
   useEffect(() => {
@@ -36,10 +37,8 @@ const Chat = ({ chatId }) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         const mensagensArray = Object.values(data);
-        const mensagensFiltradas = mensagensArray.filter(msg =>
-          msg.id_cliente === id_cliente || msg.id_usuario === chatId
-        );
-        setMensagens(mensagensFiltradas);
+        // Inverter a ordem das mensagens para mostrar as mais recentes embaixo
+        setMensagens(mensagensArray.reverse());
       }
       setLoading(false);
     });
@@ -47,7 +46,7 @@ const Chat = ({ chatId }) => {
     return () => {
       mensagensListener(); // Remover o listener ao sair da tela
     };
-  }, [chatIdUnico, id_cliente, chatId]);
+  }, [chatIdUnico]);
 
   useEffect(() => {
     const fetchUsuario = async () => {
@@ -72,6 +71,7 @@ const Chat = ({ chatId }) => {
     fetchUsuario();
   }, [chatId]);
 
+  // Enviar mensagem para o Firebase
   const enviarMensagem = () => {
     if (novaMensagem.trim() !== '') {
       const mensagem = {
@@ -79,6 +79,7 @@ const Chat = ({ chatId }) => {
         texto: novaMensagem,
         timestamp: new Date().toISOString(),
         id_cliente: id_cliente,
+        id_usuario: chatId // Adicionando o id_usuario para identificar a mensagem
       };
 
       const chatRef = ref(database, `chats/${chatIdUnico}/conversa`);
@@ -90,6 +91,13 @@ const Chat = ({ chatId }) => {
     }
   };
 
+  // Rolagem automática para a última mensagem
+  useEffect(() => {
+    if (chatConversaRef.current) {
+      chatConversaRef.current.scrollTop = chatConversaRef.current.scrollHeight;
+    }
+  }, [mensagens]);
+
   if (loading) return <div>Carregando...</div>;
 
   return (
@@ -99,11 +107,13 @@ const Chat = ({ chatId }) => {
         <span className="nome-pessoa-chat">{usuario.nome}</span>
       </div>
 
-      <div className="chat-conversa">
+      <div className="chat-conversa" ref={chatConversaRef}>
         {mensagens.length > 0 ? (
           mensagens.map((msg, index) => (
-            <div key={index} className={`msg-${msg.tipo}`}>
-              <div className="foto-perfil-enviado"></div>
+            <div key={index} className={`msg-${msg.id_cliente === id_cliente ? 'cliente' : 'usuario'}`}>
+              <div className="foto-perfil-enviado">
+                <img src={msg.id_cliente === id_cliente ? '../../img/person.png' : usuario.foto} alt="Foto" />
+              </div>
               <div className="mensagem-texto">{msg.texto}</div>
             </div>
           ))
