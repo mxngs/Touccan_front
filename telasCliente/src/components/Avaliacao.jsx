@@ -80,7 +80,8 @@ const Avaliacao = () => {
       avaliacao: comentario,
       nota: nota,
     };
-
+    console.log(dadosAvaliacao);
+    
     try {
       const response = await fetch('https://touccan-backend-8a78.onrender.com/2.0/touccan/avaliacao/cliente', {
         method: 'POST',
@@ -93,6 +94,8 @@ const Avaliacao = () => {
       if (!response.ok) {
         throw new Error('Erro ao enviar avaliação');
       }
+      console.log(response);
+      
 
       Swal.fire({
         icon: 'success',
