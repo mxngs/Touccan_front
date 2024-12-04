@@ -50,7 +50,7 @@ const Perfil = () => {
       const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/feedback/cliente/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Dados brutos recebidos da API:', data);
+        console.log('Feedbacks recebidos:', data);  // Verifique os dados
         const feedback = juntar(data);
         if (Array.isArray(feedback)) {
           setFeedbacks(feedback);
@@ -67,6 +67,7 @@ const Perfil = () => {
       setFeedbacks([]);
     }
   };
+  
 
 
   const fetchAnuncios = async (id) => {
@@ -206,104 +207,108 @@ const Perfil = () => {
         </span>
 
         <div className="tabs">
-          <button
-            className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
-            onClick={() => handleTabChange('sobre')}
-          >
-            Sobre Nós
-          </button>
-          <button
-            className={`tab-button ${mudarTab === 'feedback' ? 'active' : ''}`}
-            onClick={() => handleTabChange('feedback')}
-          >
-            Feedback
-          </button>
-        </div>
+  <button
+    className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
+    onClick={() => handleTabChange('sobre')}
+  >
+    Sobre Nós
+  </button>
+  <button
+    className={`tab-button ${mudarTab === 'feedback' ? 'active' : ''}`}
+    onClick={() => handleTabChange('feedback')}
+  >
+    Feedback
+  </button>
+</div>
 
-        {mudarTab === 'sobre' && (
-          <div className="tab-content" id="sobre-perfil-cliente">
-            <button onClick={isEditing ? handleSave : handleEdit}>
-              {isEditing ? 'Salvar' : 'Editar'}
-            </button>
+{mudarTab === 'sobre' && (
+  <div className="tab-content" id="sobre-perfil-cliente">
+    <button onClick={isEditing ? handleSave : handleEdit}>
+      {isEditing ? 'Salvar' : 'Editar'}
+    </button>
 
-            <div className="inputs-perfil-cliente">
-              <div className="endereco-perfil-cliente">
-                <input
-                  type="text"
-                  disabled
-                  value={endereco ? `Endereço: ${endereco.rua}, ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}` : 'Indefinido'}
-                />
-              </div>
+    <div className="inputs-perfil-cliente">
+      <div className="endereco-perfil-cliente">
+        <input
+          type="text"
+          disabled
+          value={endereco ? `Endereço: ${endereco.rua}, ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}` : 'Indefinido'}
+        />
+      </div>
 
-              <div className="contatos-perfil-cliente">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="E-mail"
-                  disabled={!isEditing}
-                />
-              </div>
-              <input
-                type="tel"
-                value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
-                placeholder="Telefone"
-                disabled={!isEditing}
-              />
-            </div>
-          </div>
-        )}
+      <div className="contatos-perfil-cliente">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="E-mail"
+          disabled={!isEditing}
+        />
+      </div>
+      <input
+        type="tel"
+        value={telefone}
+        onChange={(e) => setTelefone(e.target.value)}
+        placeholder="Telefone"
+        disabled={!isEditing}
+      />
+    </div>
+  </div>
+)}
 
-        <div className="extra-anuncios">
-          {anuncios.length > 0 ? (
-            anuncios.map((anuncio) => (
-              <div className="job-card" key={`extra-${anuncio.id}`} onClick={() => showDetalhesAnuncio(anuncio)}>
-                <div className="job-info">
-                  <h3 className="job-title">{anuncio.titulo}</h3>
-                  <p className="job-description">{anuncio.descricao}</p>
-                  <div className="job-timing">
-                    Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
-                    Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
-                    Preço: R$ {anuncio.salario.toFixed(2)}
-                  </div>
-                </div>
-              </div>
-            ))
+{mudarTab === 'feedback' && (
+  <div id="feedback" className="tab-content">
+    {feedbacks.length > 0 ? (
+      feedbacks.map((feedback, index) => (
+        <div className="feedback-card" key={index}>
+          {feedback.denuncia ? (
+            <p><strong>Denúncia:</strong> {feedback.denuncia}</p>
           ) : (
-            <div className="semAnuncios">
-              <p>Você não tem anúncios</p> {/* Mensagem para quando não houver anúncios */}
-            </div>
+            <p><strong>Denúncia:</strong> Nenhuma denúncia registrada</p>
           )}
+          {feedback.avaliacao ? (
+            <p><strong>Avaliação:</strong> {feedback.avaliacao}</p>
+          ) : (
+            <p><strong>Avaliação:</strong> Nenhuma avaliação registrada</p>
+          )}
+          <p><strong>Id Bico:</strong> {feedback.id_bico || 'Indefinido'}</p>
+          <p><strong>Id Cliente:</strong> {feedback.id_cliente || 'Indefinido'}</p>
+          <p><strong>Id Usuário:</strong> {feedback.id_usuario || 'Indefinido'}</p>
         </div>
+      ))
+    ) : (
+      <div className="semFeedbacks">
+        <p>Você não tem feedbacks.</p> {/* Mensagem para quando não houver feedbacks */}
+      </div>
+    )}
+  </div>
+)}
 
-        {mudarTab === 'feedback' && (
-          <div id="feedback" className="tab-content">
-            {feedbacks.length > 0 ? (
-              feedbacks.map((feedback, index) => (
-                <div className="feedback-card" key={index}>
-                  {feedback.denuncia ? (
-                    <p><strong>Denúncia:</strong> {feedback.denuncia}</p>
-                  ) : (
-                    <p><strong>Denúncia:</strong> Nenhuma denúncia registrada</p>
-                  )}
-                  {feedback.avaliacao ? (
-                    <p><strong>Avaliação:</strong> {feedback.avaliacao}</p>
-                  ) : (
-                    <p><strong>Avaliação:</strong> Nenhuma avaliação registrada</p>
-                  )}
-                  <p><strong>Id Bico:</strong> {feedback.id_bico || 'Indefinido'}</p>
-                  <p><strong>Id Cliente:</strong> {feedback.id_cliente || 'Indefinido'}</p>
-                  <p><strong>Id Usuário:</strong> {feedback.id_usuario || 'Indefinido'}</p>
-                </div>
-              ))
-            ) : (
-              <div className="semFeedbacks">
-                <p>Você não tem feedbacks.</p> {/* Mensagem para quando não houver feedbacks */}
-              </div>
-            )}
+{/* Adicionar condição para exibir anúncios apenas quando a aba "sobre" estiver ativa */}
+{mudarTab === 'sobre' && (
+  <div className="extra-anuncios">
+    {anuncios.length > 0 ? (
+      anuncios.map((anuncio) => (
+        <div className="job-card" key={`extra-${anuncio.id}`} onClick={() => showDetalhesAnuncio(anuncio)}>
+          <div className="job-info">
+            <h3 className="job-title">{anuncio.titulo}</h3>
+            <p className="job-description">{anuncio.descricao}</p>
+            <div className="job-timing">
+              Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
+              Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
+              Preço: R$ {anuncio.salario.toFixed(2)}
+            </div>
           </div>
-        )}
+        </div>
+      ))
+    ) : (
+      <div className="semAnuncios">
+        <p>Você não tem anúncios</p> {/* Mensagem para quando não houver anúncios */}
+      </div>
+    )}
+  </div>
+)}
+
 
 
 
