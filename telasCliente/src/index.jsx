@@ -20,7 +20,7 @@ import RecuperarSenha from './recuperarSenha/recuperarSenha.jsx'
 import Avaliacao from './components/Avaliacao.jsx'
 import DetalhesVaga from './components/DetalhesVaga';
 
-
+//funcionando
 export default function App() {
     return (
         <BrowserRouter>

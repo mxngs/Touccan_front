@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'; // Usando a sintaxe de importação ES
 
 // Configurar o transporte de e-mail
+// Configurar o transporte de e-mail
 let transporter = nodemailer.createTransport({
     service: 'gmail', // Pode ser outro serviço como 'hotmail', 'yahoo', etc.
     auth: {
