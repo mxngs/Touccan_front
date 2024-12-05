@@ -4,6 +4,7 @@ import DetalhesVaga from '../components/DetalhesVaga.jsx';
 import AvaliarModal from '../components/Avaliacao.jsx'; 
 import './App.css'; 
 
+//funcionando
 const MainContent = () => {
   const [activeTab, setActiveTab] = useState('perto');
   const [anuncios, setAnuncios] = useState([]);

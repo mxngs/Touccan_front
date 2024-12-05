@@ -3,6 +3,8 @@ import './App.css';
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'; // Importando o SweetAlert2
 
+//funcionando
+
 function Cadastro() {
   const [formData, setFormData] = useState({
     nome_responsavel: '',

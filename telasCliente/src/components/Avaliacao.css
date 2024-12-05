@@ -96,6 +96,10 @@
     font-size: 16px;
     margin-top: 20px;
   }
+
+  .formulario button{
+    gap: 10px; 
+  }
   
   button:hover {
     background-color: #d7690e;

@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar.jsx';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
+//funcionando
 const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan/';
 
 const Historico = () => {

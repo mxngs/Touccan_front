@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import './App.css';
 import Sidebar from '../components/Sidebar.jsx';
 
+//funcionando
 const PerfilUsuario = () => {
   const { id } = useParams();
   const [mudarTab, setMudarTab] = useState('sobre');

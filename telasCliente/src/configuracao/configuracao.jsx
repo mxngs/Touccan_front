@@ -4,6 +4,7 @@ import Confetti from 'react-confetti';
 import Swal from 'sweetalert2'; 
 import './App.css';
 
+//funcionando
 const Configuracao = () => {
     const [userData, setUserData] = useState(null);
     const [isPremium, setIsPremium] = useState(false);

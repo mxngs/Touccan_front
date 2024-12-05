@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar.jsx';
 import { AiOutlinePlus } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 
+//funcionando  - editar perfil bugado
 const Perfil = () => {
   const [mudarTab, setMudarTab] = useState('sobre');
   const [dadosCliente, setDadosCliente] = useState(null);

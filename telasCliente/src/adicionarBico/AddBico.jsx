@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar.jsx';
 import Swal from 'sweetalert2';
 import './App.css';
+ //funcionando
 
 const AddBico = () => {
     const baseUrl = 'https://touccan-backend-8a78.onrender.com/2.0/touccan';

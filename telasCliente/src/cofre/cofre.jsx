@@ -3,6 +3,7 @@ import axios from 'axios';
 import Sidebar from '../components/Sidebar.jsx';
 import './App.css';
 
+//funcionando
 const Cofre = () => {
     const [startIndex, setStartIndex] = useState(0);
     const maxNotifications = 4;

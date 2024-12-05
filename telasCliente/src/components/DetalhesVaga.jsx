@@ -3,6 +3,7 @@ import './DetalhesVaga.css';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'; // Importando o SweetAlert2
 
+//funcionando
 const DetalhesVaga = ({ anuncio, onClose }) => {
     const navigate = useNavigate();
 

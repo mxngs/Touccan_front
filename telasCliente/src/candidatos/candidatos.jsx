@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'; // Importar o Link do React Router
 import Sidebar from '../components/Sidebar.jsx';
 import './App.css';
 
+//funcionando
+
 const Candidatos = () => {
     const [candidatos, setCandidatos] = useState([]);
     const [loading, setLoading] = useState(true);

@@ -3,6 +3,8 @@ import { getDatabase, ref, push, onValue } from 'firebase/database';
 import './App.css';
 import { initializeApp } from "firebase/app";
 
+//funcionando
+
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAm4r7cDuQWBT4dLTnNqj6ijVKvNVIJ-As",

@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import './Avaliacao.css';
 import { Link } from 'react-router-dom';
 
+//funcionando
 const Avaliacao = () => {
   const { id } = useParams();
   const navigate = useNavigate();
