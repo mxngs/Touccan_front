@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from '../components/Sidebar.jsx';
 import { AiOutlinePlus } from 'react-icons/ai';
+import Swal from 'sweetalert2';
 
 const Perfil = () => {
   const [mudarTab, setMudarTab] = useState('sobre');
@@ -16,6 +17,10 @@ const Perfil = () => {
 
   const handleTabChange = (tab) => {
     setMudarTab(tab);
+    if (tab === 'feedback') {
+      const id = localStorage.getItem("id_cliente");
+      if (id) fetchFeedbacks(id);
+    }
   };
 
   const fetchDadosCliente = async (id) => {
@@ -50,7 +55,7 @@ const Perfil = () => {
       const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/feedback/cliente/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Feedbacks recebidos:', data);  // Verifique os dados
+        console.log('Feedbacks recebidos:', data);
         const feedback = juntar(data);
         if (Array.isArray(feedback)) {
           setFeedbacks(feedback);
@@ -67,8 +72,6 @@ const Perfil = () => {
       setFeedbacks([]);
     }
   };
-  
-
 
   const fetchAnuncios = async (id) => {
     try {
@@ -145,25 +148,41 @@ const Perfil = () => {
       premium: dadosCliente.premium,
       foto: fotoURL
     };
-
+  
+    console.log('Payload being sent:', payload); 
+  
     try {
-      const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/cliente/${id}`, {
+      const response = await fetch(`http://localhost:8080/2.0/touccan/cliente/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
+  
+      const responseBody = await response.json(); 
       if (response.ok) {
-        console.log('Dados atualizados com sucesso');
+        Swal.fire({
+          title: 'Perfil atualizado com sucesso!',
+          icon: 'success',
+          confirmButtonText: 'Ok',
+        });
         setIsEditing(false);
       } else {
-        const errorText = await response.text();
-        console.error('Erro ao atualizar dados:', response.statusText, errorText);
-        alert('Erro ao salvar os dados. Tente novamente.');
+        // Exibindo o erro com SweetAlert2
+        Swal.fire({
+          title: 'Erro ao atualizar perfil!',
+          text: responseBody.message || 'Houve um erro ao tentar salvar os dados.',
+          icon: 'error',
+          confirmButtonText: 'Tentar novamente',
+        });
       }
     } catch (error) {
       console.error('Erro na requisição de atualização:', error);
-      alert('Erro na atualização. Tente novamente.');
+      Swal.fire({
+        title: 'Erro ao atualizar perfil!',
+        text: 'Houve um problema ao tentar atualizar o perfil. Tente novamente mais tarde.',
+        icon: 'error',
+        confirmButtonText: 'Fechar',
+      });
     }
   };
 
@@ -207,107 +226,159 @@ const Perfil = () => {
         </span>
 
         <div className="tabs">
-  <button
-    className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
-    onClick={() => handleTabChange('sobre')}
-  >
-    Sobre Nós
-  </button>
-  <button
-    className={`tab-button ${mudarTab === 'feedback' ? 'active' : ''}`}
-    onClick={() => handleTabChange('feedback')}
-  >
-    Feedback
-  </button>
-</div>
-
-{mudarTab === 'sobre' && (
-  <div className="tab-content" id="sobre-perfil-cliente">
-    <button onClick={isEditing ? handleSave : handleEdit}>
-      {isEditing ? 'Salvar' : 'Editar'}
-    </button>
-
-    <div className="inputs-perfil-cliente">
-      <div className="endereco-perfil-cliente">
-        <input
-          type="text"
-          disabled
-          value={endereco ? `Endereço: ${endereco.rua}, ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}` : 'Indefinido'}
-        />
-      </div>
-
-      <div className="contatos-perfil-cliente">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="E-mail"
-          disabled={!isEditing}
-        />
-      </div>
-      <input
-        type="tel"
-        value={telefone}
-        onChange={(e) => setTelefone(e.target.value)}
-        placeholder="Telefone"
-        disabled={!isEditing}
-      />
-    </div>
-  </div>
-)}
-
-{mudarTab === 'feedback' && (
-  <div id="feedback" className="tab-content">
-    {feedbacks.length > 0 ? (
-      feedbacks.map((feedback, index) => (
-        <div className="feedback-card" key={index}>
-          {feedback.denuncia ? (
-            <p><strong>Denúncia:</strong> {feedback.denuncia}</p>
-          ) : (
-            <p><strong>Denúncia:</strong> Nenhuma denúncia registrada</p>
-          )}
-          {feedback.avaliacao ? (
-            <p><strong>Avaliação:</strong> {feedback.avaliacao}</p>
-          ) : (
-            <p><strong>Avaliação:</strong> Nenhuma avaliação registrada</p>
-          )}
-          <p><strong>Id Bico:</strong> {feedback.id_bico || 'Indefinido'}</p>
-          <p><strong>Id Cliente:</strong> {feedback.id_cliente || 'Indefinido'}</p>
-          <p><strong>Id Usuário:</strong> {feedback.id_usuario || 'Indefinido'}</p>
+          <button
+            className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
+            onClick={() => handleTabChange('sobre')}
+          >
+            Sobre Nós
+          </button>
+          <button
+            className={`tab-button ${mudarTab === 'feedback' ? 'active' : ''}`}
+            onClick={() => handleTabChange('feedback')}
+          >
+            Feedback
+          </button>
         </div>
-      ))
-    ) : (
-      <div className="semFeedbacks">
-        <p>Você não tem feedbacks.</p> {/* Mensagem para quando não houver feedbacks */}
-      </div>
-    )}
-  </div>
-)}
 
-{/* Adicionar condição para exibir anúncios apenas quando a aba "sobre" estiver ativa */}
-{mudarTab === 'sobre' && (
-  <div className="extra-anuncios">
-    {anuncios.length > 0 ? (
-      anuncios.map((anuncio) => (
-        <div className="job-card" key={`extra-${anuncio.id}`} onClick={() => showDetalhesAnuncio(anuncio)}>
-          <div className="job-info">
-            <h3 className="job-title">{anuncio.titulo}</h3>
-            <p className="job-description">{anuncio.descricao}</p>
-            <div className="job-timing">
-              Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
-              Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
-              Preço: R$ {anuncio.salario.toFixed(2)}
+        {mudarTab === 'sobre' && (
+          <div className="tab-content" id="sobre-perfil-cliente">
+            <button onClick={isEditing ? handleSave : handleEdit}>
+              {isEditing ? 'Salvar' : 'Editar'}
+            </button>
+
+            <div className="inputs-perfil-cliente">
+              <div className="endereco-perfil-cliente">
+                <input
+                  type="text"
+                  disabled
+                  value={endereco ? `Endereço: ${endereco.rua}, ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}` : 'Indefinido'}
+                />
+              </div>
+
+              <div className="contatos-perfil-cliente">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="E-mail"
+                  disabled={!isEditing}
+                />
+              </div>
+              <input
+                type="tel"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+                placeholder="Telefone"
+                disabled={!isEditing}
+              />
             </div>
           </div>
-        </div>
-      ))
+        )}
+
+{mudarTab === 'feedback' && (
+  <div id="feedback" className="tab-contentt">
+    {feedbacks.length > 0 ? (
+      <>
+        {/* Calcular a avaliação geral e a porcentagem de denúncias */}
+        {
+          (() => {
+            const totalNotas = feedbacks.reduce((acc, f) => acc + (f.nota || 0), 0);
+            const mediaAvaliacoes = totalNotas / feedbacks.length;
+            const estrelasGeral = mediaAvaliacoes ? Math.round(mediaAvaliacoes) : 0;
+
+            const totalDenuncias = feedbacks.filter(f => f.denuncia).length;
+            const porcentagemDenuncias = feedbacks.length > 0 ? (totalDenuncias / feedbacks.length) * 100 : 0;
+
+            return (
+              <div className="gerals">
+                {/* Div para Avaliação Geral */}
+                <div className="avaliacao-geral">
+                  <p><strong>Avaliação Geral:</strong></p>
+                  <div className="avaliacao-containerR">
+                    <div className="estrelasS">
+                      {/* Exibindo as estrelas da avaliação geral */}
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span key={i} className={i < estrelasGeral ? 'estrela-cheia' : 'estrela-vazia'}>★</span>
+                      ))}
+                    </div>
+                    <p>{mediaAvaliacoes ? mediaAvaliacoes.toFixed(1) : '0'}</p>
+                  </div>
+                </div>
+
+                {/* Div para Denúncia Geral */}
+                <div className="denuncia-geral">
+                  <p><strong>Denúncias:</strong></p>
+                  <p>{totalDenuncias} de {feedbacks.length} feedbacks ({porcentagemDenuncias.toFixed(2)}%)</p>
+                </div>
+              </div>
+            );
+          })()
+        }
+
+        {/* Iterando pelos feedbacks individuais */}
+        {feedbacks.map((feedback, index) => (
+          <div className="" key={index}>
+            <div className="avaliacao-especifica-container">
+              <div className="avaliacao-especifica">
+                {feedback.nota && (
+                  <>
+                    <p>{feedback.avaliacao}</p>
+                    <div className="estrelas">
+                      {/* Exibindo as estrelas com base na nota do feedback */}
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span key={i} className={i < feedback.nota ? 'estrela-cheia' : 'estrela-vazia'}>★</span>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Div para Denúncia Específica */}
+            <div className="denuncia-especifica">
+              {feedback.denuncia && (
+                <div className="denuncia-card">{feedback.denuncia}
+                  <img src="../img/denuncia.png" alt="Denúncia" className="denuncia-img" />
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </>
     ) : (
-      <div className="semAnuncios">
-        <p>Você não tem anúncios</p> {/* Mensagem para quando não houver anúncios */}
+      <div className="semFeedbacks">
+        <p>Você não tem feedbacks.</p>
       </div>
-    )}
-  </div>
 )}
+</div>
+        )}
+
+
+
+        {/* Adicionar condição para exibir anúncios apenas quando a aba "sobre" estiver ativa */}
+        {mudarTab === 'sobre' && (
+          <div className="extra-anuncios">
+            {anuncios.length > 0 ? (
+              anuncios.map((anuncio) => (
+                <div className="job-card" key={`extra-${anuncio.id}`} onClick={() => showDetalhesAnuncio(anuncio)}>
+                  <div className="job-info">
+                    <h3 className="job-title">{anuncio.titulo}</h3>
+                    <p className="job-description">{anuncio.descricao}</p>
+                    <div className="job-timing">
+                      Local: {anuncio.cliente?.[0]?.nome_fantasia || 'Não disponível'} <br />
+                      Horário: {new Date(anuncio.horario_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(anuncio.horario_limite).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
+                      Preço: R$ {anuncio.salario.toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="semAnuncios">
+                <p>Você não tem anúncios</p> {/* Mensagem para quando não houver anúncios */}
+              </div>
+            )}
+          </div>
+        )}
 
 
 

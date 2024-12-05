@@ -104,30 +104,47 @@ const AddBico = () => {
         }
 
         if (validateForm()) {
-            const dadosLimpos = {
-                ...formData,
-                id_cliente: parseInt(idCliente, 10),
-                salario: formData.salario // Valor bruto sem formatação
-            };
+            // Calcula o valor com 15% de desconto
+            const salarioComDesconto = formData.salario * 0.85;
+            const salarioExibidoComDesconto = `R$ ${salarioComDesconto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
-            try {
-                const response = await fetch(`${baseUrl}/bicos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(dadosLimpos),
-                });
-                if (response.ok) {
-                    const result = await response.json();
-                    Swal.fire('Sucesso', 'Anúncio criado com sucesso!', 'success');
-                    navigate('/home');
-                } else {
-                    Swal.fire('Erro', 'Erro ao criar o anúncio.', 'error');
+            // Exibe o SweetAlert2 com a confirmação
+            Swal.fire({
+                title: 'Confirmar',
+                text: `O valor do salário será R$ ${salarioExibidoComDesconto} após o desconto de 15% de taxa de serviço. Você concorda?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    // Adiciona a taxa já descontada no payload
+                    const dadosLimpos = {
+                        ...formData,
+                        id_cliente: parseInt(idCliente, 10),
+                        salario: salarioComDesconto // Valor com desconto
+                    };
+
+                    try {
+                        const response = await fetch(`${baseUrl}/bicos`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(dadosLimpos),
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            Swal.fire('Sucesso', 'Anúncio criado com sucesso!', 'success');
+                            navigate('/home');
+                        } else {
+                            Swal.fire('Erro', 'Erro ao criar o anúncio.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Erro de rede:', error);
+                    }
                 }
-            } catch (error) {
-                console.error('Erro de rede:', error);
-            }
+            });
         }
     };
 

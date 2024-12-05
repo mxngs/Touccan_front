@@ -131,31 +131,173 @@ input {
     margin: 0 auto;
 }
 
-.feedback-card {
+
+  .estrelasS {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .estrela-cheia {
+    color: gold;
+  }
+  
+  .estrela-vazia {
+    color: lightgray;
+  }
+  
+  .avaliacao-geral p {
+    color: black;
+    font-size: 16px;
+    font-style: oblique;
+  }
+  
+  
+  .denuncia-geral p {
+    color: black;
+    font-size: 16px;
+    font-style: oblique;
+  }
+  
+  /* Mantemos a estrutura das avaliações gerais e denúncias gerais */
+  .avaliacao-geral,
+  .denuncia-geral {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #F07B07;
+    gap: 5px;
+    justify-content: flex-start;
+  }
+  
+
+
+.gerals{
+  
+  display: flex;
+  justify-content: space-between; 
+  gap: 200px; 
+  align-items: center; 
+  
 }
 
-.feedback-card p {
+
+.avaliacao-especifica {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 580px;
+  background-color: #fffdfd;
+ 
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-left: 20px solid #F07B07;
+  margin-top: 40px;
+  margin-left: 3px; 
+  height: auto;
+}
+
+.denuncia-especifica{
+  display: flex;
+  flex-direction: column;
+  
+  width: 580px;
+  background-color: #fffdfd;
+  
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-left: 20px solid #F07B07; 
+  height: auto;
+
+}
+
+.denuncia-card p{
+  color: black;
+  text-align: left;
+  font-size: 16px;
+  b
+
+}
+.avaliacao-especifica p{
+  color: black;
+  text-align: left;
+  font-size: 16px;
+}
+
+.avaliacao-especifica .estrelas{
+  margin-left: 400px;
+}
+
+.avaliacao-containerR {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+  
+  .feedback-cardd p {
     font-size: 16px;
     color: #333;
     margin: 0;
-}
-
-.feedback-card strong {
+  }
+  
+  .feedback-cardd strong {
     color: #F07B07;
+  }
+  
+  .denuncia-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .denuncia-img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+  }
+  
+
+  
+
+/* Estilos para as estrelas de avaliação */
+.estrelas {
+    display: flex;
+    gap: 5px;
 }
 
-.feedback-card::before {
-    content: "Feedback";
+.estrela-cheia, .estrela-vazia {
+    font-size: 24px;
+    color: #F07B07; /* Cor das estrelas */
+}
+
+.estrelas .estrela-vazia {
+    color: #e0e0e0; /* Cor para as estrelas vazias */
+}
+
+/* Estilos para o card de denúncia */
+.denuncia-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.denuncia-img {
+    width: 30px;
+    height: 30px;
+}
+
+
+.denuncia-info {
+    font-size: 16px;
+    color: #333;
+}
+
+.semFeedbacks {
+    text-align: center;
     font-size: 18px;
+    color: #b7b5b587;
     font-weight: bold;
-    color: #F07B07;
-    margin-bottom: 10px;
+    font-style: oblique;
 }

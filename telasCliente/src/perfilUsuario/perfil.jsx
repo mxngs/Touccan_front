@@ -7,12 +7,13 @@ const PerfilUsuario = () => {
   const { id } = useParams();
   const [mudarTab, setMudarTab] = useState('sobre');
   const [dadosUsuario, setDadosUsuario] = useState(null);
-  const [feedbacks, setFeedbacks] = useState([]); // Estado para armazenar os feedbacks
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [mediaNotas, setMediaNotas] = useState(null);
 
   useEffect(() => {
     if (!id) return;
     fetchDadosUsuario(id);
-    fetchFeedbacks(id); // Carregar feedbacks ao carregar a página
+    fetchFeedbacks(id);
   }, [id]);
 
   const fetchDadosUsuario = async (id) => {
@@ -20,7 +21,6 @@ const PerfilUsuario = () => {
       const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Dados retornados da API:', data);
         if (data && data.usuario) {
           setDadosUsuario(data.usuario);
         }
@@ -35,13 +35,12 @@ const PerfilUsuario = () => {
       const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/feedback/usuario/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Feedbacks retornados da API:', data);
         if (data.avaliacoes && Array.isArray(data.avaliacoes)) {
           setFeedbacks(data.avaliacoes);
-          console.log('Feedbacks atualizados no estado:', data.avaliacoes);
+          calcularMediaNotas(data.avaliacoes);
         } else {
-          console.log("Nenhuma avaliação encontrada ou formato incorreto:", data);
           setFeedbacks([]);
+          setMediaNotas(null);
         }
       } else {
         console.error('Erro ao buscar feedbacks:', response.statusText);
@@ -49,11 +48,21 @@ const PerfilUsuario = () => {
     } catch (error) {
       console.error('Erro ao buscar feedbacks:', error);
       setFeedbacks([]);
+      setMediaNotas(null);
     }
   };
 
-
-
+  const calcularMediaNotas = (avaliacoes) => {
+    const notasValidas = avaliacoes
+      .filter((feedback) => feedback.nota !== null && feedback.nota !== undefined)
+      .map((feedback) => feedback.nota);
+    if (notasValidas.length > 0) {
+      const soma = notasValidas.reduce((acc, nota) => acc + nota, 0);
+      setMediaNotas((soma / notasValidas.length).toFixed(2));
+    } else {
+      setMediaNotas(null);
+    }
+  };
 
   const calcularIdade = (dataNascimento) => {
     const hoje = new Date();
@@ -70,7 +79,6 @@ const PerfilUsuario = () => {
     <div className="tela-perfil-user">
       <Sidebar />
       <div className="infos-perfil-user">
-        {/* Foto de perfil */}
         <div className="pfp-perfil-usuario">
           {dadosUsuario ? (
             dadosUsuario.foto ? (
@@ -81,7 +89,6 @@ const PerfilUsuario = () => {
           ) : 'Carregando...'}
         </div>
 
-        {/* Nome e e-mail */}
         <span className="nome-perfil-usuario">
           {dadosUsuario ? `${dadosUsuario.nome}, ${calcularIdade(dadosUsuario.dataNascimento)}` : 'Carregando...'}
         </span>
@@ -89,7 +96,6 @@ const PerfilUsuario = () => {
           {dadosUsuario ? dadosUsuario.email : 'Carregando...'}
         </span>
 
-        {/* Abas "Sobre mim" e "Feedback" */}
         <div className="tabs">
           <button
             className={`tab-button ${mudarTab === 'sobre' ? 'active' : ''}`}
@@ -105,7 +111,6 @@ const PerfilUsuario = () => {
           </button>
         </div>
 
-        {/* Conteúdo da aba "Sobre mim" */}
         {mudarTab === 'sobre' && (
           <div className="inputs-perfil-user">
             <div>
@@ -146,30 +151,83 @@ const PerfilUsuario = () => {
           </div>
         )}
 
-        {/*Não sei pq n esta aparecendo no front */}
-        {mudarTab === 'feedback' && (
-          <div className="tab-content" id="feedback-perfil-usuario">
-            <div className="feedbacks-list-user">
-              {feedbacks.length > 0 ? (
-                feedbacks.map((feedback, index) => (
-                  <div className="feedback-card-user" key={index}>
-                    <p><strong>Avaliação:</strong> {feedback.avaliacao || 'Nenhuma avaliação registrada'}</p>
-                    <p><strong>Nota:</strong> {feedback.nota || 'N/A'}</p>
-                    <p><strong>ID Bico:</strong> {feedback.id_bico || 'N/A'}</p>
+{mudarTab === 'feedback' && (
+  <div id="feedback" className="tab-contentt">
+    {feedbacks.length > 0 ? (
+      <>
+        {/* Calcular a avaliação geral e a porcentagem de denúncias */}
+        {
+          (() => {
+            const totalNotas = feedbacks.reduce((acc, f) => acc + (f.nota || 0), 0);
+            const mediaAvaliacoes = totalNotas / feedbacks.length;
+            const estrelasGeral = mediaAvaliacoes ? Math.round(mediaAvaliacoes) : 0;
+
+            const totalDenuncias = feedbacks.filter(f => f.denuncia).length;
+            const porcentagemDenuncias = feedbacks.length > 0 ? (totalDenuncias / feedbacks.length) * 100 : 0;
+
+            return (
+              <div className="gerals">
+                {/* Div para Avaliação Geral */}
+                <div className="avaliacao-geral">
+                  <p><strong>Avaliação Geral:</strong></p>
+                  <div className="avaliacao-containerR">
+                    <div className="estrelasS">
+                      {/* Exibindo as estrelas da avaliação geral */}
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span key={i} className={i < estrelasGeral ? 'estrela-cheia' : 'estrela-vazia'}>★</span>
+                      ))}
+                    </div>
+                    <p>{mediaAvaliacoes ? mediaAvaliacoes.toFixed(1) : '0'}</p>
                   </div>
-                ))
-              ) : (
-                <p>🔍 Nenhum feedback encontrado. Verifique se há avaliações feitas por clientes.</p>
+                </div>
+
+                {/* Div para Denúncia Geral */}
+                <div className="denuncia-geral">
+                  <p><strong>Denúncias:</strong></p>
+                  <p>{totalDenuncias} de {feedbacks.length} feedbacks ({porcentagemDenuncias.toFixed(2)}%)</p>
+                </div>
+              </div>
+            );
+          })()
+        }
+
+        {/* Iterando pelos feedbacks individuais */}
+        {feedbacks.map((feedback, index) => (
+          <div className="" key={index}>
+            <div className="avaliacao-especifica-container">
+              <div className="avaliacao-especifica">
+                {feedback.nota && (
+                  <>
+                    <p>{feedback.avaliacao}</p>
+                    <div className="estrelas">
+                      {/* Exibindo as estrelas com base na nota do feedback */}
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span key={i} className={i < feedback.nota ? 'estrela-cheia' : 'estrela-vazia'}>★</span>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Div para Denúncia Específica */}
+            <div className="denuncia-especifica">
+              {feedback.denuncia && (
+                <div className="denuncia-card">{feedback.denuncia}
+                  <img src="../img/denuncia.png" alt="Denúncia" className="denuncia-img" />
+                </div>
               )}
             </div>
           </div>
+        ))}
+      </>
+    ) : (
+      <div className="semFeedbacks">
+        <p>Você não tem feedbacks.</p>
+      </div>
+)}
+</div>
         )}
-
-
-
-
-
-
       </div>
     </div>
   );

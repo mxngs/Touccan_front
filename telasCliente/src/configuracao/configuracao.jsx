@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.jsx';
 import Confetti from 'react-confetti';
-import Swal from 'sweetalert2'; // Importação do SweetAlert2
+import Swal from 'sweetalert2'; 
 import './App.css';
 
 const Configuracao = () => {
@@ -11,12 +11,13 @@ const Configuracao = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
     const [showConfetti, setShowConfetti] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
-    
     const toggleView = (view) => {
         setCurrentView(view);
     };
-
     const handleLogout = () => {
         Swal.fire({
             title: 'Tem certeza?',
@@ -32,6 +33,59 @@ const Configuracao = () => {
             }
         });
     };
+
+    const handleSavePassword = async () => {
+      
+        if (!currentPassword) {
+            Swal.fire('Erro', 'A senha atual é obrigatória.', 'warning');
+            return;
+        }
+
+       
+        if (!newPassword || !confirmPassword) {
+            Swal.fire('Erro', 'A nova senha e a confirmação são obrigatórias.', 'warning');
+            return;
+        }
+
+       
+        if (newPassword !== confirmPassword) {
+            Swal.fire('Erro', 'As senhas não coincidem.', 'warning');
+            return;
+        }
+
+        const id = localStorage.getItem("id_cliente");
+        if (!id) {
+            Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
+            return;
+        }
+
+        try {
+            const updatedPasswordData = {
+                senha: newPassword, 
+            };
+
+            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/senha/cliente/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedPasswordData),
+            });
+
+            if (response.ok) {
+                Swal.fire('Sucesso', 'Senha atualizada com sucesso!', 'success');
+            } else {
+                const errorData = await response.json();
+                console.error('Erro ao atualizar a senha:', errorData);
+                Swal.fire('Erro', `Erro ao atualizar a senha: ${errorData.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar a senha:', error);
+            Swal.fire('Erro', 'Erro ao atualizar a senha. Tente novamente.', 'error');
+        }
+    };
+
+
 
     const fetchUserData = async () => {
         const id = localStorage.getItem("id_cliente");
@@ -64,7 +118,7 @@ const Configuracao = () => {
             Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
             return;
         }
-    
+
         const confirmed = await Swal.fire({
             title: isPremium ? "Cancelar assinatura Premium?" : "Tornar-se Premium?",
             html: isPremium
@@ -78,14 +132,14 @@ const Configuracao = () => {
                 confirmButton: 'custom-confirm-button',
                 cancelButton: 'custom-cancel-button',
             },
-            buttonsStyling: false, // Desativa o estilo padrão do SweetAlert2
+            buttonsStyling: false, 
         });
-    
+
         if (!confirmed.isConfirmed) return;
-    
+
         const newPremiumStatus = isPremium ? 0 : 1;
         setIsPremium(newPremiumStatus);
-    
+
         try {
             const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/premium/cliente/${id}`, {
                 method: 'PUT',
@@ -94,7 +148,7 @@ const Configuracao = () => {
                 },
                 body: JSON.stringify({ premium: newPremiumStatus }),
             });
-    
+
             if (response.ok) {
                 Swal.fire(
                     'Sucesso',
@@ -119,63 +173,130 @@ const Configuracao = () => {
             setIsPremium(!newPremiumStatus);
         }
     };
-    
-    
 
+    const handleSendSupport = async () => {
+        const corpo = document.getElementById('support-message').value;
+        const assunto = `Suporte para o cliente`; 
+        
+        if (!corpo) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'Por favor, preencha o campo de mensagem.',
+            });
+            return;
+        }
+    
+        try {
+            const response = await fetch('http://localhost:8080/2.0/touccan/enviar-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    assunto: assunto,
+                    corpo: corpo,
+                }),
+            });
+    
+            if (!response.ok) {
+                const errorMessage = response.status === 404 
+                    ? 'URL não encontrada. Verifique se o servidor está rodando corretamente.'
+                    : 'Ocorreu um erro ao tentar enviar a mensagem.';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: errorMessage,
+                });
+                return;
+            }
+    
+            const data = await response.json();
+            Swal.fire({
+                icon: 'success',
+                title: 'E-mail enviado com sucesso!',
+                text: data.message || 'Sua mensagem foi enviada com sucesso.',
+            }).then(() => {
+                // Atualiza a página após o usuário clicar em "OK"
+                window.location.reload();
+            });
+        } catch (error) {
+            console.error('Erro ao enviar e-mail:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'Ocorreu um erro ao tentar enviar seu e-mail.',
+            });
+        }
+    };
+    
+    
+    
     const validateFormData = () => {
         const requiredFields = ['nome_fantasia', 'telefone', 'email', 'cep'];
         for (let field of requiredFields) {
             if (!formData[field]) {
                 Swal.fire('Erro', `O campo ${field} é obrigatório.`, 'warning');
-                console.log("Erro: Campo obrigatório não preenchido:", field);  // Adicione este log
+                console.log("Erro: Campo obrigatório não preenchido:", field);  
                 return false;
             }
         }
-        console.log("Validação bem-sucedida", formData);  // Log para ver os dados
+        console.log("Validação bem-sucedida", formData);  
         return true;
     };
-    
+
     const handleFormChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
     const handleSaveChanges = async () => {
         if (!validateFormData()) return;
-    
-        console.log("Salvando alterações...");  // Adicione isso para verificar se a função está sendo chamada
-    
-        const id = localStorage.getItem("id_cliente");
-        if (!id) {
+
+        console.log("Salvando alterações..."); 
+        const id_cliente = localStorage.getItem("id_cliente");
+        if (!id_cliente) {
             Swal.fire('Erro', 'ID do cliente não encontrado', 'error');
             return;
         }
-    
+
         try {
-            const updatedFormData = { ...formData, cep: formData.cep.toString() };
-    
-            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/infos/cliente/${id}`, {
+            
+            const updatedFormData = {
+                ...formData,
+                cep: formData.cep ? formData.cep.toString() : '' 
+            };
+
+            const response = await fetch(`https://touccan-backend-8a78.onrender.com/2.0/touccan/infos/cliente/${id_cliente}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(updatedFormData),
             });
-    
+
+            
             if (response.ok) {
-                await fetchUserData();
+                await fetchUserData();  
                 setIsEditing(false);
+                
                 Swal.fire('Sucesso', 'As alterações foram salvas com sucesso!', 'success');
+                
+                window.location.reload();
             } else {
                 const errorData = await response.json();
                 console.error('Erro ao atualizar os dados:', errorData);
+                
                 Swal.fire('Erro', `Erro ao salvar alterações: ${errorData.message}`, 'error');
             }
         } catch (error) {
             console.error('Erro ao salvar as alterações:', error);
+            
             Swal.fire('Erro', 'Erro ao salvar as alterações. Tente novamente.', 'error');
         }
     };
-    
+
+
+
 
     useEffect(() => {
         fetchUserData();
@@ -186,13 +307,13 @@ const Configuracao = () => {
             <Sidebar toggleView={toggleView} />
 
             <div className="logout-icon" onClick={handleLogout}>
-                        <img src="./img/sair.png" alt="Sair" className="logout-img" />
-                    </div>
+                <img src="./img/sair.png" alt="Sair" className="logout-img" />
+            </div>
 
             <div className="cards-panel">
                 <div className="card" onClick={() => toggleView('account')}>
                     <div className="card-content">
-                    <img src="../img/usuario.png" alt="Sobre Nós" className="card-icon" />
+                        <img src="../img/usuario.png" alt="Sobre Nós" className="card-icon" />
                         <div>
                             <div className="card-title">Informações da conta</div>
                             <div className="card-description">Veja as informações da conta, como telefone e endereço de e-mail</div>
@@ -201,7 +322,7 @@ const Configuracao = () => {
                 </div>
                 <div className="card" onClick={() => toggleView('security')}>
                     <div className="card-content">
-                    <img src="../img/senha.png" alt="Sobre Nós" className="card-icon" />
+                        <img src="../img/senha.png" alt="Sobre Nós" className="card-icon" />
                         <div>
                             <div className="card-title">Segurança</div>
                             <div className="card-description">Gerencie a segurança da sua conta</div>
@@ -210,7 +331,7 @@ const Configuracao = () => {
                 </div>
                 <div className="card" onClick={() => toggleView('support')}>
                     <div className="card-content">
-                    <img src="../img/suporte.png" alt="Sobre Nós" className="card-icon" />
+                        <img src="../img/suporte.png" alt="Sobre Nós" className="card-icon" />
                         <div>
                             <div className="card-title">Suporte</div>
                             <div className="card-description">Entre em contato conosco de qualquer lugar</div>
@@ -247,16 +368,16 @@ const Configuracao = () => {
             {currentView === 'account' && userData && (
                 <div className="account-details">
                     <h2 className="account-titlee">Informações da Conta</h2>
-                    
+
                     <div className="account-card">
                         {isEditing ? (
                             <div>
                                 <div className="info">
-                                    <label>Nome do Usuário:</label> 
+                                    <label>Nome do Usuário:</label>
                                     <input
                                         type="text"
                                         name="nome_fantasia"
-                                        value= {formData.nome_fantasia || ''}
+                                        value={formData.nome_fantasia || ''}
                                         onChange={handleFormChange}
                                     />
                                 </div>
@@ -289,25 +410,25 @@ const Configuracao = () => {
                                     />
                                 </div>
                                 <div className="infoConta">
-                                <button onClick={handleSaveChanges}>Salvar Alterações</button>
-                                <button onClick={() => setIsEditing(false)}>Cancelar</button>
+                                    <button onClick={handleSaveChanges}>Salvar Alterações</button>
+                                    <button onClick={() => setIsEditing(false)}>Cancelar</button>
                                 </div>
                             </div>
                         ) : (
                             <div>
-                            <div className="infos"><strong>Nome do Usuário:</strong> <br /> {userData.nome_fantasia}</div>
-                            <div className="infos"><strong>Telefone:</strong> <br /> {userData.telefone}</div>
-                            <div className="infos"><strong>E-mail:</strong> <br /> {userData.email}</div>
-                            <div className="infos"><strong>CEP:</strong> <br /> {userData.cep}</div>
-                            
-                            <div className="button-container">
-                                <button onClick={() => setIsEditing(true)}>Editar Informações</button>
+                                <div className="infos"><strong>Nome do Usuário:</strong> <br /> {userData.nome_fantasia}</div>
+                                <div className="infos"><strong>Telefone:</strong> <br /> {userData.telefone}</div>
+                                <div className="infos"><strong>E-mail:</strong> <br /> {userData.email}</div>
+                                <div className="infos"><strong>CEP:</strong> <br /> {userData.cep}</div>
+
+                                <div className="button-container">
+                                    <button onClick={() => setIsEditing(true)}>Editar Informações</button>
+                                </div>
                             </div>
-                        </div>
-                        
+
                         )}
                     </div>
-                    
+
                 </div>
             )}
 
@@ -329,7 +450,6 @@ const Configuracao = () => {
             )}
 
 
-
             {currentView === 'security' && (
                 <div className="security-settings">
                     <h2 className="account-titlee">Segurança</h2>
@@ -337,17 +457,34 @@ const Configuracao = () => {
                         <div className="security-form">
                             <div className="info">
                                 <div className="info-title">Senha Atual:</div>
-                                <input type="password" placeholder="Escreva sua senha atual" />
+                                <input
+                                    type="password"
+                                    placeholder="Escreva sua senha atual"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                />
                             </div>
                             <div className="info">
                                 <div className="info-title">Nova Senha:</div>
-                                <input type="password" placeholder="Pelo menos 8 caracteres" />
+                                <input
+                                    type="password"
+                                    placeholder="Pelo menos 8 caracteres"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                />
                             </div>
                             <div className="info">
                                 <div className="info-title">Confirmar Senha:</div>
-                                <input type="password" placeholder="Pelo menos 8 caracteres" />
+                                <input
+                                    type="password"
+                                    placeholder="Pelo menos 8 caracteres"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                />
                             </div>
-                            <button className="logout-button">Atualizar Senha</button>
+                            <button className="logout-button" onClick={handleSavePassword}>
+                                Atualizar Senha
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -360,9 +497,15 @@ const Configuracao = () => {
                         <div className="contato">E-mail para contato</div>
                         <div className="info-value">contato.touccan@gmail.com</div>
                         <div className="info-title">Encontrou algum problema? reporte para nós</div>
-                        <textarea className='suporte' id="support-message" rows="4" placeholder="Digite sua mensagem aqui..."></textarea>
+                        <textarea
+                            className='suporte'
+                            id="support-message"
+                            rows="4"
+                            placeholder="Digite sua mensagem aqui..."
+                        ></textarea>
                         <div className="character-count">0/500 caracteres</div>
-                        <button className="send-button">Enviar Reporte</button>
+                        <button className="send-button" onClick={handleSendSupport}>Enviar Reporte</button>
+
                     </div>
                 </div>
             )}
